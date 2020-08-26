@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration
+class CreateMemberTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('user', function (Blueprint $table) {
+        Schema::create('member', function (Blueprint $table) {
             $table->id();
-            $table->string('username');
-            $table->string('password');
-            $table->unsignedTinyInteger('type')->nullable();
-            $table->unsignedInteger('owner_id')->nullable();
-            $table->unsignedInteger('role_id');
-            $table->boolean('is_active')->default(true);
-            $table->rememberToken();
-            $table->datetime('email_verified_at')->nullable();
+            $table->string('name')->nullable();
+            $table->string('office_address')->nullable();
+            $table->string('office_phone_number')->nullable();
+            $table->string('email')->nullable();
+            $table->unsignedInteger('department_id')->nullable();
+            $table->unsignedInteger('nationality')->nullable();
+            $table->string('employee_number')->nullable();
+            $table->unsignedInteger('title_id')->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();
@@ -38,6 +38,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user');
+        Schema::dropIfExists('member');
     }
 }
