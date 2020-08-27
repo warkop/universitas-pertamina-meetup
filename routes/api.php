@@ -26,10 +26,19 @@ Route::group(['prefix' => 'title'], function () {
     Route::delete('/{title}', 'TitleController@destroy');
 });
 
-Route::group('nationality')->get('/', function (Request $request) {
+Route::group(['prefix' => 'nationality'], function () {
     Route::get('/', 'NationalityController@index');
     Route::get('/{nationality}', 'NationalityController@show');
     Route::post('/', 'NationalityController@store');
     Route::put('/{nationality}', 'NationalityController@store');
     Route::delete('/{nationality}', 'NationalityController@destroy');
 });
+
+Route::group(['prefix' => 'skill'], function () {
+    Route::get('/', 'SkillController@index');
+    Route::get('/{skill}', 'SkillController@show');
+    Route::post('/', 'SkillController@store');
+    Route::put('/{skill}', 'SkillController@store');
+    Route::delete('/{skill}', 'SkillController@destroy');
+});
+
