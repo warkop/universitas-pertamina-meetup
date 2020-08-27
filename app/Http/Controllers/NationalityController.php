@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NationalityStoreRequest;
 use App\Http\Resources\NationalityListDataResource;
 use App\Model\Nationality;
 use Illuminate\Http\Request;
@@ -100,8 +101,9 @@ class NationalityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Nationality $nationality)
+    public function store(NationalityStoreRequest $request, Nationality $nationality)
     {
+        $request->validated();
         $nationality->name = $request->input('name');
         $nationality->code = $request->input('code');
         $nationality->save();
