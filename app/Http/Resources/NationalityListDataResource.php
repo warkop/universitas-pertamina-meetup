@@ -19,6 +19,6 @@ class NationalityListDataResource extends JsonResource
             'name'          => $this->name,
             'code'          => $this->code,
             'updated_at'    => date('d-m-Y', strtotime($this->updated_at)),
-        ];;
+        ];
     }
 }
