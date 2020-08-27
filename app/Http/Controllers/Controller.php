@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HelperPublic;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -24,6 +25,6 @@ class Controller extends BaseController
 
     public function getResponse()
     {
-        return helpResponse($this->responseCode, $this->responseData, $this->responseMessage, $this->responseStatus, $this->responseNote);
+        return HelperPublic::helpResponse($this->responseCode, $this->responseData, $this->responseMessage, $this->responseStatus, $this->responseNote);
     }
 }
