@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\NationalityStoreRequest;
-use App\Http\Resources\NationalityListDataResource;
-use App\Model\Nationality;
+use App\Http\Requests\InstitutionStoreRequest;
+use App\Http\Resources\InstitutionListDataResource;
+use App\Model\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class NationalityController extends Controller
+class InstitutionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -60,17 +60,17 @@ class NationalityController extends Controller
 
             $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only')];
 
-            $result = Nationality::listData($start, $perpage, $search, false, $sort, $field, $options);
-            $total = Nationality::listData($start, $perpage, $search, true, $sort, $field, $options);
+            $result = Institution::listData($start, $perpage, $search, false, $sort, $field, $options);
+            $total = Institution::listData($start, $perpage, $search, true, $sort, $field, $options);
 
             if ($grid == 'datatable') {
                 $this->responseData['sEcho'] = $echo;
                 $this->responseData["iTotalRecords"] = $total;
                 $this->responseData["iTotalDisplayRecords"] = $total;
-                $this->responseData["aaData"] = NationalityListDataResource::collection($result);
+                $this->responseData["aaData"] = InstitutionListDataResource::collection($result);
                 return response()->json($this->responseData, $this->responseCode);
             } else {
-                $this->responseData['nationality'] = NationalityListDataResource::collection($result);
+                $this->responseData['nationality'] = InstitutionListDataResource::collection($result);
                 $pagination['row'] = count($result);
                 $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
                 $pagination['rowEnd'] = ($start + count($result));
@@ -101,16 +101,18 @@ class NationalityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(NationalityStoreRequest $request, Nationality $nationality)
+    public function store(InstitutionStoreRequest $request, Institution $institution)
     {
         $request->validated();
-        $nationality->name = $request->input('name');
-        $nationality->code = $request->input('code');
-        $nationality->save();
+        $institution->name      = $request->input('name');
+        $institution->email     = $request->input('email');
+        $institution->address   = $request->input('address');
+        $institution->phone     = $request->input('phone');
+        $institution->save();
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $nationality;
+        $this->responseData = $institution;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -121,12 +123,9 @@ class NationalityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Nationality $nationality)
+    public function show($id)
     {
-        $this->responseCode = 200;
-        $this->responseData = $nationality;
-
-        return response()->json($this->getResponse(), $this->responseCode);
+        //
     }
 
     /**
@@ -158,9 +157,9 @@ class NationalityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Nationality $nationality)
+    public function destroy(Institution $institution)
     {
-        $nationality->delete();
+        $institution->delete();
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil dihapus';

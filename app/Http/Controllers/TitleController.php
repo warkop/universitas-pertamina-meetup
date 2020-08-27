@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TitleStoreRequest;
 use App\Http\Resources\TitleListDataResource;
 use App\Model\Title;
 use Illuminate\Http\Request;
@@ -100,8 +101,9 @@ class TitleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Title $title)
+    public function store(TitleStoreRequest $request, Title $title)
     {
+        $request->validated();
         $title->name = $request->input('name');
         $title->save();
 

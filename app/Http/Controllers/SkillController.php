@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SkillStoreRequest;
 use App\Http\Resources\SkillListDataResource;
 use App\Model\Skill;
 use Illuminate\Http\Request;
@@ -100,9 +101,11 @@ class SkillController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Skill $skill)
+    public function store(SkillStoreRequest $request, Skill $skill)
     {
+        $request->validated();
         $skill->name = $request->input('name');
+        $skill->type = $request->input('type');
         $skill->save();
 
         $this->responseCode = 200;

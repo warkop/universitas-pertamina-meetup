@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class NationalityListDataResource extends JsonResource
+class DepartmentListDataResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +17,7 @@ class NationalityListDataResource extends JsonResource
         return [
             'id'            => $this->id,
             'name'          => $this->name,
-            'code'          => $this->code,
+            'institution_name'   => $this->institution_name,
             'updated_at'    => date('d-m-Y', strtotime($this->updated_at)),
         ];
     }

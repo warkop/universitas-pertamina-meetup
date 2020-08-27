@@ -42,3 +42,20 @@ Route::group(['prefix' => 'skill'], function () {
     Route::delete('/{skill}', 'SkillController@destroy');
 });
 
+Route::group(['prefix' => 'department'], function () {
+    Route::get('/', 'DepartmentController@index');
+    Route::get('/get-list-institution', 'DepartmentController@getListInstitution');
+    Route::get('/{department}', 'DepartmentController@show');
+    Route::post('/', 'DepartmentController@store');
+    Route::put('/{department}', 'DepartmentController@store');
+    Route::delete('/{department}', 'DepartmentController@destroy');
+});
+
+Route::group(['prefix' => 'institution'], function () {
+    Route::get('/', 'InstitutionController@index');
+    Route::get('/{institution}', 'InstitutionController@show');
+    Route::post('/', 'InstitutionController@store');
+    Route::put('/{institution}', 'InstitutionController@store');
+    Route::delete('/{institution}', 'InstitutionController@destroy');
+});
+
