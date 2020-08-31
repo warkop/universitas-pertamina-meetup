@@ -59,6 +59,21 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::put('/{institution}', 'InstitutionController@store');
         Route::delete('/{institution}', 'InstitutionController@destroy');
     });
+
+    Route::group(['prefix' => 'regulation'], function () {
+        Route::get('/', 'RegulationController@index');
+        Route::get('/{regulation}', 'RegulationController@show');
+        Route::post('/', 'RegulationController@store');
+        Route::put('/{regulation}', 'RegulationController@store');
+        Route::delete('/{regulation}', 'RegulationController@destroy');
+    });
+});
+
+Route::group(['prefix' => 'public'], function () {
+    Route::get('/title', 'TitleController@getAll');
+    Route::get('/institution', 'InstitutionController@getAll');
+    Route::get('/nationality', 'NationalityController@getAll');
+    Route::get('/department', 'DepartmentController@getAll');
 });
 
 Route::group(['prefix' => 'auth'], function () {
@@ -66,6 +81,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::delete('/', 'AuthController@logout'); //logout
     Route::get('/', 'AuthController@me');
     Route::get('/refresh', 'AuthController@refresh');
-    Route::get('/refresh-with-token', 'AuthController@refreshWithToken');
 });
 
