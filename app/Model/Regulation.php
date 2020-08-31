@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
-class Department extends Model
+class Regulation extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'department';
+    protected $table = 'nationality';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -24,18 +24,11 @@ class Department extends Model
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('department')->select(
-            'department.*',
-            'institution.name as institution_name'
-        )
-        ->leftJoin('institution', 'institution.id', '=', 'department.institution_id')
-        ->whereNull('department.deleted_at')
-        ;
+        $result = DB::table('regulation')->whereNull('regulation.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
-                $where->where('department.name', 'ILIKE', '%' . $search . '%');
-                $where->orWhere('institution.name', 'ILIKE', '%' . $search . '%');
+                $where->where('name', 'ILIKE', '%' . $search . '%');
             });
         }
 
@@ -46,10 +39,5 @@ class Department extends Model
         }
 
         return $result;
-    }
-
-    public function institution()
-    {
-        return $this->hasOne(Institution::class);
     }
 }

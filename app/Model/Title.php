@@ -26,7 +26,7 @@ class Title extends Model
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('title');
+        $result = DB::table('title')->whereNull('title.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
