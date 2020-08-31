@@ -70,7 +70,7 @@ class SkillController extends Controller
                 $this->responseData["aaData"] = SkillListDataResource::collection($result);
                 return response()->json($this->responseData, $this->responseCode);
             } else {
-                $this->responseData['nationality'] = SkillListDataResource::collection($result);
+                $this->responseData['skill'] = SkillListDataResource::collection($result);
                 $pagination['row'] = count($result);
                 $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
                 $pagination['rowEnd'] = ($start + count($result));

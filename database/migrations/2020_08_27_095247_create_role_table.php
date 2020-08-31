@@ -16,9 +16,9 @@ class CreateRoleTable extends Migration
         Schema::create('role', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->unsignedInteger('created_by')->nullabe();
-            $table->unsignedInteger('updated_by')->nullabe();
-            $table->unsignedInteger('deleted_by')->nullabe();
+            $table->unsignedInteger('created_by')->nullable();
+            $table->unsignedInteger('updated_by')->nullable();
+            $table->unsignedInteger('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

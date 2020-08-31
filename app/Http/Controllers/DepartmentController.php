@@ -71,7 +71,7 @@ class DepartmentController extends Controller
                 $this->responseData["aaData"] = DepartmentListDataResource::collection($result);
                 return response()->json($this->responseData, $this->responseCode);
             } else {
-                $this->responseData['nationality'] = DepartmentListDataResource::collection($result);
+                $this->responseData['department'] = DepartmentListDataResource::collection($result);
                 $pagination['row'] = count($result);
                 $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
                 $pagination['rowEnd'] = ($start + count($result));
