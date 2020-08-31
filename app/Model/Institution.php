@@ -24,7 +24,7 @@ class Institution extends Model
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('institution');
+        $result = DB::table('institution')->whereNull('institution.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {

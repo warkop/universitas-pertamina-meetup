@@ -29,6 +29,7 @@ class Department extends Model
             'institution.name as institution_name'
         )
         ->leftJoin('institution', 'institution.id', '=', 'department.institution_id')
+        ->whereNull('department.deleted_at')
         ;
 
         if (!empty($search)) {
