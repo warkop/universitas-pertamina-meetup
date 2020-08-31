@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RegulationStoreRequest;
 use App\Http\Resources\RegulationListDataResource;
+use App\Model\Institution;
 use App\Model\Regulation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -140,6 +141,16 @@ class RegulationController extends Controller
     public function edit($id)
     {
         //
+    }
+
+    public function getListInstitution()
+    {
+        $institution = Institution::all();
+
+        $this->responseCode = 200;
+        $this->responseData = $institution;
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
