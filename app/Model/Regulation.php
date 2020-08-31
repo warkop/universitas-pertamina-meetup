@@ -12,7 +12,7 @@ class Regulation extends Model
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'nationality';
+    protected $table = 'regulation';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -26,7 +26,13 @@ class Regulation extends Model
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('regulation')->whereNull('regulation.deleted_at');
+        $result = DB::table('regulation')
+        ->select(
+            'regulation.*',
+            'institution.name as institution_name'
+        )
+        ->leftJoin('institution','institution.id', '=', 'institution_id')
+        ->whereNull('regulation.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
