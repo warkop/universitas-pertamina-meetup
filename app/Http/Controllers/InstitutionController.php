@@ -70,7 +70,7 @@ class InstitutionController extends Controller
                 $this->responseData["aaData"] = InstitutionListDataResource::collection($result);
                 return response()->json($this->responseData, $this->responseCode);
             } else {
-                $this->responseData['nationality'] = InstitutionListDataResource::collection($result);
+                $this->responseData['institution'] = InstitutionListDataResource::collection($result);
                 $pagination['row'] = count($result);
                 $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
                 $pagination['rowEnd'] = ($start + count($result));
