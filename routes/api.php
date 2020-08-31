@@ -62,6 +62,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'regulation'], function () {
         Route::get('/', 'RegulationController@index');
+        Route::get('/get-list-institution', 'RegulationController@getListInstitution');
         Route::get('/{regulation}', 'RegulationController@show');
         Route::post('/', 'RegulationController@store');
         Route::put('/{regulation}', 'RegulationController@store');
