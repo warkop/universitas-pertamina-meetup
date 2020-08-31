@@ -123,9 +123,12 @@ class InstitutionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Institution $institution)
     {
-        //
+        $this->responseCode = 200;
+        $this->responseData = $institution;
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
