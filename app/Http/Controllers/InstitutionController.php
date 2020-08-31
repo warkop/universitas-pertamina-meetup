@@ -142,6 +142,16 @@ class InstitutionController extends Controller
         //
     }
 
+    public function getAll()
+    {
+        $institution = Institution::all()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
+
+        $this->responseCode = 200;
+        $this->responseData = $institution;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
     /**
      * Update the specified resource in storage.
      *

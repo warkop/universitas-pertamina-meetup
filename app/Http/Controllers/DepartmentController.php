@@ -151,6 +151,17 @@ class DepartmentController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
+    public function getAll(Request $request)
+    {
+        $institution_id = $request->get('institution_id');
+        $department = Department::where('institution_id', $institution_id)->get()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
+
+        $this->responseCode = 200;
+        $this->responseData = $department;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
     /**
      * Update the specified resource in storage.
      *
