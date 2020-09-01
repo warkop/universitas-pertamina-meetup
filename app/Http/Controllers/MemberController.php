@@ -2,11 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MemberSignUpInsitutionRequest;
 use App\Http\Requests\MemberStoreRequest;
+use App\Model\Institution;
+use App\Model\Member;
+use App\Model\User;
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
+    /**
+     * Creating User
+     *
+     * @param Object $member Description
+     * @param Integer $role_id Description
+     * @return void
+     * @throws conditon
+     **/
+    private function createUser($member, $role_id)
+    {
+        $user = new User();
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -36,6 +53,27 @@ class MemberController extends Controller
     public function store(MemberStoreRequest $request)
     {
         $request->validated();
+    }
+
+    public function signUpInsitution(MemberSignUpInsitutionRequest $request)
+    {
+        $request->validated();
+        $institution = new Institution();
+
+        $institution->name      = $request->name;
+        $institution->address   = $request->address;
+        $institution->email     = $request->email;
+        $institution->save();
+
+        $role_id = 3;
+        // create user
+        $this->createUser($institution, $role_id);
+
+        $this->responseCode     = 200;
+        $this->responseMessage  = 'Pendaftaran berhasil';
+        $this->responseData     = $institution;
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
