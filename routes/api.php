@@ -70,8 +70,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     });
 });
 
-Route::post('/sign-up-institution', 'MemberController@signUpInsitution');
-Route::post('/sign-up-researcher', 'MemberController@signUpResearcher');
+Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
+Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
 
 Route::group(['prefix' => 'public'], function () {
     Route::get('/title', 'TitleController@getAll');
