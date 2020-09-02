@@ -28,7 +28,7 @@ class DepartmentStoreRequest extends FormRequest
     {
         return [
             'name'              => 'required',
-            'institution_id'    => 'numeric|required',
+            'institution_id'    => 'numeric|required|exists:institution,id',
         ];
     }
 }

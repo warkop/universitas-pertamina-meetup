@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SkillStoreRequest extends FormRequest
+class SignUpInstitutionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,10 @@ class SkillStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'type' => 'numeric|between:0,1|required'
+            'name'                  => 'required|regex:/^[a-zA-Z0-9\-\s]+$/|unique:institution,name',
+            'email'                 => 'required|email',
+            'password'              => 'required|confirmed',
+            'password_confirmation' => 'required|present',
         ];
     }
 }

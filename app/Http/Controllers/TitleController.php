@@ -139,6 +139,16 @@ class TitleController extends Controller
         //
     }
 
+    public function getAll()
+    {
+        $title = Title::all()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
+
+        $this->responseCode = 200;
+        $this->responseData = $title;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
     /**
      * Update the specified resource in storage.
      *
