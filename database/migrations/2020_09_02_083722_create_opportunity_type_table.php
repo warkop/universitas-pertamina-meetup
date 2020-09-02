@@ -16,9 +16,9 @@ class CreateOpportunityTypeTable extends Migration
         Schema::create('opportunity_type', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('updated_by');
-            $table->unsignedBigInteger('deleted_by');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
