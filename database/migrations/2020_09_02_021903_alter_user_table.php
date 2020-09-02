@@ -14,7 +14,6 @@ class AlterUserTable extends Migration
     public function up()
     {
         Schema::table('user', function (Blueprint $table) {
-            $table->renameColumn('email', 'username');
             $table->datetime('confirm_at')->nullable();
             $table->unsignedInteger('confirm_by')->nullable();
             $table->string('reason')->nullable();
@@ -29,7 +28,6 @@ class AlterUserTable extends Migration
     public function down()
     {
         Schema::table('user', function (Blueprint $table) {
-            $table->renameColumn('username', 'email');
             $table->dropColumn('confirm_at');
             $table->dropColumn('confirm_by');
             $table->dropColumn('reason');
