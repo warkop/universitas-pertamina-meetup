@@ -25,7 +25,7 @@ class SkillStoreRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'type' => 'numeric|required'
+            'type' => 'numeric|between:0,1|required'
         ];
     }
 }
