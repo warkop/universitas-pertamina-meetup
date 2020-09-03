@@ -2,15 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegulationStoreFilesRequest;
 use App\Http\Requests\RegulationStoreRequest;
 use App\Http\Resources\RegulationListDataResource;
 use App\Model\Institution;
+use App\Model\Member;
 use App\Model\Regulation;
+use App\Model\RegulationFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class RegulationController extends Controller
 {
+    private function getInstitutionId()
+    {
+        $user = auth()->user();
+
+        $typeName = [
+            'institution'   => 0,
+            'researcher'    => 1,
+        ];
+
+        if ($user->type == $typeName['institution']) {
+            $institution = Institution::find($user->owner_id);
+
+            $institution_id = $institution->id;
+        } else if ($user->type == $typeName['researcher']) {
+            $member = Member::find($user->owner_id);
+
+            $institution_id = $member->department->institution->id;
+        }
+
+        return $institution_id;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -87,16 +113,6 @@ class RegulationController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -105,8 +121,10 @@ class RegulationController extends Controller
     public function store(RegulationStoreRequest $request, Regulation $regulation)
     {
         $request->validated();
+        $institutionId = $this->getInstitutionId();
+
+        $regulation->institution_id = $institutionId;
         $regulation->name           = $request->input('name');
-        $regulation->institution_id = $request->input('institution_id');
         $regulation->code           = $request->input('code');
         $regulation->regulator      = $request->input('regulator');
         $regulation->save();
@@ -114,6 +132,78 @@ class RegulationController extends Controller
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
         $this->responseData = $regulation;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    /**
+     * getFile function summary
+     *
+     * Undocumented function long description
+     *
+     * @param string $fileName showfile
+     * @return Response
+     **/
+    public function getFile(Request $request, Regulation $regulation)
+    {
+        $fileName = $request->input('name');
+        $path = storage_path('app/public').'/regulation/'.$regulation->id.'/'.$fileName;
+        return Response::download($path);
+    }
+
+    /**
+     * storeFiles function for storing file depend regulation id
+     *
+     * @param RegulationStoreFilesRequest $request Get request
+     * @param Regulation $regulation Get model
+     * @return json
+     **/
+    public function storeFiles(RegulationStoreFilesRequest $request, Regulation $regulation)
+    {
+        $request->validated();
+
+        //simpan foto
+        $file = $request->file('file');
+        if (!empty($file)) {
+            $jumlahFile = count($file);
+            for ($i = 0; $i < $jumlahFile; $i++) {
+                if ($file[$i]->isValid()) {
+                    $regulationFile = new RegulationFile();
+
+                    storage_path('public/regulation/') . $regulation->id;
+                    $changedName = time().rand(100,999).$file[$i]->getClientOriginalName();
+                    $guessExtension = $file[$i]->getClientOriginalExtension();
+                    $is_image = false;
+                    if(substr($file[$i]->getClientMimeType(), 0, 5) == 'image') {
+                        $is_image = true;
+                    }
+                    $file[$i]->storeAs('public/regulation/' . $regulation->id, $changedName . '.' . $guessExtension);
+
+                    $arrayFoto = [
+                        'regulation_id'       => $regulation->id,
+                        'name'                => $file[$i]->getClientOriginalName(),
+                        'path'                => $changedName,
+                        'size'                => $file[$i]->getSize(),
+                        'ext'                 => $file[$i]->getClientOriginalExtension(),
+                        'is_image'            => $is_image,
+                    ];
+
+                    $regulationFile->create($arrayFoto);
+                }
+            }
+
+            $file = RegulationFile::where('regulation_id', $regulation->id)->get()->makeHidden([
+                'id',
+                'created_at',
+                'created_by',
+                'updated_at',
+                'updated_by'
+            ]);
+        }
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Data berhasil disimpan';
+        $this->responseData = $file;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -132,17 +222,6 @@ class RegulationController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
     public function getListInstitution()
     {
         $institution = Institution::all();
@@ -151,18 +230,6 @@ class RegulationController extends Controller
         $this->responseData = $institution;
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
