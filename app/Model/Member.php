@@ -24,6 +24,15 @@ class Member extends Model
         'deleted_by',
     ];
 
+    protected $with = [
+        'department'
+    ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
         $result = DB::table('member')->whereNull('member.deleted_at');
