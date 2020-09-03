@@ -20,9 +20,23 @@ class Regulation extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $with = ['regulationFile', 'institution'];
+
+    public function regulationFile()
+    {
+        return $this->hasMany(RegulationFile::class);
+    }
+
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class);
+    }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
@@ -36,7 +50,8 @@ class Regulation extends Model
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
-                $where->where('name', 'ILIKE', '%' . $search . '%');
+                $where->where('regulation.name', 'ILIKE', '%' . $search . '%');
+                $where->orWhere('institution.name', 'ILIKE', '%' . $search . '%');
             });
         }
 
