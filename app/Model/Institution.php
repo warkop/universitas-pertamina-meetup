@@ -20,8 +20,17 @@ class Institution extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
+        'deleted_at',
+        'deleted_by',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
