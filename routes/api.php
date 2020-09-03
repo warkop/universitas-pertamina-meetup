@@ -65,8 +65,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/get-list-institution', 'RegulationController@getListInstitution');
         Route::get('/{regulation}', 'RegulationController@show');
         Route::post('/', 'RegulationController@store');
+        Route::post('/{regulation}', 'RegulationController@storeFiles');
         Route::put('/{regulation}', 'RegulationController@store');
         Route::delete('/{regulation}', 'RegulationController@destroy');
+        Route::get('/files/{regulation}', 'RegulationController@getFile');
     });
 });
 
