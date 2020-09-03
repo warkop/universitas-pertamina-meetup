@@ -42,7 +42,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - "./storage/db-data:/var/lib/mysql"
+      - "./storage/db-data:/var/lib/postgresql/data"
     networks:
       - app_network
 
