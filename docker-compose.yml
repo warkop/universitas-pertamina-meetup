@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  meet_up:
+    build:
+      context: . # The path of the Dockerfile
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - up_db
+    working_dir: /usr/src/app
+    environment:
+      SERVICE_NAME: meet-up-api
+      DB_CONNECTION: pgsql
+      DB_DRIVER: pgsql
+      DB_HOST: up_db
+      DB_PORT: 5432
+    networks:
+      - app_network
+
+  up_nginx:
+    build:
+      context: ./docker-nginx/. # The path of the Dockerfile
+    volumes:
+      - "./public:/usr/src/app/public"
+    environment:
+      NGINX_FPM_HOST: meet_up
+      NGINX_ROOT: /usr/src/app/public
+    ports:
+      - "8000:80"
+    depends_on:
+      - meet_up
+    networks:
+      - app_network
+
+  up_db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: meet_up
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./storage/db-data:/var/lib/mysql"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
