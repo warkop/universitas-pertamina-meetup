@@ -26,7 +26,6 @@ class RegulationStoreRequest extends FormRequest
         return [
             'name' => 'required',
             'code' => 'required',
-            'institution_id' => 'exists:institution,id'
         ];
     }
 }
