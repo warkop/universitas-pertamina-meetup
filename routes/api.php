@@ -93,6 +93,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::delete('/{announcement}', 'AnnouncementController@destroy');
         Route::delete('/{announcement}/comment/{announcementComment}', 'AnnouncementController@destroyComment');
     });
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('/', 'ProfileController@index');
+        Route::post('/', 'ProfileController@store');
+    });
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
