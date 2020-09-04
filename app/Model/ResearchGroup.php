@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
-class Role extends Model
+class ResearchGroup extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'role';
+    protected $table = 'research_group';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -19,11 +19,16 @@ class Role extends Model
     ];
 
     protected $hidden = [
-        'created_at',
         'created_by',
-        'updated_at',
         'updated_by',
         'deleted_at',
         'deleted_by',
+        'deleted_at',
+        'deleted_by',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 }

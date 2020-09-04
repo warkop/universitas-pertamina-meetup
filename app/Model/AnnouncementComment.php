@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
-class Role extends Model
+class AnnouncementComment extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'role';
+    protected $table = 'announcement_comment';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -19,11 +19,14 @@ class Role extends Model
     ];
 
     protected $hidden = [
-        'created_at',
         'created_by',
-        'updated_at',
         'updated_by',
         'deleted_at',
         'deleted_by',
     ];
+
+    public function userComment()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }

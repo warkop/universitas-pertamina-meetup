@@ -31,7 +31,12 @@ class Department extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    protected $with = ['institution'];
+    protected $with = ['institution', 'member'];
+
+    public function member()
+    {
+        return $this->hasMany(Member::class);
+    }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {

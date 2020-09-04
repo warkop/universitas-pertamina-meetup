@@ -19,6 +19,8 @@ class OpportunityType extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
     ];

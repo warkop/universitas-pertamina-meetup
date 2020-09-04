@@ -33,6 +33,16 @@ class Institution extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    public function department()
+    {
+        return $this->hasMany(Department::class);
+    }
+
+    public function opportunity()
+    {
+        return $this->hasMany(Opportunity::class)->latest();
+    }
+
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
         $result = DB::table('institution')->whereNull('institution.deleted_at');

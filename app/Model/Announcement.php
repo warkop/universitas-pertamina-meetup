@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Opportunity extends Model
+class Announcement extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'opportunity';
+    protected $table = 'announcement';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -20,46 +20,24 @@ class Opportunity extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
     ];
 
     protected $with = [
-        'institution',
-        'opportunityType',
-        'institutionTarget',
-        'interest',
-        'files',
+        'comment.userComment'
     ];
 
-    public function institution()
+    public function comment()
     {
-        return $this->belongsTo(Institution::class);
-    }
-
-    public function interest()
-    {
-        return $this->belongsToMany(Member::class, 'member_opportunity', 'member_id', 'opportunity_id');
-    }
-
-    public function opportunityType()
-    {
-        return $this->belongsTo(OpportunityType::class);
-    }
-
-    public function files()
-    {
-        return $this->hasMany(OpportunityFile::class);
-    }
-
-    public function institutionTarget()
-    {
-        return $this->belongsToMany(Institution::class, 'opportunity_target', 'institution_id', 'opportunity_id');
+        return $this->hasMany(AnnouncementComment::class);
     }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('opportunity')->whereNull('opportunity.deleted_at');
+        $result = DB::table('announcement')->whereNull('announcement.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
