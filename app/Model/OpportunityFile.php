@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
-class OpportunityType extends Model
+class OpportunityFile extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'opportunity_type';
+    protected $table = 'opportunity_file';
     protected $primaryKey = 'id';
 
     protected $guarded = [
