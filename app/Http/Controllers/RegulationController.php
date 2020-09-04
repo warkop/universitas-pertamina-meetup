@@ -9,6 +9,7 @@ use App\Model\Institution;
 use App\Model\Member;
 use App\Model\Regulation;
 use App\Model\RegulationFile;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -30,7 +31,12 @@ class RegulationController extends Controller
 
             $institution_id = $institution->id;
         } else if ($user->type == $typeName['researcher']) {
-            $member = Member::find($user->owner_id);
+            $member = Member::findOrFail($user->owner_id);
+
+            if ($member->department->isEmpty()) {
+                $error = 'User ini tidak memiliki institusi';
+                throw new Exception($error);
+            }
 
             $institution_id = $member->department->institution->id;
         }
