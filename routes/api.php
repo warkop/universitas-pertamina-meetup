@@ -83,6 +83,16 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::delete('/{opportunity}', 'OpportunityController@destroy');
         Route::get('/files/{opportunityFile}', 'OpportunityController@showFile');
     });
+
+    Route::group(['prefix' => 'announcement'], function () {
+        Route::get('/', 'AnnouncementController@index');
+        Route::get('/{announcement}', 'AnnouncementController@show');
+        Route::post('/', 'AnnouncementController@store');
+        Route::post('/{announcement}/comment', 'AnnouncementController@storeComment');
+        Route::put('/{announcement}', 'AnnouncementController@store');
+        Route::delete('/{announcement}', 'AnnouncementController@destroy');
+        Route::delete('/{announcement}/comment/{announcementComment}', 'AnnouncementController@destroyComment');
+    });
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
