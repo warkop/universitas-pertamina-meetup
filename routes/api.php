@@ -68,7 +68,20 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/{regulation}', 'RegulationController@storeFiles');
         Route::put('/{regulation}', 'RegulationController@store');
         Route::delete('/{regulation}', 'RegulationController@destroy');
-        Route::get('/files/{regulation}', 'RegulationController@getFile');
+        Route::get('/files/{regulationFile}', 'RegulationController@showFile');
+    });
+
+    Route::group(['prefix' => 'opportunity'], function () {
+        Route::get('/', 'OpportunityController@index');
+        Route::get('/get-institution', 'OpportunityController@getInstitution');
+        Route::get('/get-type-opportunity', 'OpportunityController@getTypeOpportunity');
+        Route::get('/{opportunity}', 'OpportunityController@show');
+        Route::post('/', 'OpportunityController@store');
+        Route::post('/{opportunity}', 'OpportunityController@storeFiles');
+        Route::post('/{opportunity}/interest', 'OpportunityController@interest');
+        Route::put('/{opportunity}', 'OpportunityController@store');
+        Route::delete('/{opportunity}', 'OpportunityController@destroy');
+        Route::get('/files/{opportunityFile}', 'OpportunityController@showFile');
     });
 });
 
