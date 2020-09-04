@@ -40,6 +40,15 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    protected $with = [
+        'role'
+    ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
