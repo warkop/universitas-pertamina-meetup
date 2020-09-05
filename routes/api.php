@@ -98,6 +98,16 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/', 'ProfileController@index');
         Route::post('/', 'ProfileController@store');
     });
+
+    Route::group(['prefix' => 'research-user'], function () {
+        Route::get('/', 'ResearchUserController@index');
+        Route::get('/interest', 'ResearchUserController@getInterest');
+        Route::get('/skill', 'ResearchUserController@getSkill');
+        Route::get('/department', 'ResearchUserController@getDepartment');
+        Route::get('/{member}', 'ResearchUserController@show');
+        Route::post('/{member}', 'ResearchUserController@store');
+        Route::patch('/{member}', 'ResearchUserController@acceptInvitation');
+    });
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
