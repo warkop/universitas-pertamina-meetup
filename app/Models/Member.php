@@ -24,13 +24,23 @@ class Member extends Model
         'deleted_by',
     ];
 
-    protected $with = [
-        'department'
-    ];
+    // protected $with = [
+    //     'department'
+    // ];
+
+    public function memberSkill()
+    {
+        return $this->belongsToMany(Skill::class, 'member_skill');
+    }
 
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function publication()
+    {
+        return $this->hasMany(MemberPublication::class);
     }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
