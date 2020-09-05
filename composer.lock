@@ -312,26 +312,6 @@
                 "sqlserver",
                 "sqlsrv"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
-                    "type": "tidelift"
-                }
-            ],
->>>>>>> 93c6d14369df48942d38c156bb58daf06fea043b
-=======
->>>>>>> 07894361b36fd1f00c9fa574ae5f02132066acaf
             "time": "2020-09-02T01:35:42+00:00"
         },
         {
@@ -1667,11 +1647,7 @@
                 "datetime",
                 "time"
             ],
-<<<<<<< HEAD
-            "time": "2020-08-24T12:35:58+00:00"
-=======
             "time": "2020-09-04T13:11:37+00:00"
->>>>>>> 07894361b36fd1f00c9fa574ae5f02132066acaf
         },
         {
             "name": "nikic/php-parser",
@@ -2521,11 +2497,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-            "time": "2020-08-17T13:51:41+00:00"
-=======
             "time": "2020-09-02T07:07:40+00:00"
->>>>>>> 07894361b36fd1f00c9fa574ae5f02132066acaf
         },
         {
             "name": "symfony/css-selector",
@@ -3028,11 +3000,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-            "time": "2020-08-31T06:18:12+00:00"
-=======
             "time": "2020-09-02T08:15:18+00:00"
->>>>>>> 07894361b36fd1f00c9fa574ae5f02132066acaf
         },
         {
             "name": "symfony/mime",
