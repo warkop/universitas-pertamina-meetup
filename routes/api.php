@@ -105,6 +105,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/skill', 'ResearchUserController@getSkill');
         Route::get('/department', 'ResearchUserController@getDepartment');
         Route::get('/{member}', 'ResearchUserController@show');
+        Route::post('/send-invitation', 'ResearchUserController@sendInvitation');
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptInvitation');
     });
