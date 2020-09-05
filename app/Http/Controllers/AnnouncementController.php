@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AnnouncementListDataResource;
-use App\Model\Announcement;
-use App\Model\AnnouncementComment;
+use App\Models\Announcement;
+use App\Models\AnnouncementComment;
 use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller

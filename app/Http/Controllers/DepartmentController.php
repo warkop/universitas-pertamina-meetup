@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DepartmentStoreRequest;
 use App\Http\Resources\DepartmentListDataResource;
-use App\Model\Department;
-use App\Model\Institution;
+use App\Models\Department;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 

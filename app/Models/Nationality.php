@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Skill extends Model
+class Nationality extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'skill';
+    protected $table = 'nationality';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -26,7 +26,7 @@ class Skill extends Model
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('skill')->whereNull('skill.deleted_at');
+        $result = DB::table('nationality')->whereNull('nationality.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {

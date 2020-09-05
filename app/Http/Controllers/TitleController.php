@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TitleStoreRequest;
 use App\Http\Resources\TitleListDataResource;
-use App\Model\Title;
+use App\Models\Title;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 

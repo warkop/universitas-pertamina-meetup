@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\InstitutionStoreRequest;
 use App\Http\Resources\InstitutionListDataResource;
-use App\Model\Institution;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 

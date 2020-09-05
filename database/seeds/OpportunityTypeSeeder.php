@@ -1,6 +1,6 @@
 <?php
 
-use App\Model\OpportunityType;
+use App\Models\OpportunityType;
 use Illuminate\Database\Seeder;
 
 class OpportunityTypeSeeder extends Seeder

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SkillStoreRequest;
 use App\Http\Resources\SkillListDataResource;
-use App\Model\Skill;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
