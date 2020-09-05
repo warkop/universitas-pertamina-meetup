@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Role;
+use App\Models\OpportunityType;
 use Illuminate\Database\Seeder;
 
-class RoleSeeder extends Seeder
+class OpportunityTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,20 +15,16 @@ class RoleSeeder extends Seeder
         $roleData = [
             [
                 'id'    => 1,
-                'name'  => 'super_user',
+                'name'  => 'Research',
             ],
             [
                 'id'    => 2,
-                'name'  => 'regular_user',
-            ],
-            [
-                'id'    => 3,
-                'name'  => 'institution',
+                'name'  => 'Funding',
             ],
         ];
 
         foreach ($roleData as $key) {
-            Role::updateOrCreate([
+            OpportunityType::updateOrCreate([
                 'id' => $key['id']
             ],[
                 'id'    => $key['id'],

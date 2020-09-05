@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Regulation extends Model
+class Member extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'regulation';
+    protected $table = 'member';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -20,38 +20,26 @@ class Regulation extends Model
     ];
 
     protected $hidden = [
-        'created_by',
-        'updated_by',
         'deleted_at',
         'deleted_by',
     ];
 
-    protected $with = ['regulationFile', 'institution'];
+    protected $with = [
+        'department'
+    ];
 
-    public function regulationFile()
+    public function department()
     {
-        return $this->hasMany(RegulationFile::class);
-    }
-
-    public function institution()
-    {
-        return $this->belongsTo(Institution::class);
+        return $this->belongsTo(Department::class);
     }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('regulation')
-        ->select(
-            'regulation.*',
-            'institution.name as institution_name'
-        )
-        ->leftJoin('institution','institution.id', '=', 'institution_id')
-        ->whereNull('regulation.deleted_at');
+        $result = DB::table('member')->whereNull('member.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
-                $where->where('regulation.name', 'ILIKE', '%' . $search . '%');
-                $where->orWhere('institution.name', 'ILIKE', '%' . $search . '%');
+                $where->where('name', 'ILIKE', '%' . $search . '%');
             });
         }
 

@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RegulationStoreFilesRequest;
 use App\Http\Requests\RegulationStoreRequest;
 use App\Http\Resources\RegulationListDataResource;
-use App\Model\Institution;
-use App\Model\Member;
-use App\Model\Regulation;
-use App\Model\RegulationFile;
+use App\Models\Institution;
+use App\Models\Member;
+use App\Models\Regulation;
+use App\Models\RegulationFile;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -32,11 +32,6 @@ class RegulationController extends Controller
             $institution_id = $institution->id;
         } else if ($user->type == $typeName['researcher']) {
             $member = Member::findOrFail($user->owner_id);
-
-            if ($member->department->isEmpty()) {
-                $error = 'User ini tidak memiliki institusi';
-                throw new Exception($error);
-            }
 
             $institution_id = $member->department->institution->id;
         }
@@ -150,11 +145,10 @@ class RegulationController extends Controller
      * @param string $fileName showfile
      * @return Response
      **/
-    public function getFile(Request $request, Regulation $regulation)
+    public function showFile(RegulationFile $regulationFile)
     {
-        $fileName = $request->input('name');
-        $path = storage_path('app/public').'/regulation/'.$regulation->id.'/'.$fileName;
-        return Response::download($path);
+        $path = storage_path('app/regulation/'.$regulationFile->regulation_id.'/'.$regulationFile->path);
+        return response()->file($path);
     }
 
     /**
@@ -176,14 +170,12 @@ class RegulationController extends Controller
                 if ($file[$i]->isValid()) {
                     $regulationFile = new RegulationFile();
 
-                    storage_path('public/regulation/') . $regulation->id;
                     $changedName = time().rand(100,999).$file[$i]->getClientOriginalName();
-                    $guessExtension = $file[$i]->getClientOriginalExtension();
                     $is_image = false;
                     if(substr($file[$i]->getClientMimeType(), 0, 5) == 'image') {
                         $is_image = true;
                     }
-                    $file[$i]->storeAs('public/regulation/' . $regulation->id, $changedName . '.' . $guessExtension);
+                    $file[$i]->storeAs('regulation/' . $regulation->id, $changedName);
 
                     $arrayFoto = [
                         'regulation_id'       => $regulation->id,
@@ -223,7 +215,7 @@ class RegulationController extends Controller
     public function show(Regulation $regulation)
     {
         $this->responseCode = 200;
-        $this->responseData = $regulation;
+        $this->responseData = $regulation->with(['institution.opportunity'])->get();
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

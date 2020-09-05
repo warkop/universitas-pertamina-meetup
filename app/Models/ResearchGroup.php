@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
-class OpportunityType extends Model
+class ResearchGroup extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'opportunity_type';
+    protected $table = 'research_group';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -19,7 +19,16 @@ class OpportunityType extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
+        'deleted_at',
+        'deleted_by',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 }

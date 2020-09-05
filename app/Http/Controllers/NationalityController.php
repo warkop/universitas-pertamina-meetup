@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NationalityStoreRequest;
 use App\Http\Resources\NationalityListDataResource;
-use App\Model\Nationality;
+use App\Models\Nationality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 

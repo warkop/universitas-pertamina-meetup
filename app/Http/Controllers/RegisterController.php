@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SignUpInstitutionRequest;
 use App\Http\Requests\SignUpResearcherRequest;
-use App\Model\Institution;
-use App\Model\Member;
-use App\Model\User;
+use App\Models\Institution;
+use App\Models\Member;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class RegisterController extends Controller
