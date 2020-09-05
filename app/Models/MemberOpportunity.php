@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class MemberSkill extends Pivot
+class MemberOpportunity extends Pivot
 {
     //
 }

@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Institution extends Model
+class Member extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'institution';
+    protected $table = 'member';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -20,32 +20,22 @@ class Institution extends Model
     ];
 
     protected $hidden = [
-        'created_by',
-        'updated_by',
-        'deleted_at',
-        'deleted_by',
         'deleted_at',
         'deleted_by',
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
+    protected $with = [
+        'department'
     ];
 
     public function department()
     {
-        return $this->hasMany(Department::class);
-    }
-
-    public function opportunity()
-    {
-        return $this->hasMany(Opportunity::class)->latest();
+        return $this->belongsTo(Department::class);
     }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('institution')->whereNull('institution.deleted_at');
+        $result = DB::table('member')->whereNull('member.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {

@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Opportunity extends Model
+class Institution extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'opportunity';
+    protected $table = 'institution';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -20,46 +20,32 @@ class Opportunity extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
+        'deleted_at',
+        'deleted_by',
         'deleted_at',
         'deleted_by',
     ];
 
-    protected $with = [
-        'institution',
-        'opportunityType',
-        'institutionTarget',
-        'interest',
-        'files',
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    public function institution()
+    public function department()
     {
-        return $this->belongsTo(Institution::class);
+        return $this->hasMany(Department::class);
     }
 
-    public function interest()
+    public function opportunity()
     {
-        return $this->belongsToMany(Member::class, 'member_opportunity', 'member_id', 'opportunity_id');
-    }
-
-    public function opportunityType()
-    {
-        return $this->belongsTo(OpportunityType::class);
-    }
-
-    public function files()
-    {
-        return $this->hasMany(OpportunityFile::class);
-    }
-
-    public function institutionTarget()
-    {
-        return $this->belongsToMany(Institution::class, 'opportunity_target', 'institution_id', 'opportunity_id');
+        return $this->hasMany(Opportunity::class)->latest();
     }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('opportunity')->whereNull('opportunity.deleted_at');
+        $result = DB::table('institution')->whereNull('institution.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
