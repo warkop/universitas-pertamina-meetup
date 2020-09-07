@@ -97,7 +97,7 @@ class OpportunityController extends Controller
                 $this->responseData["aaData"] = OpportunityListDataResource::collection($result);
                 return response()->json($this->responseData, $this->responseCode);
             } else {
-                $this->responseData['nationality'] = OpportunityListDataResource::collection($result);
+                $this->responseData['opportunity'] = OpportunityListDataResource::collection($result);
                 $pagination['row'] = count($result);
                 $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
                 $pagination['rowEnd'] = ($start + count($result));
