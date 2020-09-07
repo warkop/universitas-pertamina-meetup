@@ -142,8 +142,8 @@ class OpportunityController extends Controller
         $opportunity->desc                  = $request->input('desc');
         $opportunity->total_funding         = $request->input('total_funding');
         $opportunity->contact_person        = $request->input('contact_person');
-        $opportunity->start_date            = $request->input('start_date');
-        $opportunity->end_date              = $request->input('end_date');
+        $opportunity->start_date            = date('Y-m-d', strtotime($request->input('start_date')));
+        $opportunity->end_date              = date('Y-m-d', strtotime($request->input('end_date')));
         $opportunity->target                = $target;
         $opportunity->keyword               = $request->input('keyword');
         $opportunity->institution_id        = $institutionId;
