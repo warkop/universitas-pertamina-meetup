@@ -187,7 +187,7 @@ class ResearchUserController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function acceptInvitation(Member $member)
+    public function acceptMember(Member $member)
     {
         $user = User::where(['owner_id' => $member->id])->firstOrFail();
 
