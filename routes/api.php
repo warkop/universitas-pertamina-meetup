@@ -106,8 +106,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/department', 'ResearchUserController@getDepartment');
         Route::get('/{member}', 'ResearchUserController@show');
         Route::post('/send-invitation', 'ResearchUserController@sendInvitation');
+        Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
         Route::post('/{member}', 'ResearchUserController@store');
-        Route::patch('/{member}', 'ResearchUserController@acceptInvitation');
+        Route::patch('/{member}', 'ResearchUserController@acceptMember');
     });
 });
 
