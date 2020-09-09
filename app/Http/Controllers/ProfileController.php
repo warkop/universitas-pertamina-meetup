@@ -29,8 +29,8 @@ class ProfileController extends Controller
            $data = Institution::with('department')->find($user->owner_id);
            $this->responseData = new ProfileInstitutionDataResource($data);
         } else if ($user->type == 1) {
-            $data = Member::with('memberSkill')->with('memberEducation')->with('department')->find($user->owner_id);
-            $this->responseData = $data;
+            $data = Member::with('memberSkill')->with('memberEducation')->with('department')->with('nationality')->find($user->owner_id);
+            // $this->responseData = $data;
             $this->responseData = new ProfileMemberDataResource($data);
         } else {
             $this->responseData = $user;
@@ -91,42 +91,35 @@ class ProfileController extends Controller
      public function storeMember(ProfileMemberStoreRequest $request, Member $member)
      {
          $request->validated();
-         'photo' => 'image',
-         'name' => '',
-         // 'email' => 'required',
-         'desc' => '',
-         'education.degree' => 'exists:m_ac_degree,id|required_with:education.institution',
-         'education.institution' => 'required_with:education.degree',
-         'skill.*' => 'exists:skill,id',
-         'department' => 'exists:department,id',
-         'position' => 'required_with:department',
-         'employee_id' => 'required_with:department',
-         'orcid_id' => '',
-         'scopus_id' => '',
-         'website' => '',
+
          $member->name = $request->input('name');
          // $member->email = $request->input('email');
          $member->desc = $request->input('desc');
          $member->department_id = $request->input('department');
          $member->position = $request->input('position');
          $member->employee_number = $request->input('employee_id');
-         $member->orcid_id = $request->input('orcus_id');
+         $member->nationality_id = $request->input('nationality');
+         $member->orcid_id = $request->input('orcid_id');
          $member->scopus_id = $request->input('scopus_id');
-         $member->web = $request->input('web');
-         $member->est = $request->input('est');
+         $member->web = $request->input('website');
 
          //Education//
-         if($request->filled(['education.id'])){
-            $m_education = MemberEducation::with('department')->find($raw_education->id);
-         }else{
-            $m_education = new MemberEducation;
+         $education = $request->input('education');
+
+         $arrayEducation = [
+            'member_id' => $member->id,
+            'm_ac_degree_id' => $education['degree_id'],
+            'institution_name' => $education['institution'],
+         ];
+
+         $memberEducation = MemberEducation::where('member_id', $member->id)->first();
+
+         if (!empty($memberEducation)){
+             MemberEducation::where('member_id', $member->id)
+            ->update($arrayEducation);
+         } else {
+            MemberEducation::insert($arrayEducation);
          }
-
-         $m_education->member_id = $member->id;
-         $m_education->m_ac_degree_id = $education->degree;
-         $m_education->institution = $education->institution;
-
-         $m_education->save();
          //////////////////////////////////////////////////
 
          //SKILL//
@@ -136,7 +129,7 @@ class ProfileController extends Controller
             $skill[] = [
                'member_id' => $member->id,
                'skill_id' => $value
-            ]
+            ];
          }
 
          MemberSkill::insert($skill);
@@ -175,6 +168,20 @@ class ProfileController extends Controller
     public function show()
     {
 
+    }
+
+    public function showFile()
+    {
+      $user = auth()->user();
+
+      if ($user->type == 0) {
+         $data = Institution::find($user->owner_id);
+         $path = storage_path('app/profile/institution/'.$data->id.'/'.$data->path_photo);
+      } else if ($user->type == 1) {
+         $data = Member::find($user->owner_id);
+         $path = storage_path('app/profile/member/'.$data->id.'/'.$data->path_photo);
+      }
+        return response()->file($path);
     }
 
     /**
