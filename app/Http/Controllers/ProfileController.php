@@ -181,7 +181,12 @@ class ProfileController extends Controller
          $data = Member::find($user->owner_id);
          $path = storage_path('app/profile/member/'.$data->id.'/'.$data->path_photo);
       }
-        return response()->file($path);
+
+      if ($data->path_photo == ''){
+         abort(404);
+      } else {
+         return response()->file($path);
+      }
     }
 
     /**
