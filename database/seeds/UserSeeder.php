@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
                 'username'  => 'super_admin',
                 'password'  => bcrypt('qwerty'),
                 'role_id'   => 1,
-                'type'      => 1,
+                'type'      => 2,
                 'is_active'      => true,
                 'remember_token' => Str::random(10),
             ],
