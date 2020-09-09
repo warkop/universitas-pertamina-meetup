@@ -20,7 +20,6 @@ class ResearchUserListDataResource extends JsonResource
             'name'              => $this->name,
             'institution_name'  => $this->institution_name,
             'department_name'   => $this->department_name,
-            'confirm_at'        => $this->confirm_at,
         ];
     }
 }
