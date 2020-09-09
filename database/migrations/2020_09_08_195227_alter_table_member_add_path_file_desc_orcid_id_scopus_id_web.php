@@ -19,7 +19,7 @@ class AlterTableMemberAddPathFileDescOrcidIdScopusIdWeb extends Migration
            $table->text('scopus_id')->nullable();
            $table->text('desc')->nullable();
            $table->text('web')->nullable();
-           $table->varchar('position')->nullable();
+           $table->string('position')->nullable();
         });
     }
 
