@@ -59,7 +59,15 @@ class Opportunity extends Model
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('opportunity')->whereNull('opportunity.deleted_at');
+        $result = DB::table('opportunity')
+        ->select(
+            'opportunity.*',
+            'opportunity_type.name as opportunity_type_name',
+            'institution.name as institution_name'
+        )
+        ->join('opportunity_type', 'opportunity_type.id', '=', 'opportunity_type_id')
+        ->join('institution', 'institution.id', '=', 'institution_id')
+        ->whereNull('opportunity.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
