@@ -15,14 +15,17 @@ class OpportunityListDataResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'desc' => $this->desc,
-            'contact_person' => $this->contact_person,
-            'start_date'    => $this->start_date,
-            'end_date'      => $this->end_date,
-            'created_at'      => $this->created_at,
-            'updated_at'      => $this->updated_at,
+            'id'                    => $this->id,
+            'name'                  => $this->name,
+            'desc'                  => $this->desc,
+            'contact_person'        => $this->contact_person,
+            'total_funding'         => $this->total_funding,
+            'opportunity_type_name' => $this->opportunity_type_name,
+            'institution_name'      => $this->institution_name,
+            'start_date'            => $this->start_date,
+            'end_date'              => $this->end_date,
+            'created_at'            => $this->created_at,
+            'updated_at'            => $this->updated_at,
         ];
     }
 }

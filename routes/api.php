@@ -87,6 +87,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'announcement'], function () {
         Route::get('/', 'AnnouncementController@index');
         Route::get('/{announcement}', 'AnnouncementController@show');
+        Route::get('/{announcement}/show-file/', 'AnnouncementController@showFile');
         Route::post('/', 'AnnouncementController@store');
         Route::post('/{announcement}/comment', 'AnnouncementController@storeComment');
         Route::put('/{announcement}', 'AnnouncementController@store');
