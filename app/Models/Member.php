@@ -33,6 +33,11 @@ class Member extends Model
         return $this->belongsToMany(Skill::class, 'member_skill');
     }
 
+    public function memberEducation()
+    {
+        return $this->hasOne(MemberEducation::class);
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class);

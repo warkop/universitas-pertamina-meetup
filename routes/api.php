@@ -97,6 +97,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'profile'], function () {
         Route::get('/', 'ProfileController@index');
         Route::post('/', 'ProfileController@store');
+        Route::post('/institution/{institution}', 'ProfileController@storeInstitution');
+        Route::post('/member/{member}', 'ProfileController@storeMember');
     });
 
     Route::group(['prefix' => 'research-user'], function () {
@@ -128,4 +130,3 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('/', 'AuthController@me');
     Route::get('/refresh', 'AuthController@refresh');
 });
-
