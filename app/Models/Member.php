@@ -38,6 +38,11 @@ class Member extends Model
         return $this->hasOne(MemberEducation::class);
     }
 
+    public function nationality()
+    {
+        return $this->belongsTo(Nationality::class);
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class);
