@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
-class Role extends Model
+class MemberPublication extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'role';
+    protected $table = 'member_publication';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -19,7 +19,7 @@ class Role extends Model
     ];
 
     protected $hidden = [
-        'deleted_at',
-        'deleted_by',
+        'created_by',
+        'updated_by',
     ];
 }

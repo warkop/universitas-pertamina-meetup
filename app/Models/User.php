@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -28,7 +28,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'created_by', 'updated_by', 'deleted_by', 'deleted_at', 'confirm_by'
     ];
 
     /**
@@ -39,6 +39,15 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $with = [
+        'role'
+    ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 
     public function getJWTIdentifier()
     {

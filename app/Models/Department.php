@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,9 +20,23 @@ class Department extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $with = ['institution', 'member'];
+
+    public function member()
+    {
+        return $this->hasMany(Member::class);
+    }
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
@@ -52,6 +66,6 @@ class Department extends Model
 
     public function institution()
     {
-        return $this->hasOne(Institution::class);
+        return $this->belongsTo(Institution::class);
     }
 }

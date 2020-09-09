@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Regulation extends Model
+class Skill extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'regulation';
+    protected $table = 'skill';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -20,19 +20,15 @@ class Regulation extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
     ];
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('regulation')
-        ->select(
-            'regulation.*',
-            'institution.name as institution_name'
-        )
-        ->leftJoin('institution','institution.id', '=', 'institution_id')
-        ->whereNull('regulation.deleted_at');
+        $result = DB::table('skill')->whereNull('skill.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {

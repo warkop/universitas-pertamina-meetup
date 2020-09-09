@@ -65,8 +65,50 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/get-list-institution', 'RegulationController@getListInstitution');
         Route::get('/{regulation}', 'RegulationController@show');
         Route::post('/', 'RegulationController@store');
+        Route::post('/{regulation}', 'RegulationController@storeFiles');
         Route::put('/{regulation}', 'RegulationController@store');
         Route::delete('/{regulation}', 'RegulationController@destroy');
+        Route::get('/files/{regulationFile}', 'RegulationController@showFile');
+    });
+
+    Route::group(['prefix' => 'opportunity'], function () {
+        Route::get('/', 'OpportunityController@index');
+        Route::get('/get-institution', 'OpportunityController@getInstitution');
+        Route::get('/get-type-opportunity', 'OpportunityController@getTypeOpportunity');
+        Route::get('/{opportunity}', 'OpportunityController@show');
+        Route::post('/', 'OpportunityController@store');
+        Route::post('/{opportunity}', 'OpportunityController@storeFiles');
+        Route::post('/{opportunity}/interest', 'OpportunityController@interest');
+        Route::put('/{opportunity}', 'OpportunityController@store');
+        Route::delete('/{opportunity}', 'OpportunityController@destroy');
+        Route::get('/files/{opportunityFile}', 'OpportunityController@showFile');
+    });
+
+    Route::group(['prefix' => 'announcement'], function () {
+        Route::get('/', 'AnnouncementController@index');
+        Route::get('/{announcement}', 'AnnouncementController@show');
+        Route::post('/', 'AnnouncementController@store');
+        Route::post('/{announcement}/comment', 'AnnouncementController@storeComment');
+        Route::put('/{announcement}', 'AnnouncementController@store');
+        Route::delete('/{announcement}', 'AnnouncementController@destroy');
+        Route::delete('/{announcement}/comment/{announcementComment}', 'AnnouncementController@destroyComment');
+    });
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('/', 'ProfileController@index');
+        Route::post('/', 'ProfileController@store');
+    });
+
+    Route::group(['prefix' => 'research-user'], function () {
+        Route::get('/', 'ResearchUserController@index');
+        Route::get('/interest', 'ResearchUserController@getInterest');
+        Route::get('/skill', 'ResearchUserController@getSkill');
+        Route::get('/department', 'ResearchUserController@getDepartment');
+        Route::get('/{member}', 'ResearchUserController@show');
+        Route::post('/send-invitation', 'ResearchUserController@sendInvitation');
+        Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
+        Route::post('/{member}', 'ResearchUserController@store');
+        Route::patch('/{member}', 'ResearchUserController@acceptMember');
     });
 });
 

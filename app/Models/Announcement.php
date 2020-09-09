@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Nationality extends Model
+class Announcement extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'nationality';
+    protected $table = 'announcement';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -20,13 +20,24 @@ class Nationality extends Model
     ];
 
     protected $hidden = [
+        'created_by',
+        'updated_by',
         'deleted_at',
         'deleted_by',
     ];
 
+    protected $with = [
+        'comment.userComment'
+    ];
+
+    public function comment()
+    {
+        return $this->hasMany(AnnouncementComment::class);
+    }
+
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('nationality')->whereNull('nationality.deleted_at');
+        $result = DB::table('announcement')->whereNull('announcement.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {

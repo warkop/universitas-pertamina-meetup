@@ -8,7 +8,6 @@ use Tests\TestCase;
 
 class TitleTest extends TestCase
 {
-    use RefreshDatabase;
     /**
      * A basic feature test example.
      *
