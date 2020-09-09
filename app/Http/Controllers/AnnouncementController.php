@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AnnouncementStoreRequest;
 use App\Http\Resources\AnnouncementListDataResource;
 use App\Models\Announcement;
 use App\Models\AnnouncementComment;
@@ -14,9 +15,15 @@ class AnnouncementController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $announcement = Announcement::paginate();
+        $order = $request->get('order');
+        $announcement = new Announcement;
+        if ($order == 'asc' or $order == 'desc') {
+            $announcement = $announcement->orderBy('updated_at', $order);
+        }
+
+        $announcement = $announcement->paginate();
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
         $this->responseData = $announcement;
@@ -40,14 +47,27 @@ class AnnouncementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Announcement $announcement)
+    public function store(AnnouncementStoreRequest $request, Announcement $announcement)
     {
+        $request->validated();
+        $file = $request->file('photo');
+
         $announcement->announcement = $request->input('announcement');
         $announcement->save();
 
-        $this->responseCode = 200;
-        $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $announcement->refresh();
+        if (!empty($file)) {
+            if ($file->isValid()) {
+                $changedName = time().rand(100,999).$file->getClientOriginalName();
+                $file->storeAs('announcement/' . $announcement->id, $changedName);
+
+                $announcement->path_file = $changedName;
+                $announcement->save();
+            }
+        }
+
+        $this->responseCode     = 200;
+        $this->responseMessage  = 'Data berhasil disimpan';
+        $this->responseData     = $announcement->refresh();
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -76,6 +96,12 @@ class AnnouncementController extends Controller
         $this->responseData = $announcement;
 
         return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function showFile(Announcement $announcement)
+    {
+        $path = storage_path('app/announcement/'.$announcement->id.'/'.$announcement->path_file);
+        return response()->file($path);
     }
 
     /**
