@@ -36,6 +36,10 @@ class ProfileMemberDataResource extends JsonResource
          ],
          'skill'              => [],
          'position'           => $this->position,
+         'nationality'         => [
+            'id'    => $this->nationality ['id'],
+            'name'  => $this->nationality ['name'],
+         ],
          'employee_id'        => $this->employee_number,
          'orcid_id'           => $this->orcid_id,
          'scopus_id'          => $this->scopus_id,
