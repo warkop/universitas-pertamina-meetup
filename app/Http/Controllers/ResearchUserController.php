@@ -66,8 +66,8 @@ class ResearchUserController extends Controller
 
             $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only')];
 
-            $result = ResearchGroup::listData($start, $perpage, $search, false, $sort, $field, $options);
-            $total = ResearchGroup::listData($start, $perpage, $search, true, $sort, $field, $options);
+            $result = Member::listData($start, $perpage, $search, false, $sort, $field, $options);
+            $total = Member::listData($start, $perpage, $search, true, $sort, $field, $options);
 
             if ($grid == 'datatable') {
                 $this->responseData['sEcho'] = $echo;
@@ -190,7 +190,6 @@ class ResearchUserController extends Controller
     public function acceptMember(Member $member)
     {
         $user = User::where(['owner_id' => $member->id])->firstOrFail();
-
         if ($user->confirm_at == null) {
             $user->confirm_by = auth()->user()->id;
             $user->confirm_at = now();
