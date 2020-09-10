@@ -60,12 +60,24 @@ class Member extends Model
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('member')->whereNull('member.deleted_at');
+        $user = auth()->user();
+
+        $result = DB::table('member')
+        ->select('member.*', 'institution.name as institution_name', 'department.name as department_name')
+        ->join('department', 'department.id', '=', 'department_id')
+        ->join('institution', 'institution.id', '=', 'institution_id')
+        ->whereNull('member.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
                 $where->where('name', 'ILIKE', '%' . $search . '%');
             });
+        }
+
+        if ($user->type == 0 or $user->type == 1) {
+            $member = Member::find($user->owner_id);
+            $department = Department::find($member->department_id);
+            $result = $result->where('institution_id', $department->institution_id);
         }
 
         if ($count == true) {
