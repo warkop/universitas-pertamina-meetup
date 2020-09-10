@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AcademicDegreeStoreRequest;
-use App\Models\MAcDegree;
+use App\Models\AcademicDegree;
 use Illuminate\Http\Request;
 
 class AcademicDegreeController extends Controller
@@ -45,7 +45,7 @@ class AcademicDegreeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(MAcDegree $mAcDegree)
+    public function show(AcademicDegree $academicDegree)
     {
         //
     }
@@ -79,8 +79,13 @@ class AcademicDegreeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MAcDegree $mAcDegree)
+    public function destroy(AcademicDegree $academicDegree)
     {
-        //
+        $academicDegree->delete();
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Data berhasil dihapus';
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 }
