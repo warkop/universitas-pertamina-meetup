@@ -108,7 +108,7 @@ class ProfileController extends Controller
 
          $arrayEducation = [
             'member_id' => $member->id,
-            'm_ac_degree_id' => $education['degree_id'],
+            'academic_degree_id' => $education['degree_id'],
             'institution_name' => $education['institution'],
          ];
 

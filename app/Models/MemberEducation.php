@@ -26,11 +26,11 @@ class MemberEducation extends Model
         'deleted_by',
     ];
 
-    protected $with = ['MAcDegree'];
+    protected $with = ['AcademicDegree'];
 
-    public function MAcDegree()
+    public function AcademicDegree()
     {
-        return $this->belongsTo(MAcDegree::class);
+        return $this->belongsTo(AcademicDegree::class);
     }
     //
     // public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
