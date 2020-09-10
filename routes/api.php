@@ -104,6 +104,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/files/member/{member}', 'ProfileController@showFileMember');
     });
 
+    Route::group(['prefix' => 'menu'], function () {
+        Route::get('/', 'MenuController@index');
+    });
+
     Route::group(['prefix' => 'research-user'], function () {
         Route::get('/', 'ResearchUserController@index');
         Route::get('/interest', 'ResearchUserController@getInterest');
