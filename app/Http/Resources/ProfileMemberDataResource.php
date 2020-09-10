@@ -21,8 +21,8 @@ class ProfileMemberDataResource extends JsonResource
          'education'          => [
             'id' => $this->memberEducation['id'],
             'degree' => [
-               'id'   => $this->memberEducation['MAcDegree']['id'],
-               'name' => $this->memberEducation['MAcDegree']['name'],
+               'id'   => $this->memberEducation['AcademicDegree']['id'],
+               'name' => $this->memberEducation['AcademicDegree']['name'],
             ],
             'institution' => $this->memberEducation['institution_name'],
          ],

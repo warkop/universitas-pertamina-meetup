@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class MAcDegree extends Model
+class AcademicDegree extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'm_ac_degree';
+    protected $table = 'academic_degree';
     protected $primaryKey = 'id';
 
     protected $guarded = [
