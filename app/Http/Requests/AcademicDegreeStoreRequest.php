@@ -24,7 +24,7 @@ class AcademicDegreeStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required'
+            'name' => 'required|unique:academic_degree,name,'.$this->route('academicDegree')->id
         ];
     }
 }
