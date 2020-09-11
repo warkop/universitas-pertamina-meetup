@@ -22,4 +22,11 @@ class MemberPublication extends Model
         'created_by',
         'updated_by',
     ];
+
+    protected $with = ['publicationType'];
+
+    public function publicationType()
+    {
+        return $this->belongsTo(PublicationType::class);
+    }
 }

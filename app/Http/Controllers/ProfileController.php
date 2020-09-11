@@ -29,7 +29,7 @@ class ProfileController extends Controller
            $data = Institution::with('department')->find($user->owner_id);
            $this->responseData = new ProfileInstitutionDataResource($data);
         } else if ($user->type == 1) {
-            $data = Member::with('title')->with('memberSkill')->with('memberEducation')->with('department')->with('nationality')->find($user->owner_id);
+            $data = Member::with('title')->with('memberSkill')->with('memberResearchInterest')->with('memberEducation')->with('department')->with('nationality')->with('publication')->find($user->owner_id);
             // $this->responseData = $data;
             $this->responseData = new ProfileMemberDataResource($data);
         } else {
