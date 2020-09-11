@@ -75,6 +75,14 @@ class Opportunity extends Model
             });
         }
 
+        if (isset($options['profile'])){
+           if ($options['profile'] == 1){
+             $user = auth()->user();
+
+             $result = $result->leftJoin('member_opportunity', 'opportunity_id', 'opportunity.id')->where('member_opportunity.member_id', $user->owner_id);
+           }
+       }
+
         if ($count == true) {
             $result = $result->count();
         } else {

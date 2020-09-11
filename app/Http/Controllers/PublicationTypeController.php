@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SkillStoreRequest;
-use App\Http\Resources\SkillListDataResource;
-use App\Models\Skill;
+use App\Http\Requests\PublicationTypeStoreRequest;
+use App\Http\Resources\PublicationTypeListDataResource;
+use App\Models\PublicationType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class SkillController extends Controller
+class PublicationTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,7 +23,6 @@ class SkillController extends Controller
         $rules['start'] = 'required|integer|min:0';
         $rules['length'] = 'required|integer|min:1|max:100';
         $rules['options_active_only'] = 'boolean';
-        // $rules['type'] = 'boolean';
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -59,19 +58,19 @@ class SkillController extends Controller
             $pattern = '/[^a-zA-Z0-9 !@#$%^&*\/\.\,\(\)-_:;?\+=]/u';
             $search = preg_replace($pattern, '', $search);
 
-            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'type' => $request->get('type')];
+            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only')];
 
-            $result = Skill::listData($start, $perpage, $search, false, $sort, $field, $options);
-            $total = Skill::listData($start, $perpage, $search, true, $sort, $field, $options);
+            $result = PublicationType::listData($start, $perpage, $search, false, $sort, $field, $options);
+            $total = PublicationType::listData($start, $perpage, $search, true, $sort, $field, $options);
 
             if ($grid == 'datatable') {
                 $this->responseData['sEcho'] = $echo;
                 $this->responseData["iTotalRecords"] = $total;
                 $this->responseData["iTotalDisplayRecords"] = $total;
-                $this->responseData["aaData"] = SkillListDataResource::collection($result);
+                $this->responseData["aaData"] = PublicationTypeListDataResource::collection($result);
                 return response()->json($this->responseData, $this->responseCode);
             } else {
-                $this->responseData['skill'] = SkillListDataResource::collection($result);
+                $this->responseData['academic_degree'] = PublicationTypeListDataResource::collection($result);
                 $pagination['row'] = count($result);
                 $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
                 $pagination['rowEnd'] = ($start + count($result));
@@ -102,16 +101,16 @@ class SkillController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SkillStoreRequest $request, Skill $skill)
+    public function store(PublicationTypeStoreRequest $request, PublicationType $publicationType)
     {
         $request->validated();
-        $skill->name = $request->input('name');
-        $skill->type = $request->input('type');
-        $skill->save();
 
-        $this->responseCode = 200;
-        $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $skill;
+        $publicationType->name           = $request->input('name');
+        $publicationType->save();
+
+        $this->responseCode     = 200;
+        $this->responseMessage  = 'Data berhasil disimpan';
+        $this->responseData     = $publicationType;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -122,10 +121,10 @@ class SkillController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Skill $skill)
+    public function show(PublicationType $publicationType)
     {
         $this->responseCode = 200;
-        $this->responseData = $skill;
+        $this->responseData = $publicationType;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -159,9 +158,9 @@ class SkillController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Skill $skill)
+    public function destroy(PublicationType $publicationType)
     {
-        $skill->delete();
+        $publicationType->delete();
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil dihapus';

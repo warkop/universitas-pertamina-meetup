@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
-class Skill extends Model
+class PublicationType extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'skill';
+    protected $table = 'publication_type';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -22,22 +22,16 @@ class Skill extends Model
     protected $hidden = [
         'created_by',
         'updated_by',
-        'deleted_at',
-        'deleted_by',
     ];
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
-        $result = DB::table('skill')->whereNull('skill.deleted_at');
+        $result = DB::table('publication_type')->whereNull('publication_type.deleted_at');
 
         if (!empty($search)) {
             $result = $result->where(function ($where) use ($search) {
                 $where->where('name', 'ILIKE', '%' . $search . '%');
             });
-        }
-
-        if (isset($options['type'])){
-           $result = $result->where('type', $options['type']);
         }
 
         if ($count == true) {

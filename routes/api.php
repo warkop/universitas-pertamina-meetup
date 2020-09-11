@@ -104,6 +104,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/files/member/{member}', 'ProfileController@showFileMember');
     });
 
+    Route::group(['prefix' => 'menu'], function () {
+        Route::get('/', 'MenuController@index');
+    });
+
     Route::group(['prefix' => 'research-user'], function () {
         Route::get('/', 'ResearchUserController@index');
         Route::get('/interest', 'ResearchUserController@getInterest');
@@ -122,6 +126,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/', 'AcademicDegreeController@store');
         Route::put('/{academicDegree}', 'AcademicDegreeController@store');
         Route::delete('/{academicDegree}', 'AcademicDegreeController@destroy');
+    });
+
+    Route::group(['prefix' => 'publication-type'], function () {
+        Route::get('/', 'PublicationTypeController@index');
+        Route::get('/{publicationType}', 'PublicationTypeController@show');
+        Route::post('/', 'PublicationTypeController@store');
+        Route::put('/{publicationType}', 'PublicationTypeController@store');
+        Route::delete('/{publicationType}', 'PublicationTypeController@destroy');
     });
 });
 
