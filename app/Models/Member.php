@@ -40,7 +40,7 @@ class Member extends Model
 
     public function memberEducation()
     {
-        return $this->hasOne(MemberEducation::class);
+        return $this->hasMany(MemberEducation::class);
     }
 
     public function title()
@@ -63,14 +63,27 @@ class Member extends Model
         return $this->hasMany(MemberPublication::class);
     }
 
+    public function projectInterest()
+    {
+        return $this->belongsToMany(Opportunity::class, 'member_opportunity');
+    }
+
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
     {
         $user = auth()->user();
 
         $result = DB::table('member')
-        ->select('member.*', 'institution.name as institution_name', 'department.name as department_name')
+        ->select(
+            'member.*',
+            'institution.name as institution_name',
+            'department.name as department_name',
+            'nationality.name as nationality_name',
+            'user.status'
+        )
         ->join('department', 'department.id', '=', 'department_id')
         ->join('institution', 'institution.id', '=', 'institution_id')
+        ->join('nationality', 'nationality.id', '=', 'nationality_id')
+        ->join('user', 'user.owner_id', '=', 'member.id')
         ->whereNull('member.deleted_at');
 
         if (!empty($search)) {
