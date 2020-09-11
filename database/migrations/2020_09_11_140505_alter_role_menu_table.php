@@ -13,9 +13,11 @@ class AlterRoleMenuTable extends Migration
      */
     public function up()
     {
-        Schema::table('role_menu', function (Blueprint $table) {
-            $table->string('action')->nullable();
-        });
+        if (Schema::hasColumn('role_menu', 'action')) {
+            Schema::table('role_menu', function (Blueprint $table) {
+                $table->string('action')->nullable();
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ class AlterRoleMenuTable extends Migration
      */
     public function down()
     {
-        Schema::table('role_menu', function (Blueprint $table) {
-            $table->dropColumn('action');
-        });
+        if (Schema::hasColumn('role_menu', 'action')) {
+            Schema::table('role_menu', function (Blueprint $table) {
+                $table->dropColumn('action');
+            });
+        }
     }
 }
