@@ -13,7 +13,7 @@ class AlterRoleMenuTable extends Migration
      */
     public function up()
     {
-        if (Schema::hasColumn('role_menu', 'action')) {
+        if (!Schema::hasColumn('role_menu', 'action')) {
             Schema::table('role_menu', function (Blueprint $table) {
                 $table->string('action')->nullable();
             });
