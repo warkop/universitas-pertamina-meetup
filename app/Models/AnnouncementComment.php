@@ -26,10 +26,10 @@ class AnnouncementComment extends Model
     ];
 
     protected $with = [
-        'userComment.member'
+        'user.member'
     ];
 
-    public function userComment()
+    public function user()
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
