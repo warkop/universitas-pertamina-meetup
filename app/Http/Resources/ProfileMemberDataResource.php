@@ -40,11 +40,13 @@ class ProfileMemberDataResource extends JsonResource
             'name'  => $this->department['institution']['name'],
          ],
          'skill'              => [],
+         'research_interest'  => [],
          'position'           => $this->position,
          'nationality'         => [
             'id'    => $this->nationality ['id'],
             'name'  => $this->nationality ['name'],
          ],
+         'publication'        => [],
          'employee_id'        => $this->employee_number,
          'orcid_id'           => $this->orcid_id,
          'scopus_id'          => $this->scopus_id,
@@ -58,6 +60,26 @@ class ProfileMemberDataResource extends JsonResource
             'id'       => $value->id,
             'name'     => $value->name,
             'type'     => $value->type,
+         ];
+      }
+
+      foreach ($this->memberResearchInterest as $key => $value) {
+         $data['research_interest'][] = [
+            'id'       => $value->id,
+            'name'     => $value->name,
+            'type'     => $value->type,
+         ];
+      }
+
+      foreach ($this->publication as $key => $value) {
+         $data['publication'][] = [
+            'id'       => $value->id,
+            'title'     => $value->title,
+            'author'     => $value->author,
+            'publication_type' => [
+               'id'    => $value->publicationType->id,
+               'name'    => $value->publicationType->name,
+            ]
          ];
       }
 

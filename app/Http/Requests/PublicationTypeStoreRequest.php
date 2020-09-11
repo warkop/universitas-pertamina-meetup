@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AcademicDegreeStoreRequest extends FormRequest
+class PublicationTypeStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class AcademicDegreeStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:academic_degree,name,'.$this->route('academicDegree')->id
+            'name' => 'required'
         ];
     }
 }

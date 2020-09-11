@@ -25,6 +25,10 @@ class AnnouncementComment extends Model
         'deleted_by',
     ];
 
+    protected $with = [
+        'userComment.member'
+    ];
+
     public function userComment()
     {
         return $this->belongsTo(User::class, 'updated_by');

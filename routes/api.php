@@ -119,6 +119,22 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
     });
+
+    Route::group(['prefix' => 'academic-degree'], function () {
+        Route::get('/', 'AcademicDegreeController@index');
+        Route::get('/{academicDegree}', 'AcademicDegreeController@show');
+        Route::post('/', 'AcademicDegreeController@store');
+        Route::put('/{academicDegree}', 'AcademicDegreeController@store');
+        Route::delete('/{academicDegree}', 'AcademicDegreeController@destroy');
+    });
+
+    Route::group(['prefix' => 'publication-type'], function () {
+        Route::get('/', 'PublicationTypeController@index');
+        Route::get('/{publicationType}', 'PublicationTypeController@show');
+        Route::post('/', 'PublicationTypeController@store');
+        Route::put('/{publicationType}', 'PublicationTypeController@store');
+        Route::delete('/{publicationType}', 'PublicationTypeController@destroy');
+    });
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');

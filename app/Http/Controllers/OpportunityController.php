@@ -85,7 +85,7 @@ class OpportunityController extends Controller
             $pattern = '/[^a-zA-Z0-9 !@#$%^&*\/\.\,\(\)-_:;?\+=]/u';
             $search = preg_replace($pattern, '', $search);
 
-            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only')];
+            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'profile' => $request->get('profile')];
 
             $result = Opportunity::listData($start, $perpage, $search, false, $sort, $field, $options);
             $total = Opportunity::listData($start, $perpage, $search, true, $sort, $field, $options);
