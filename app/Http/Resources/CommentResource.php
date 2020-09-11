@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AnnouncementListDataResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,14 +15,13 @@ class AnnouncementListDataResource extends JsonResource
      */
     public function toArray($request)
     {
-        $limit = \request()->get('limit');
         return [
             'id'                => $this->id,
-            'name'              => $this->announcement,
+            'announcement_id'   => $this->announcement_id,
+            'comment'           => $this->id,
+            'creator'           => $this->user->member->name,
             'updated_at'        => date('d-m-Y H:i:s', strtotime($this->updated_at)),
             'translate_time'    => $this->updated_at->diffForHumans(),
-            'comment'           => CommentResource::collection($this->comment()->paginate($limit)),
-            'total_comment'     => count($this->comment),
         ];
     }
 }
