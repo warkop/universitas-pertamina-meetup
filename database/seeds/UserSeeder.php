@@ -15,12 +15,12 @@ class UserSeeder extends Seeder
     {
         $data = [
             [
-                'username'  => 'super_admin',
-                'password'  => bcrypt('qwerty'),
-                'role_id'   => 1,
-                'type'      => 2,
-                'is_active'      => true,
-                'remember_token' => Str::random(10),
+                'username'          => 'super_admin',
+                'password'          => bcrypt('qwerty'),
+                'role_id'           => 1,
+                'type'              => 2,
+                'status'            => 1,
+                'remember_token'    => Str::random(10),
             ],
         ];
 
@@ -32,8 +32,7 @@ class UserSeeder extends Seeder
                 'role_id'  => $key['role_id'],
                 'password' => $key['password'],
                 'type'     => $key['type'],
-                'role_id'  => $key['role_id'],
-                'is_active'  => $key['role_id'],
+                'status'   => $key['status'],
             ]);
         }
     }
