@@ -79,7 +79,7 @@ class AnnouncementController extends Controller
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $comment->refresh();
+        $this->responseData = $comment->refresh()->load('userComment.member');
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
