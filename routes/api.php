@@ -119,6 +119,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
     });
+
+    Route::group(['prefix' => 'academic-degree'], function () {
+        Route::get('/', 'AcademicDegreeController@index');
+        Route::get('/{academicDegree}', 'AcademicDegreeController@show');
+        Route::post('/', 'AcademicDegreeController@store');
+        Route::put('/{academicDegree}', 'AcademicDegreeController@store');
+        Route::delete('/{academicDegree}', 'AcademicDegreeController@destroy');
+    });
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
