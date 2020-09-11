@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AnnouncementStoreRequest;
+use App\Http\Resources\AnnouncementCollection;
 use App\Http\Resources\AnnouncementListDataResource;
+use App\Http\Resources\CommentResource;
 use App\Models\Announcement;
 use App\Models\AnnouncementComment;
 use Illuminate\Http\Request;
@@ -24,12 +26,23 @@ class AnnouncementController extends Controller
             $announcement = $announcement->orderBy('updated_at', $order);
         }
 
-        $announcement = $announcement->paginate();
+        $announcement = $announcement->with(['comment'])->get();
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $announcement->load(['comment' => function($query) use ($limit){
-            $query->take($limit);
-        }]);
+        $this->responseData = AnnouncementListDataResource::collection($announcement);
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function getComment(Request $request, Announcement $announcement)
+    {
+        $start = $request->get('start');
+        $limit = $request->get('limit');
+
+        $announcementComment = AnnouncementComment::where('announcement_id', $announcement->id)->skip($start)->take($limit)->get();
+
+        $this->responseCode     = 200;
+        $this->responseData     = CommentResource::collection($announcementComment);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
