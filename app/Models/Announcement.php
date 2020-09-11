@@ -26,10 +26,6 @@ class Announcement extends Model
         'deleted_by',
     ];
 
-    protected $with = [
-        'comment.userComment'
-    ];
-
     public function comment()
     {
         return $this->hasMany(AnnouncementComment::class);
