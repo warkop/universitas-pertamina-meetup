@@ -18,6 +18,7 @@ class AnnouncementController extends Controller
     public function index(Request $request)
     {
         $order = $request->get('order');
+        $limit = $request->get('limit')??5;
         $announcement = new Announcement;
         if ($order == 'asc' or $order == 'desc') {
             $announcement = $announcement->orderBy('updated_at', $order);
@@ -26,7 +27,9 @@ class AnnouncementController extends Controller
         $announcement = $announcement->paginate();
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $announcement;
+        $this->responseData = $announcement->load(['comment' => function($query) use ($limit){
+            $query->take($limit);
+        }]);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -90,10 +93,12 @@ class AnnouncementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Announcement $announcement)
+    public function show(Request $request, Announcement $announcement)
     {
+        $limit = $request->get('limit');
         $this->responseCode = 200;
-        $this->responseData = $announcement;
+        $this->responseData['announcement'] = $announcement;
+        $this->responseData['comment'] = AnnouncementComment::where('announcement_id', $announcement->id)->paginate($limit);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
