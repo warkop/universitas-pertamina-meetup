@@ -36,6 +36,10 @@ class Skill extends Model
             });
         }
 
+        if (isset($options['type'])){
+           $result = $result->where('type', $options['type']);
+        }
+
         if ($count == true) {
             $result = $result->count();
         } else {

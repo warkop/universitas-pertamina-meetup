@@ -30,7 +30,12 @@ class Member extends Model
 
     public function memberSkill()
     {
-        return $this->belongsToMany(Skill::class, 'member_skill');
+        return $this->belongsToMany(Skill::class, 'member_skill')->where('skill.type', 1);
+    }
+
+    public function memberResearchInterest()
+    {
+        return $this->belongsToMany(Skill::class, 'member_skill')->where('skill.type', 0);
     }
 
     public function memberEducation()

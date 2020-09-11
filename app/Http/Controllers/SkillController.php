@@ -23,6 +23,7 @@ class SkillController extends Controller
         $rules['start'] = 'required|integer|min:0';
         $rules['length'] = 'required|integer|min:1|max:100';
         $rules['options_active_only'] = 'boolean';
+        // $rules['type'] = 'boolean';
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -58,7 +59,7 @@ class SkillController extends Controller
             $pattern = '/[^a-zA-Z0-9 !@#$%^&*\/\.\,\(\)-_:;?\+=]/u';
             $search = preg_replace($pattern, '', $search);
 
-            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only')];
+            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'type' => $request->get('type')];
 
             $result = Skill::listData($start, $perpage, $search, false, $sort, $field, $options);
             $total = Skill::listData($start, $perpage, $search, true, $sort, $field, $options);

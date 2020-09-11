@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
-class MemberPublication extends Model
+class PublicationType extends Model
 {
     use SoftDeletes;
     use Userstamps;
 
-    protected $table = 'member_publication';
+    protected $table = 'publication_type';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -22,11 +22,4 @@ class MemberPublication extends Model
         'created_by',
         'updated_by',
     ];
-
-    protected $with = ['publicationType'];
-
-    public function publicationType()
-    {
-        return $this->belongsTo(PublicationType::class);
-    }
 }
