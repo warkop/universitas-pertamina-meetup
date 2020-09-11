@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MemberResource;
 use App\Http\Resources\ResearchUserListDataResource;
 use App\Mail\Invitation;
 use App\Models\Member;
@@ -39,20 +40,16 @@ class ResearchUserController extends Controller
             $this->responseData['error_log'] = $validator->errors();
         } else {
             $this->responseCode = 200;
-            $grid = ($request->input('grid') == 'datatable') ? 'datatable' : 'default';
+            $grid = ($request->input('grid') == 'datatable')??'default';
 
             if ($grid == 'datatable') {
                 $numbcol = $request->get('order');
                 $columns = $request->get('columns');
-
                 $echo = $request->get('draw');
-
 
                 $sort = $numbcol[0]['dir'];
                 $field = $columns[$numbcol[0]['column']]['data'];
             } else {
-                $order = $request->input('order');
-
                 $sort = $request->input('order_method');
                 $field = $request->input('order_column');
             }
@@ -213,9 +210,9 @@ class ResearchUserController extends Controller
      */
     public function show($id)
     {
-        $member = Member::with(['department.institution', 'memberSkill'])->find($id);
+        $member = Member::with(['department.institution', 'memberSkill', 'memberEducation.AcademicDegree', 'publication', 'memberResearchInterest'])->find($id);
         $this->responseCode = 200;
-        $this->responseData = $member;
+        $this->responseData = new MemberResource($member);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
