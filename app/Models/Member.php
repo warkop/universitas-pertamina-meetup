@@ -94,7 +94,7 @@ class Member extends Model
             $result = $result->where('institution_id', $department->institution_id);
         }
 
-        if ($count == true) {
+        if ($count) {
             $result = $result->count();
         } else {
             $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();

@@ -10,7 +10,6 @@ use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -110,16 +109,6 @@ class OpportunityController extends Controller
         }
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**

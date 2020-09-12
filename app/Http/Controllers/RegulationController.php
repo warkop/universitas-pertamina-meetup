@@ -9,10 +9,8 @@ use App\Models\Institution;
 use App\Models\Member;
 use App\Models\Regulation;
 use App\Models\RegulationFile;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class RegulationController extends Controller

@@ -46,8 +46,6 @@ class DepartmentController extends Controller
                 $sort = $numbcol[0]['dir'];
                 $field = $columns[$numbcol[0]['column']]['data'];
             } else {
-                $order = $request->input('order');
-
                 $sort = $request->input('order_method');
                 $field = $request->input('order_column');
             }
