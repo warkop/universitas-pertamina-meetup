@@ -24,10 +24,6 @@ class Member extends Model
         'deleted_by',
     ];
 
-    // protected $with = [
-    //     'department'
-    // ];
-
     public function memberSkill()
     {
         return $this->belongsToMany(Skill::class, 'member_skill')->where('skill.type', 1);
