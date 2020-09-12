@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ResearchUserListDataRequest;
 use App\Http\Resources\MemberResource;
 use App\Http\Resources\ResearchUserListDataResource;
 use App\Mail\Invitation;
@@ -22,8 +23,9 @@ class ResearchUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(ResearchUserListDataRequest $request)
     {
+        $request->validated();
         $rules['grid'] = 'required|in:default,datatable';
         $rules['draw'] = 'required_if:grid,datatable|integer';
         $rules['columns'] = 'required_if:grid,datatable';
@@ -37,10 +39,10 @@ class ResearchUserController extends Controller
             $this->responseCode = 400;
             $this->responseStatus = 'Missing Param';
             $this->responseMessage = 'Silahkan isi form dengan benar terlebih dahulu';
-            $this->responseData['error_log'] = $validator->errors();
+            // $this->responseData['error_log'] = $validator->errors();
         } else {
             $this->responseCode = 200;
-            $grid = ($request->input('grid') == 'datatable')??'default';
+            $grid = $request->input('grid');
 
             if ($grid == 'datatable') {
                 $numbcol = $request->get('order');

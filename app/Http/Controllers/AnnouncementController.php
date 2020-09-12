@@ -73,7 +73,7 @@ class AnnouncementController extends Controller
 
         if (!empty($file)) {
             if ($file->isValid()) {
-                $changedName = time().rand(100,999).$file->getClientOriginalName();
+                $changedName = time().random_int(100,999).$file->getClientOriginalName();
                 $file->storeAs('announcement/' . $announcement->id, $changedName);
 
                 $announcement->path_file = $changedName;

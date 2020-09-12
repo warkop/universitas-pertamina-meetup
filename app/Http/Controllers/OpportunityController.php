@@ -185,7 +185,7 @@ class OpportunityController extends Controller
                 if ($file[$i]->isValid()) {
                     $regulationFile = new OpportunityFile();
 
-                    $changedName = time().rand(100,999).$file[$i]->getClientOriginalName();
+                    $changedName = time().random_int(100,999).$file[$i]->getClientOriginalName();
                     $is_image = false;
                     if(substr($file[$i]->getClientMimeType(), 0, 5) == 'image') {
                         $is_image = true;

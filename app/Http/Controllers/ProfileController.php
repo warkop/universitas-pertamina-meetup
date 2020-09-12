@@ -68,7 +68,7 @@ class ProfileController extends Controller
          $file = $request->file('photo');
          if (!empty($file)) {
             if ($file->isValid()) {
-               $changedName = time().rand(100,999).$file->getClientOriginalName();
+               $changedName = time().random_int(100,999).$file->getClientOriginalName();
                $file->storeAs('profile/institution/' . $institution->id, $changedName);
 
                if ($institution->path_photo != ''){
@@ -139,7 +139,7 @@ class ProfileController extends Controller
          $file = $request->file('photo');
          if (!empty($file)) {
             if ($file->isValid()) {
-               $changedName = time().rand(100,999).$file->getClientOriginalName();
+               $changedName = time().random_int(100,999).$file->getClientOriginalName();
                $file->storeAs('profile/member/' . $member->id, $changedName);
 
                if ($member->path_photo != ''){
