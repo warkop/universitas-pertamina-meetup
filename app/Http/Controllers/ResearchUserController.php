@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ResearchUserListDataRequest;
+use App\Http\Resources\DatatableResource;
 use App\Http\Resources\MemberResource;
 use App\Http\Resources\ResearchUserListDataResource;
 use App\Mail\Invitation;
@@ -15,6 +16,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class ResearchUserController extends Controller
 {
@@ -23,9 +25,8 @@ class ResearchUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(ResearchUserListDataRequest $request)
+    public function index(Request $request)
     {
-        $request->validated();
         $rules['grid'] = 'required|in:default,datatable';
         $rules['draw'] = 'required_if:grid,datatable|integer';
         $rules['columns'] = 'required_if:grid,datatable';
@@ -39,7 +40,7 @@ class ResearchUserController extends Controller
             $this->responseCode = 400;
             $this->responseStatus = 'Missing Param';
             $this->responseMessage = 'Silahkan isi form dengan benar terlebih dahulu';
-            // $this->responseData['error_log'] = $validator->errors();
+            $this->responseData['error_log'] = $validator->errors();
         } else {
             $this->responseCode = 200;
             $grid = $request->input('grid');
@@ -88,6 +89,13 @@ class ResearchUserController extends Controller
         }
 
         return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function getForDatatables()
+    {
+        $model = Member::select('id', 'name', 'email', 'updated_at')->get();
+
+        return DataTables::of($model)->toJson();
     }
 
     /**
