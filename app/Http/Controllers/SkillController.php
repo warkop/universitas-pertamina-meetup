@@ -23,7 +23,6 @@ class SkillController extends Controller
         $rules['start'] = 'required|integer|min:0';
         $rules['length'] = 'required|integer|min:1|max:100';
         $rules['options_active_only'] = 'boolean';
-        // $rules['type'] = 'boolean';
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -46,8 +45,6 @@ class SkillController extends Controller
                 $sort = $numbcol[0]['dir'];
                 $field = $columns[$numbcol[0]['column']]['data'];
             } else {
-                $order = $request->input('order');
-
                 $sort = $request->input('order_method');
                 $field = $request->input('order_column');
             }

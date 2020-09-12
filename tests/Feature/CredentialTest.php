@@ -15,6 +15,6 @@ class CredentialTest extends TestCase
      */
     public function testGuest()
     {
-        $this->assertGuest($guard = null);
+        $this->assertGuest(null);
     }
 }

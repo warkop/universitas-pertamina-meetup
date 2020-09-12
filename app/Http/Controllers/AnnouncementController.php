@@ -19,9 +19,9 @@ class AnnouncementController extends Controller
     public function index(Request $request)
     {
         $order = $request->get('order');
-        $limit = $request->get('limit')??5;
+
         $announcement = new Announcement;
-        if ($order == 'asc' or $order == 'desc') {
+        if ($order == 'asc' || $order == 'desc') {
             $announcement = $announcement->orderBy('updated_at', $order);
         }
 
@@ -60,14 +60,12 @@ class AnnouncementController extends Controller
         $announcement->announcement = $request->input('announcement');
         $announcement->save();
 
-        if (!empty($file)) {
-            if ($file->isValid()) {
-                $changedName = time().random_int(100,999).$file->getClientOriginalName();
-                $file->storeAs('announcement/' . $announcement->id, $changedName);
+        if (!empty($file) && $file->isValid()) {
+            $changedName = time().random_int(100,999).$file->getClientOriginalName();
+            $file->storeAs('announcement/' . $announcement->id, $changedName);
 
-                $announcement->path_file = $changedName;
-                $announcement->save();
-            }
+            $announcement->path_file = $changedName;
+            $announcement->save();
         }
 
         $this->responseCode     = 200;

@@ -90,8 +90,8 @@ class HelperPublic
         $num = "$num";
 
         $int = '';
-        if (preg_match('/^[+-]?(\d+)/', $num, $m)) {
-            $int = $m[1];
+        if (preg_match('!\d+!', $num, $m)) {
+            $int = $m;
         }
 
         $mult = 0;
@@ -171,8 +171,7 @@ class HelperPublic
         }
         $hasil .= $wint;
         $hasil .= ($wfrac ? " koma $wfrac" : '');
-        $hasil = str_replace("sejuta", "satu juta", $hasil);
-        return $hasil;
+        return str_replace("sejuta", "satu juta", $hasil);
     }
 
     /**
@@ -347,44 +346,6 @@ class HelperPublic
         $pattern = '/[^a-zA-Z0-9 &.,-_]/u';
 
         return preg_replace($pattern, $replace_with, $value);
-    }
-
-    public static function help_forbidden_char($value = '', $replace_with = '')
-    {
-        $forbidden_char = array('[', ']', '(', ')', '?', '\'', '′', '%');
-
-        return str_replace($forbidden_char, $replace_with, $value);
-    }
-
-    public static function help_filename($value = '', $replace_with = '', $timestamp = true)
-    {
-        $forbidden_char = array('[', ']', '(', ')', '?', '\'', '′', '%', ' ');
-        $value = str_replace($forbidden_char, $replace_with, $value);
-
-        return ($timestamp) ? date('YmdHis') . '_' . $value : $value;
-    }
-
-    public static function helpUsername($value = '', $replace_with = '', $lower = true)
-    {
-        $pattern = '/[^a-zA-Z0-9.-_]/u';
-
-        $arr_temp = explode(' ', $value);
-
-        $result = preg_replace($pattern, $replace_with, $arr_temp[0]);
-        $result = (strlen($result) >= 5) ? $result : (isset($arr_temp[1]) ? $result . preg_replace($pattern, $replace_with, $arr_temp[1]) : $result . rand_str(2, true));
-
-        return ($lower) ? strtolower($result) : $result;
-    }
-
-    public static function helpEmpty($value = '', $replace_with = '-', $null = false)
-    {
-        if (!$null) {
-            $result = (empty($value) && $value != '0') ? $replace_with : $value;
-        } else {
-            $result = (empty($value) && $value != '0') ? '' : $value;
-        }
-
-        return $result;
     }
 
     public static function helpText($value, $tags = true, $zalgo = true)

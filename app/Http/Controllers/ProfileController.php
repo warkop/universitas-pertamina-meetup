@@ -30,7 +30,6 @@ class ProfileController extends Controller
            $this->responseData = new ProfileInstitutionDataResource($data);
         } else if ($user->type == 1) {
             $data = Member::with('title')->with('memberSkill')->with('memberResearchInterest')->with('memberEducation')->with('department')->with('nationality')->with('publication')->find($user->owner_id);
-            // $this->responseData = $data;
             $this->responseData = new ProfileMemberDataResource($data);
         } else {
             $this->responseData = $user;
@@ -60,23 +59,18 @@ class ProfileController extends Controller
      public function storeInstitution(ProfileInstitutionStoreRequest $request, Institution $institution)
      {
          $request->validated();
-         // $institution->email = $request->input('email');
-         // $institution->address = $request->input('address');
-         // $institution->phone = $request->input('phone');
          $institution->est = $request->input('est');
 
          $file = $request->file('photo');
-         if (!empty($file)) {
-            if ($file->isValid()) {
-               $changedName = time().random_int(100,999).$file->getClientOriginalName();
-               $file->storeAs('profile/institution/' . $institution->id, $changedName);
+         if (!empty($file) && $file->isValid()) {
+            $changedName = time().random_int(100,999).$file->getClientOriginalName();
+            $file->storeAs('profile/institution/' . $institution->id, $changedName);
 
-               if ($institution->path_photo != ''){
-                  unlink(storage_path('app/profile/institution/').$institution->id.'/'.$institution->path_photo);
-               }
-
-               $institution->path_photo = $changedName;
+            if ($institution->path_photo != ''){
+                unlink(storage_path('app/profile/institution/').$institution->id.'/'.$institution->path_photo);
             }
+
+            $institution->path_photo = $changedName;
          }
 
          $institution->save();
@@ -93,7 +87,6 @@ class ProfileController extends Controller
          $request->validated();
 
          $member->name = $request->input('name');
-         // $member->email = $request->input('email');
          $member->desc = $request->input('desc');
          $member->department_id = $request->input('department');
          $member->position = $request->input('position');
@@ -137,17 +130,15 @@ class ProfileController extends Controller
 
          //PHOTO//
          $file = $request->file('photo');
-         if (!empty($file)) {
-            if ($file->isValid()) {
-               $changedName = time().random_int(100,999).$file->getClientOriginalName();
-               $file->storeAs('profile/member/' . $member->id, $changedName);
+         if (!empty($file) && $file->isValid()) {
+            $changedName = time().random_int(100,999).$file->getClientOriginalName();
+            $file->storeAs('profile/member/' . $member->id, $changedName);
 
-               if ($member->path_photo != ''){
-                  unlink(storage_path('app/profile/member/').$member->id.'/'.$member->path_photo);
-               }
-
-               $member->path_photo = $changedName;
+            if ($member->path_photo != ''){
+                unlink(storage_path('app/profile/member/').$member->id.'/'.$member->path_photo);
             }
+
+            $member->path_photo = $changedName;
          }
 
          $member->save();

@@ -88,7 +88,7 @@ class Member extends Model
             });
         }
 
-        if ($user->type == 0 or $user->type == 1) {
+        if ($user->type == 0 || $user->type == 1) {
             $member = Member::find($user->owner_id);
             $department = Department::find($member->department_id);
             $result = $result->where('institution_id', $department->institution_id);
