@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MenuDataResource extends JsonResource
+class SidebarMenuDataResource extends JsonResource
 {
    /**
    * Transform the resource into an array.
@@ -21,8 +21,9 @@ class MenuDataResource extends JsonResource
          'icon'               => $this->icon,
          'url'                => $this->url,
          'id_element'         => $this->id_element,
-         // 'sub_menu'           => ($this->subMenuSidebar != null)? $this->loop($this->subMenu) : null,
+         'sub_menu'           => ($this->subMenuSidebar != null)? $this->loop($this->subMenuSidebar) : null,
          'action'             => ($this->action != null)? $this->action_list($this->action) : null,
+         'action_role'        => ($this->action_role != null)? $this->action_list($this->action_role) : null
       ];
 
       return $data;
@@ -39,8 +40,9 @@ class MenuDataResource extends JsonResource
             'icon'               => $value->icon,
             'url'                => $value->url,
             'id_element'         => $value->id_element,
-            // 'sub_menu'           => ($value->subMenuSidebar != null)? $this->loop($value->subMenu) : null,
+            'sub_menu'           => ($value->subMenuSidebar != null)? $this->loop($value->subMenuSidebar) : null,
             'action'             => ($value->action != null)? $this->action_list($value->action) : null,
+            'action_role'        => ($value->action_role != null)? $this->action_list($value->action_role) : null
          ];
       }
 
