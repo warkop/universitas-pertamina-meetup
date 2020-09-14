@@ -25,10 +25,16 @@ class ProfileInstitutionStoreRequest extends FormRequest
     {
         return [
            'photo' => 'image',
+           'name' => 'required',
            // 'email' => 'required',
-           // 'address' => 'required',
-           // 'phone' => 'required',
+           'country' => 'exists:nationality,id',
+           'city' => '',
+           'address' => 'required',
+           'postal_code' => 'required_with:address',
+           'phone' => 'required',
            'est' => 'required',
+           'department.*.id' => '',
+           'department.*.name' => 'required_with:departement.*.id',
         ];
     }
 }

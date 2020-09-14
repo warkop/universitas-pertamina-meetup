@@ -29,8 +29,12 @@ class ProfileMemberDataResource extends JsonResource
             'name'  => $this->department->name,
          ],
          'department'         => [
-            'id'    => $this->department['institution']['id'],
-            'name'  => $this->department['institution']['name'],
+            'id'    => $this->department['id'],
+            'name'  => $this->department['name'],
+            'institution' =>[
+               'id'    => $this->department['institution']['id'],
+               'name'  => $this->department['institution']['name'],
+            ]
          ],
          'skill'              => [],
          'research_interest'  => [],
