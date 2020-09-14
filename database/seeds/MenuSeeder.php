@@ -21,6 +21,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-architecture-and-city',
                 'url'  => 'home',
                 'id_element'  => 'home-nav',
+                'action' => 'R'
             ],
             [
                 'id'    => 2,
@@ -30,6 +31,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-writing',
                 'url'  => 'personal-information',
                 'id_element'  => 'research-profile-nav',
+                'action' => 'R,U'
             ],
             [
                 'id'    => 3,
@@ -39,6 +41,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-calendar-5',
                 'url'  => 'research-opportunity',
                 'id_element'  => 'opportunity-nav',
+                'action' => 'C,R,U,D'
             ],
             [
                 'id'    => 4,
@@ -48,6 +51,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-protected',
                 'url'  => 'regulation',
                 'id_element'  => 'regulation-nav',
+                'action' => 'C,R,U,D'
             ],
             [
                 'id'    => 5,
@@ -57,6 +61,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-protection',
                 'url'  => 'institution',
                 'id_element'  => 'institution-nav',
+                'action' => 'C,R,U,D,A'
             ],
             [
                 'id'    => 6,
@@ -66,6 +71,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-user-outline-symbol',
                 'url'  => 'research-user',
                 'id_element'  => 'research-user-nav',
+                'action' => 'C,R,U,D,I,A'
             ],
             [
                 'id'    => 7,
@@ -75,6 +81,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'la la-bullhorn',
                 'url'  => 'announcement',
                 'id_element'  => 'announcement-nav',
+                'action' => 'R'
             ],
             [
                 'id'    => 8,
@@ -84,6 +91,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-layers-1',
                 'url'  => null,
                 'id_element'  => 'master-nav',
+                'action' => null
             ],
             [
                 'id'    => 9,
@@ -93,6 +101,7 @@ class MenuSeeder extends Seeder
                 'icon'  => null,
                 'url'  => 'master-interest',
                 'id_element'  => null,
+                'action' => 'C,R,U,D'
             ],
             [
                 'id'    => 10,
@@ -102,6 +111,7 @@ class MenuSeeder extends Seeder
                 'icon'  => null,
                 'url'  => 'master-skill',
                 'id_element'  => null,
+                'action' => 'C,R,U,D'
             ],[
                 'id'    => 11,
                 'name'  => 'Country',
@@ -110,6 +120,7 @@ class MenuSeeder extends Seeder
                 'icon'  => null,
                 'url'  => 'master-country',
                 'id_element'  => null,
+                'action' => 'C,R,U,D'
             ],[
                 'id'    => 12,
                 'name'  => 'Department',
@@ -118,14 +129,43 @@ class MenuSeeder extends Seeder
                 'icon'  => null,
                 'url'  => 'master-departement',
                 'id_element'  => null,
+                'action' => 'C,R,U,D'
             ],[
                 'id'    => 13,
-                'name'  => 'Title',
+                'name'  => 'Role',
                 'sub_menu'  => 8,
                 'order'  => 13,
                 'icon'  => null,
+                'url'  => 'user-role',
+                'id_element'  => null,
+                'action' => 'C,R,U,D'
+            ],[
+                'id'    => 14,
+                'name'  => 'Title',
+                'sub_menu'  => 8,
+                'order'  => 14,
+                'icon'  => null,
                 'url'  => 'master-interest',
                 'id_element'  => null,
+                'action' => 'C,R,U,D'
+            ],[
+                'id'    => 15,
+                'name'  => 'Academic Degree',
+                'sub_menu'  => 8,
+                'order'  => 15,
+                'icon'  => null,
+                'url'  => 'academic-degree',
+                'id_element'  => null,
+                'action' => 'C,R,U,D'
+            ],[
+                'id'    => 16,
+                'name'  => 'Publication Type',
+                'sub_menu'  => 8,
+                'order'  => 16,
+                'icon'  => null,
+                'url'  => 'publication-type',
+                'id_element'  => null,
+                'action' => 'C,R,U,D'
             ],
         ];
 
@@ -140,6 +180,7 @@ class MenuSeeder extends Seeder
                 'icon'  => $key['icon'],
                 'url'  => $key['url'],
                 'id_element'  => $key['id_element'],
+                'action'  => $key['action'],
             ]);
         }
     }
