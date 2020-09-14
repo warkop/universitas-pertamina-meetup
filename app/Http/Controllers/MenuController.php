@@ -43,6 +43,8 @@ class MenuController extends Controller
 
       if ($url != ''){
          $data_by_role = $data_by_role->where('menu.url', $url);
+      } else {
+         $data_by_role = $data_by_role->whereRaw('sub_menu is null');
       }
 
       $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
@@ -52,6 +54,8 @@ class MenuController extends Controller
 
       if ($url != ''){
          $data_by_user = $data_by_user->where('menu.url', $url);
+      } else {
+         $data_by_user = $data_by_user->whereRaw('sub_menu is null');
       }
 
       $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
