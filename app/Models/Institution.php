@@ -38,6 +38,11 @@ class Institution extends Model
         return $this->hasMany(Department::class);
     }
 
+    public function country()
+    {
+        return $this->belongsTo(Nationality::class, 'country', 'id');
+    }
+
     public function opportunity()
     {
         return $this->hasMany(Opportunity::class)->latest();
