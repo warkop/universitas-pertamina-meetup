@@ -9,9 +9,11 @@ use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
 
 use App\Models\Institution;
+use App\Models\Department;
 use App\Models\Member;
 use App\Models\MemberSkill;
 use App\Models\MemberEducation;
+use App\Models\MemberPublication;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -59,7 +61,27 @@ class ProfileController extends Controller
      public function storeInstitution(ProfileInstitutionStoreRequest $request, Institution $institution)
      {
          $request->validated();
+         $institution->country = $request->input('country');
+         $institution->city = $request->input('city');
+         $institution->address = $request->input('address');
+         $institution->postal_code = $request->input('postal_code');
+         $institution->phone = $request->input('phone');
          $institution->est = $request->input('est');
+
+         //Publication//
+         $department = $request->input('department');
+         Department::where('institution_id', $institution->id)->delete();
+
+         foreach ($department as $key => $value) {
+            Department::withTrashed()->updateOrCreate(
+               ['institution_id' => $institution->id, 'id' => $value['id']],
+               [
+                  'name' => $value['name'],
+                  'deleted_at' => null,
+               ]
+            );
+         }
+         //////////////////////////////////////////////////
 
          $file = $request->file('photo');
          if (!empty($file) && $file->isValid()) {
@@ -98,20 +120,16 @@ class ProfileController extends Controller
 
          //Education//
          $education = $request->input('education');
+         $memberEducation = MemberEducation::where('member_id', $member->id)->delete();
 
-         $arrayEducation = [
-            'member_id' => $member->id,
-            'academic_degree_id' => $education['degree_id'],
-            'institution_name' => $education['institution'],
-         ];
-
-         $memberEducation = MemberEducation::where('member_id', $member->id)->first();
-
-         if (!empty($memberEducation)){
-             MemberEducation::where('member_id', $member->id)
-            ->update($arrayEducation);
-         } else {
-            MemberEducation::insert($arrayEducation);
+         foreach ($education as $key => $value) {
+            MemberEducation::withTrashed()->updateOrCreate(
+               ['member_id' => $member->id, 'academic_degree_id' => $value['degree_id']],
+               [
+                  'institution_name' => $value['institution'],
+                  'deleted_at' => null,
+               ]
+            );
          }
          //////////////////////////////////////////////////
 
@@ -126,6 +144,23 @@ class ProfileController extends Controller
          }
 
          MemberSkill::insert($skill);
+         //////////////////////////////////////////////////
+
+         //Publication//
+         $publication = $request->input('publication');
+         $memberEducation = MemberPublication::where('member_id', $member->id)->delete();
+
+         foreach ($publication as $key => $value) {
+            MemberPublication::withTrashed()->updateOrCreate(
+               ['member_id' => $member->id, 'id' => $value['id']],
+               [
+                  'title' => $value['title'],
+                  'publication_type_id' => $value['publication_type_id'],
+                  'author' => $value['author'],
+                  'deleted_at' => null,
+               ]
+            );
+         }
          //////////////////////////////////////////////////
 
          //PHOTO//
@@ -174,7 +209,9 @@ class ProfileController extends Controller
       }
 
       if ($data->path_photo == ''){
-         abort(404);
+         $this->responseCode = 404;
+         $this->responseStatus = 'File Not Found';
+         return response()->json($this->getResponse(), $this->responseCode);
       } else {
          return response()->file($path);
       }

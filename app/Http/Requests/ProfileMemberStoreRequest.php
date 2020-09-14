@@ -28,9 +28,12 @@ class ProfileMemberStoreRequest extends FormRequest
          'name' => '',
          // 'email' => 'required',
          'desc' => '',
-         'education.id' => '',
-         'education.degree_id' => 'exists:m_ac_degree,id|required_with:education.institution',
-         'education.institution' => 'required_with:education.degree',
+         'education.*.degree_id' => 'exists:academic_degree,id|required_with:education.*.institution',
+         'education.*.institution' => 'required_with:education.*.degree_id',
+         'publication.*.id' => '',
+         'publication.*.title' => 'required_with:publication.*.publication_type_id, publication.*.author',
+         'publication.*.publication_type_id' => 'exists:publication_type,id|required_with:publication.*.tittle, publication.*.author',
+         'publication.*.author' => 'required_with:publication.*.tittle, publication.*.publication_type_id',
          'skill.*' => 'exists:skill,id',
          'department' => 'exists:department,id',
          'nationality' => 'exists:nationality,id',
@@ -39,6 +42,7 @@ class ProfileMemberStoreRequest extends FormRequest
          'orcid_id' => '',
          'scopus_id' => '',
          'website' => '',
+         ''
       ];
    }
 }

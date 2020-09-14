@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MenuStoreRequest;
 
 use App\Http\Resources\MenuDataResource;
+use App\Http\Resources\SidebarMenuDataResource;
 
 use App\Models\Menu;
 use Illuminate\Http\Request;
@@ -20,22 +21,57 @@ class MenuController extends Controller
     {
       $user = auth()->user();
 
-      $data_by_role = Menu::Select('menu.*')
-                           ->whereRaw('sub_menu is null')
+      $data = Menu::groupBy('menu.id')->orderBy('order', 'asc')->get();
+
+      $this->responseData = MenuDataResource::collection($data);
+      // $this->responseData = $data;
+
+      $this->responseCode = 200;
+
+      return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function sidebar(Request $request)
+    {
+      $user = auth()->user();
+      $url = $request->get('url');
+
+      $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+                           // ->whereRaw('sub_menu is null')
                            ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
                            ->where('role_menu.role_id', $user->role_id);
 
-      $data_by_user = Menu::select('menu.*')
-                           ->whereRaw('sub_menu is null')
+      if ($url != ''){
+         $data_by_role = $data_by_role->where('menu.url', $url);
+      } else {
+         $data_by_role = $data_by_role->whereRaw('sub_menu is null');
+      }
+
+      $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
+                           // ->whereRaw('sub_menu is null')
                            ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
                            ->where('role_menu_addition.user_id', $user->id);
 
-      $data  = $data_by_role->union($data_by_user)->groupBy('menu.id')->orderBy('order', 'asc')->get();
+      if ($url != ''){
+         $data_by_user = $data_by_user->where('menu.url', $url);
+      } else {
+         $data_by_user = $data_by_user->whereRaw('sub_menu is null');
+      }
 
-      $this->responseData = MenuDataResource::collection($data);
+      $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
+
+      if (count($data) != 0){
+         $this->responseCode = 200;
+         $this->responseData = SidebarMenuDataResource::collection($data);
+      } else {
+         $this->responseCode = 403;
+         $this->responseStatus = 'Unauthorized action.';
+         $this->responseMessage = 'Silahkan Hubungi Admin';
+         return response()->json($this->getResponse(), $this->responseCode);
+      }
+      // $this->responseData = $data;
 
 
-      $this->responseCode = 200;
 
       return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -63,10 +99,20 @@ class MenuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show()
-    {
-
-    }
+     // public function show(Request $request)
+     // {
+     //   $user = auth()->user();
+     //
+     //   $url = $request->get('url');
+     //
+     //   $data = Menu::where('menu.url', $url)->first();
+     //
+     //   $this->responseData = MenuDataResource::collection($data);
+     //
+     //   $this->responseCode = 200;
+     //
+     //   return response()->json($this->getResponse(), $this->responseCode);
+     // }
 
     /**
      * Update the specified resource in storage.

@@ -23,21 +23,18 @@ class ProfileMemberDataResource extends JsonResource
          'name'               => $this->name,
          'email'              => $this->email,
          'desc'               => $this->desc,
-         'education'          => [
-            'id' => $this->memberEducation['id'],
-            'degree' => [
-               'id'   => $this->memberEducation['AcademicDegree']['id'],
-               'name' => $this->memberEducation['AcademicDegree']['name'],
-            ],
-            'institution' => $this->memberEducation['institution_name'],
-         ],
+         'education'          => [],
          'department'         => [
             'id'   => $this->department->id,
             'name'  => $this->department->name,
          ],
          'department'         => [
-            'id'    => $this->department['institution']['id'],
-            'name'  => $this->department['institution']['name'],
+            'id'    => $this->department['id'],
+            'name'  => $this->department['name'],
+            'institution' =>[
+               'id'    => $this->department['institution']['id'],
+               'name'  => $this->department['institution']['name'],
+            ]
          ],
          'skill'              => [],
          'research_interest'  => [],
@@ -80,6 +77,17 @@ class ProfileMemberDataResource extends JsonResource
                'id'    => $value->publicationType->id,
                'name'    => $value->publicationType->name,
             ]
+         ];
+      }
+
+      foreach ($this->memberEducation as $key => $value) {
+         $data['education'][] = [
+            'id' => $value['id'],
+            'degree' => [
+               'id'   => $value['AcademicDegree']['id'],
+               'name' => $value['AcademicDegree']['name'],
+            ],
+            'institution' => $value['institution_name'],
          ];
       }
 
