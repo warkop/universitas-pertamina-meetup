@@ -7,6 +7,7 @@ use App\Http\Resources\TitleListDataResource;
 use App\Models\Title;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class TitleController extends Controller
 {
@@ -81,6 +82,13 @@ class TitleController extends Controller
         }
 
         return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function getForDatatables()
+    {
+        $model = Title::select('id', 'name', 'updated_at')->get();
+
+        return DataTables::of($model)->toJson();
     }
 
     /**
