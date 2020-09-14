@@ -22,6 +22,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::delete('/{title}', 'TitleController@destroy');
     });
 
+    Route::get('/v2/title/', 'TitleController@getForDatatables');
+
     Route::group(['prefix' => 'nationality'], function () {
         Route::get('/', 'NationalityController@index');
         Route::get('/{nationality}', 'NationalityController@show');
