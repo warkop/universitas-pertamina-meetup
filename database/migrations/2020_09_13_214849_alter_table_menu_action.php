@@ -13,9 +13,11 @@ class AlterTableMenuAction extends Migration
      */
     public function up()
     {
-        Schema::table('menu', function (Blueprint $table) {
-            $table->string('action')->nullable();
-        });
+        if (!Schema::hasColumn('menu', 'action')) {
+            Schema::table('menu', function (Blueprint $table) {
+                $table->string('action')->nullable();
+            });
+        }
     }
 
     /**

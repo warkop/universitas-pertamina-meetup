@@ -75,15 +75,13 @@ class Opportunity extends Model
             });
         }
 
-        if (isset($options['profile'])){
-           if ($options['profile'] == 1){
+        if (isset($options['profile']) && $options['profile'] == 1){
              $user = auth()->user();
 
              $result = $result->leftJoin('member_opportunity', 'opportunity_id', 'opportunity.id')->where('member_opportunity.member_id', $user->owner_id);
-           }
        }
 
-        if ($count == true) {
+        if ($count) {
             $result = $result->count();
         } else {
             $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();

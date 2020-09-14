@@ -45,8 +45,6 @@ class AcademicDegreeController extends Controller
                 $sort = $numbcol[0]['dir'];
                 $field = $columns[$numbcol[0]['column']]['data'];
             } else {
-                $order = $request->input('order');
-
                 $sort = $request->input('order_method');
                 $field = $request->input('order_column');
             }
@@ -86,16 +84,6 @@ class AcademicDegreeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -127,29 +115,6 @@ class AcademicDegreeController extends Controller
         $this->responseData = $academicDegree;
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**

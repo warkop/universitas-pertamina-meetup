@@ -33,8 +33,6 @@ class CreateTableMemberEducation extends Migration
      */
     public function down()
     {
-        Schema::table('member_education', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('member_education');
     }
 }

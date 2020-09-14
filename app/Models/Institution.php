@@ -58,7 +58,7 @@ class Institution extends Model
             });
         }
 
-        if ($count == true) {
+        if ($count) {
             $result = $result->count();
         } else {
             $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();

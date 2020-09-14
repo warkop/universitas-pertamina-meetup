@@ -10,7 +10,6 @@ use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -72,8 +71,6 @@ class OpportunityController extends Controller
                 $sort = $numbcol[0]['dir'];
                 $field = $columns[$numbcol[0]['column']]['data'];
             } else {
-                $order = $request->input('order');
-
                 $sort = $request->input('order_method');
                 $field = $request->input('order_column');
             }
@@ -110,16 +107,6 @@ class OpportunityController extends Controller
         }
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -185,7 +172,7 @@ class OpportunityController extends Controller
                 if ($file[$i]->isValid()) {
                     $regulationFile = new OpportunityFile();
 
-                    $changedName = time().rand(100,999).$file[$i]->getClientOriginalName();
+                    $changedName = time().random_int(100,999).$file[$i]->getClientOriginalName();
                     $is_image = false;
                     if(substr($file[$i]->getClientMimeType(), 0, 5) == 'image') {
                         $is_image = true;
