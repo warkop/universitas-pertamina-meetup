@@ -13,9 +13,11 @@ class AlterTableMemberRoleAction extends Migration
      */
     public function up()
     {
-        Schema::table('role_menu', function (Blueprint $table) {
-            $table->string('action')->nullable();
-        });
+        if (!Schema::hasColumn('role_menu', 'action')) {
+            Schema::table('role_menu', function (Blueprint $table) {
+                $table->string('action')->nullable();
+            });
+        }
     }
 
     /**
