@@ -24,10 +24,6 @@ class Member extends Model
         'deleted_by',
     ];
 
-    // protected $with = [
-    //     'department'
-    // ];
-
     public function memberSkill()
     {
         return $this->belongsToMany(Skill::class, 'member_skill')->where('skill.type', 1);
@@ -92,13 +88,13 @@ class Member extends Model
             });
         }
 
-        if ($user->type == 0 or $user->type == 1) {
+        if ($user->type == 0 || $user->type == 1) {
             $member = Member::find($user->owner_id);
             $department = Department::find($member->department_id);
             $result = $result->where('institution_id', $department->institution_id);
         }
 
-        if ($count == true) {
+        if ($count) {
             $result = $result->count();
         } else {
             $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();

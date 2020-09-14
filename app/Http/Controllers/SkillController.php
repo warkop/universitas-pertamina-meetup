@@ -23,7 +23,6 @@ class SkillController extends Controller
         $rules['start'] = 'required|integer|min:0';
         $rules['length'] = 'required|integer|min:1|max:100';
         $rules['options_active_only'] = 'boolean';
-        // $rules['type'] = 'boolean';
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -46,8 +45,6 @@ class SkillController extends Controller
                 $sort = $numbcol[0]['dir'];
                 $field = $columns[$numbcol[0]['column']]['data'];
             } else {
-                $order = $request->input('order');
-
                 $sort = $request->input('order_method');
                 $field = $request->input('order_column');
             }
@@ -87,16 +84,6 @@ class SkillController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -128,29 +115,6 @@ class SkillController extends Controller
         $this->responseData = $skill;
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**

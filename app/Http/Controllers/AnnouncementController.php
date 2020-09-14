@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AnnouncementStoreRequest;
-use App\Http\Resources\AnnouncementCollection;
 use App\Http\Resources\AnnouncementListDataResource;
 use App\Http\Resources\CommentResource;
 use App\Models\Announcement;
@@ -20,9 +19,9 @@ class AnnouncementController extends Controller
     public function index(Request $request)
     {
         $order = $request->get('order');
-        $limit = $request->get('limit')??5;
+
         $announcement = new Announcement;
-        if ($order == 'asc' or $order == 'desc') {
+        if ($order == 'asc' || $order == 'desc') {
             $announcement = $announcement->orderBy('updated_at', $order);
         }
 
@@ -48,16 +47,6 @@ class AnnouncementController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -71,14 +60,12 @@ class AnnouncementController extends Controller
         $announcement->announcement = $request->input('announcement');
         $announcement->save();
 
-        if (!empty($file)) {
-            if ($file->isValid()) {
-                $changedName = time().rand(100,999).$file->getClientOriginalName();
-                $file->storeAs('announcement/' . $announcement->id, $changedName);
+        if (!empty($file) && $file->isValid()) {
+            $changedName = time().random_int(100,999).$file->getClientOriginalName();
+            $file->storeAs('announcement/' . $announcement->id, $changedName);
 
-                $announcement->path_file = $changedName;
-                $announcement->save();
-            }
+            $announcement->path_file = $changedName;
+            $announcement->save();
         }
 
         $this->responseCode     = 200;
@@ -120,29 +107,6 @@ class AnnouncementController extends Controller
     {
         $path = storage_path('app/announcement/'.$announcement->id.'/'.$announcement->path_file);
         return response()->file($path);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     public function destroy(Announcement $announcement)

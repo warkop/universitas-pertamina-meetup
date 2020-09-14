@@ -31,7 +31,12 @@ class AlterTableMemberAddPathFileDescOrcidIdScopusIdWeb extends Migration
     public function down()
     {
         Schema::table('member', function (Blueprint $table) {
-            //
+            $table->dropColumn('path_photo');
+            $table->dropColumn('orcid_id');
+            $table->dropColumn('scopus_id');
+            $table->dropColumn('desc');
+            $table->dropColumn('web');
+            $table->dropColumn('position');
         });
     }
 }

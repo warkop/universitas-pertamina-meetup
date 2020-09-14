@@ -9,10 +9,8 @@ use App\Models\Institution;
 use App\Models\Member;
 use App\Models\Regulation;
 use App\Models\RegulationFile;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class RegulationController extends Controller
@@ -73,8 +71,6 @@ class RegulationController extends Controller
                 $sort = $numbcol[0]['dir'];
                 $field = $columns[$numbcol[0]['column']]['data'];
             } else {
-                $order = $request->input('order');
-
                 $sort = $request->input('order_method');
                 $field = $request->input('order_column');
             }
@@ -170,7 +166,7 @@ class RegulationController extends Controller
                 if ($file[$i]->isValid()) {
                     $regulationFile = new RegulationFile();
 
-                    $changedName = time().rand(100,999).$file[$i]->getClientOriginalName();
+                    $changedName = time().random_int(100,999).$file[$i]->getClientOriginalName();
                     $is_image = false;
                     if(substr($file[$i]->getClientMimeType(), 0, 5) == 'image') {
                         $is_image = true;

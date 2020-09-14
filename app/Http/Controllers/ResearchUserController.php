@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ResearchUserListDataRequest;
+use App\Http\Resources\DatatableResource;
 use App\Http\Resources\MemberResource;
 use App\Http\Resources\ResearchUserListDataResource;
 use App\Mail\Invitation;
@@ -14,6 +16,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class ResearchUserController extends Controller
 {
@@ -40,7 +43,7 @@ class ResearchUserController extends Controller
             $this->responseData['error_log'] = $validator->errors();
         } else {
             $this->responseCode = 200;
-            $grid = ($request->input('grid') == 'datatable')??'default';
+            $grid = $request->input('grid');
 
             if ($grid == 'datatable') {
                 $numbcol = $request->get('order');
@@ -88,14 +91,11 @@ class ResearchUserController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function getForDatatables()
     {
-        //
+        $model = Member::select('id', 'name', 'email', 'updated_at')->get();
+
+        return DataTables::of($model)->toJson();
     }
 
     /**
@@ -215,39 +215,5 @@ class ResearchUserController extends Controller
         $this->responseData = new MemberResource($member);
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

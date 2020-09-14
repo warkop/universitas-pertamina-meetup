@@ -21,7 +21,6 @@ class MenuDataResource extends JsonResource
          'icon'               => $this->icon,
          'url'                => $this->url,
          'id_element'         => $this->id_element,
-         // 'sub_menu'           => ($this->subMenuSidebar != null)? $this->loop($this->subMenu) : null,
          'action'             => ($this->action != null)? $this->action_list($this->action) : null,
       ];
 

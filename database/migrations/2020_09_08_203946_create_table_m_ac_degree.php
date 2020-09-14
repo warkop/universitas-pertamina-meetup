@@ -31,8 +31,6 @@ class CreateTableMAcDegree extends Migration
      */
     public function down()
     {
-        Schema::table('m_ac_degree', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('m_ac_degree');
     }
 }

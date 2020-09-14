@@ -22,6 +22,6 @@ class InstitutionListDataResource extends JsonResource
             'phone'         => $this->phone,
             'est'           => $this->est,
             'updated_at'    => date('d-m-Y', strtotime($this->updated_at)),
-        ];;
+        ];
     }
 }

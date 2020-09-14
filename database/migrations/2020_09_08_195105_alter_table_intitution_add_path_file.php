@@ -26,7 +26,7 @@ class AlterTableIntitutionAddPathFile extends Migration
     public function down()
     {
         Schema::table('institution', function (Blueprint $table) {
-            //
+            $table->dropColumn('path_photo');
         });
     }
 }
