@@ -107,7 +107,17 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'menu'], function () {
         Route::get('/', 'MenuController@index');
+        Route::get('/sidebar', 'MenuController@sidebar');
     });
+
+    Route::group(['prefix' => 'role'], function () {
+        Route::get('/', 'RoleController@index');
+        Route::get('/{role}', 'RoleController@show');
+        Route::post('/', 'RoleController@store');
+        Route::put('/{role}', 'RoleController@store');
+        Route::delete('/{role}', 'RoleController@destroy');
+    });
+
 
     Route::group(['prefix' => 'research-user'], function () {
         Route::get('/', 'ResearchUserController@index');

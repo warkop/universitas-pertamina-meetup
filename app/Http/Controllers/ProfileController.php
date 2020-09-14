@@ -183,7 +183,9 @@ class ProfileController extends Controller
       }
 
       if ($data->path_photo == ''){
-         abort(404);
+         $this->responseCode = 404;
+         $this->responseStatus = 'File Not Found';
+         return response()->json($this->getResponse(), $this->responseCode);
       } else {
          return response()->file($path);
       }
