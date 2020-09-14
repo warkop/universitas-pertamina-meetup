@@ -21,6 +21,12 @@ class ProfileInstitutionDataResource extends JsonResource
             'address'            => $this->address,
             'phone'              => $this->phone,
             'est'                => $this->est,
+            'country'            => [
+               'id'  => $this->country['id'],
+               'name'=> $this->country['name'],
+            ],
+            'city'               => $this->city,
+            'postal_code'        => $this->postal_code,
             'total_department'   => count($this->department),
             'total_member'       => 0,
             'path_photo'         => $this->path_photo,

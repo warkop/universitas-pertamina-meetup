@@ -9,6 +9,7 @@ use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
 
 use App\Models\Institution;
+use App\Models\Department;
 use App\Models\Member;
 use App\Models\MemberSkill;
 use App\Models\MemberEducation;
@@ -62,9 +63,27 @@ class ProfileController extends Controller
      {
          $request->validated();
          // $institution->email = $request->input('email');
-         // $institution->address = $request->input('address');
-         // $institution->phone = $request->input('phone');
+         $institution->country = $request->input('country');
+         $institution->city = $request->input('city');
+         $institution->address = $request->input('address');
+         $institution->postal_code = $request->input('postal_code');
+         $institution->phone = $request->input('phone');
          $institution->est = $request->input('est');
+
+         //Publication//
+         $department = $request->input('department');
+         $memberEducation = Department::where('institution_id', $institution->id)->delete();
+
+         foreach ($department as $key => $value) {
+            Department::withTrashed()->updateOrCreate(
+               ['institution_id' => $institution->id, 'id' => $value['id']],
+               [
+                  'name' => $value['name'],
+                  'deleted_at' => null,
+               ]
+            );
+         }
+         //////////////////////////////////////////////////
 
          $file = $request->file('photo');
          if (!empty($file)) {
