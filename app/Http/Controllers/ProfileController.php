@@ -12,6 +12,7 @@ use App\Models\Institution;
 use App\Models\Member;
 use App\Models\MemberSkill;
 use App\Models\MemberEducation;
+use App\Models\MemberPublication;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -105,20 +106,16 @@ class ProfileController extends Controller
 
          //Education//
          $education = $request->input('education');
+         $memberEducation = MemberEducation::where('member_id', $member->id)->delete();
 
-         $arrayEducation = [
-            'member_id' => $member->id,
-            'academic_degree_id' => $education['degree_id'],
-            'institution_name' => $education['institution'],
-         ];
-
-         $memberEducation = MemberEducation::where('member_id', $member->id)->first();
-
-         if (!empty($memberEducation)){
-             MemberEducation::where('member_id', $member->id)
-            ->update($arrayEducation);
-         } else {
-            MemberEducation::insert($arrayEducation);
+         foreach ($education as $key => $value) {
+            MemberEducation::withTrashed()->updateOrCreate(
+               ['member_id' => $member->id, 'academic_degree_id' => $value['degree_id']],
+               [
+                  'institution_name' => $value['institution'],
+                  'deleted_at' => null,
+               ]
+            );
          }
          //////////////////////////////////////////////////
 
@@ -133,6 +130,23 @@ class ProfileController extends Controller
          }
 
          MemberSkill::insert($skill);
+         //////////////////////////////////////////////////
+
+         //Publication//
+         $publication = $request->input('publication');
+         $memberEducation = MemberPublication::where('member_id', $member->id)->delete();
+
+         foreach ($publication as $key => $value) {
+            MemberPublication::withTrashed()->updateOrCreate(
+               ['member_id' => $member->id, 'id' => $value['id']],
+               [
+                  'title' => $value['title'],
+                  'publication_type_id' => $value['publication_type_id'],
+                  'author' => $value['author'],
+                  'deleted_at' => null,
+               ]
+            );
+         }
          //////////////////////////////////////////////////
 
          //PHOTO//
