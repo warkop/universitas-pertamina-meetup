@@ -20,6 +20,9 @@ class UserSeeder extends Seeder
                 'role_id'           => 1,
                 'type'              => 2,
                 'status'            => 1,
+                'email_verified_at' => now(),
+                'confirm_at'        => now(),
+                'confirm_by'        => 0,
                 'remember_token'    => Str::random(10),
             ],
         ];
