@@ -38,7 +38,7 @@ class Institution extends Model
         return $this->hasMany(Department::class);
     }
 
-    public function country()
+    public function nationality()
     {
         return $this->belongsTo(Nationality::class, 'country', 'id');
     }

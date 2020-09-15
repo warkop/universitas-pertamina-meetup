@@ -22,6 +22,7 @@ class MenuDataResource extends JsonResource
          'url'                => $this->url,
          'id_element'         => $this->id_element,
          'action'             => ($this->action != null)? $this->action_list($this->action) : null,
+         'action_role'        => ($this['action_role'] != null)? $this->action_list($this['action_role']) : null
       ];
 
       return $data;
@@ -40,6 +41,7 @@ class MenuDataResource extends JsonResource
             'id_element'         => $value->id_element,
             // 'sub_menu'           => ($value->subMenuSidebar != null)? $this->loop($value->subMenu) : null,
             'action'             => ($value->action != null)? $this->action_list($value->action) : null,
+            'action_role'        => ($this['action_role'] != null)? $this->action_list($this['action_role']) : null
          ];
       }
 
@@ -48,15 +50,15 @@ class MenuDataResource extends JsonResource
 
    public function action_list($data_action)
    {
-      $array_raw = ['C','R','U','D','I','A','SA'];
-      $array_detail = ['create', 'read', 'update', 'delete', 'invite', 'approve', 'select_admin'];
-      $data = [];
-      $arrayAction = explode(",", $data_action);
-      foreach ($arrayAction as $key => $value) {
-         $key = array_search($value, $array_raw);
-
-         $data[$array_detail[$key]] = True;
-      }
+      // $array_raw = ['C','R','U','D','I','A','SA'];
+      // $array_detail = ['create', 'read', 'update', 'delete', 'invite', 'approve', 'select_admin'];
+      // $data = [];
+      $data = explode(",", $data_action);
+      // foreach ($arrayAction as $key => $value) {
+      //    $key = array_search($value, $array_raw);
+      //
+      //    $data[$array_detail[$key]] = True;
+      // }
 
       return $data;
    }

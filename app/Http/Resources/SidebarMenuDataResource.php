@@ -51,15 +51,15 @@ class SidebarMenuDataResource extends JsonResource
 
    public function action_list($data_action)
    {
-      $array_raw = ['C','R','U','D','I','A','SA'];
-      $array_detail = ['create', 'read', 'update', 'delete', 'invite', 'approve', 'select_admin'];
-      $data = [];
-      $arrayAction = explode(",", $data_action);
-      foreach ($arrayAction as $key => $value) {
-         $key = array_search($value, $array_raw);
-
-         $data[$array_detail[$key]] = True;
-      }
+      // $array_raw = ['C','R','U','D','I','A','SA'];
+      // $array_detail = ['create', 'read', 'update', 'delete', 'invite', 'approve', 'select_admin'];
+      // $data = [];
+      $data = explode(",", $data_action);
+      // foreach ($arrayAction as $key => $value) {
+      //    $key = array_search($value, $array_raw);
+      //
+      //    $data[$array_detail[$key]] = True;
+      // }
 
       return $data;
    }

@@ -30,10 +30,10 @@ class ProfileController extends Controller
         if ($user->type == 0) {
            $data = Institution::with('department')->find($user->owner_id);
            $this->responseData = new ProfileInstitutionDataResource($data);
+           // $this->responseData = $data;
         } else if ($user->type == 1) {
             $data = Member::with('title')->with('memberSkill')->with('memberResearchInterest')->with('memberEducation')->with('department')->with('nationality')->with('publication')->find($user->owner_id);
             $this->responseData = new ProfileMemberDataResource($data);
-            // $this->responseData = $data;
         } else {
             $this->responseData = $user;
         }
@@ -69,7 +69,7 @@ class ProfileController extends Controller
          $institution->phone = $request->input('phone');
          $institution->est = $request->input('est');
 
-         //Publication//
+         //Department//
          $department = $request->input('department');
          Department::where('institution_id', $institution->id)->delete();
 
