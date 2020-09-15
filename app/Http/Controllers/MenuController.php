@@ -24,6 +24,15 @@ class MenuController extends Controller
       $data = Menu::groupBy('menu.id')->orderBy('order', 'asc')->get();
 
       $this->responseData = MenuDataResource::collection($data);
+      $this->responseNote = [
+         'C' => 'Create',
+         'R' => 'Read',
+         'U' => 'Update',
+         'D' => 'Delete',
+         'I' => 'Invite',
+         'A' => 'Approve',
+         'SA'=> 'Select Admin',
+      ];
       // $this->responseData = $data;
 
       $this->responseCode = 200;
@@ -63,6 +72,15 @@ class MenuController extends Controller
       if (count($data) != 0){
          $this->responseCode = 200;
          $this->responseData = SidebarMenuDataResource::collection($data);
+         $this->responseNote = [
+            'C' => 'Create',
+            'R' => 'Read',
+            'U' => 'Update',
+            'D' => 'Delete',
+            'I' => 'Invite',
+            'A' => 'Approve',
+            'SA'=> 'Select Admin',
+         ];
       } else {
          $this->responseCode = 403;
          $this->responseStatus = 'Unauthorized action.';
