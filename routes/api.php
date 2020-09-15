@@ -1,5 +1,7 @@
 <?php
 
+use App\Mail\Invitation;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => ['jwt.verify']], function () {
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/get-announcement', 'DashboardController@getAnnouncement');
+        Route::get('/get-opening-opportunity', 'DashboardController@getOpeningOpportunity');
+        Route::get('/get-institutional', 'DashboardController@getInstitutional');
+        Route::get('/get-member', 'DashboardController@getMember');
+        Route::get('/get-regulation', 'DashboardController@getRegulation');
+    });
+
     Route::group(['prefix' => 'title'], function () {
         Route::get('/', 'TitleController@index');
         Route::get('/{title}', 'TitleController@show');
@@ -160,4 +170,8 @@ Route::group(['prefix' => 'auth'], function () {
     Route::delete('/', 'AuthController@logout'); //logout
     Route::get('/', 'AuthController@me');
     Route::get('/refresh', 'AuthController@refresh');
+});
+
+Route::post('/send-email', function(){
+    Mail::to('navigator619@gmail.com')->send(new Invitation());
 });
