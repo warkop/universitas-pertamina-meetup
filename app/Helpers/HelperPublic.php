@@ -184,7 +184,7 @@ class HelperPublic
      * @param (string) $status
      * @return (array)
      */
-    public static function helpResponse($code, $data = NULL, $msg = '', $status = '')
+    public static function helpResponse($code, $data = NULL, $msg = '', $status = '', $note = '')
     {
         switch ($code) {
             case '200':
@@ -249,7 +249,8 @@ class HelperPublic
                 "code" => $code,
                 "message" => $msg
             ),
-            "data" => $data
+            "data" => $data,
+            "note" => $note,
         );
 
         self::setHeader($code, $status);
