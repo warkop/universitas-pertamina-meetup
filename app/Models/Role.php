@@ -45,6 +45,12 @@ class Role extends Model
             });
         }
 
+        if (isset($options['active_only'])){
+           if ($options['active_only'] == 1){
+             $result = $result->where('status', 1);
+          }
+        }
+
         if ($count == true) {
             $result = $result->count();
         } else {

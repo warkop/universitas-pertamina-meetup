@@ -107,7 +107,12 @@ class RoleController extends Controller
      public function store(RoleStoreRequest $request, Role $role)
      {
         $request->validated();
-        $role->name = $request->input('name');
+        $status = $request->input('status');
+        if ($status != null) {
+           $role->status = $request->input('status');
+        } else {
+           $role->name = $request->input('name');
+        }
         $role->save();
 
         //MENU//
@@ -189,10 +194,10 @@ class RoleController extends Controller
 
     public function getAll()
     {
-        $nationality = Role::all()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
+        $role = Role::all()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
 
         $this->responseCode = 200;
-        $this->responseData = $nationality;
+        $this->responseData = $role;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -215,9 +220,9 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $nationality)
+    public function destroy(Role $role)
     {
-        $nationality->delete();
+        $role->delete();
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil dihapus';
