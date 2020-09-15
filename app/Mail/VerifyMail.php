@@ -7,18 +7,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class Invitation extends Mailable
+class VerifyMail extends Mailable
 {
     use Queueable, SerializesModels;
+
+    public $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user)
     {
-        //
+        $this->user = $user;
     }
 
     /**
@@ -28,6 +30,6 @@ class Invitation extends Mailable
      */
     public function build()
     {
-        return $this->from('meetup@universitas-pertamina.co.id')->view('welcome');
+        return $this->from('meetup@universitas-pertamina.co.id')->view('email-verification');
     }
 }
