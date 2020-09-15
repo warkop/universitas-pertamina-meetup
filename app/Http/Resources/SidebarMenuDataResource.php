@@ -22,8 +22,8 @@ class SidebarMenuDataResource extends JsonResource
          'url'                => $this->url,
          'id_element'         => $this->id_element,
          'sub_menu'           => ($this->subMenuSidebar != null)? $this->loop($this->subMenuSidebar) : null,
-         'action'             => ($this->action != null)? $this->action_list($this->action) : null,
-         'action_role'        => ($this->action_role != null)? $this->action_list($this->action_role) : null
+         'action'             => ($this->action != null)? $this->actionList($this->action) : null,
+         'action_role'        => ($this->action_role != null)? $this->actionList($this->action_role) : null
       ];
 
       return $data;
@@ -41,15 +41,15 @@ class SidebarMenuDataResource extends JsonResource
             'url'                => $value->url,
             'id_element'         => $value->id_element,
             'sub_menu'           => ($value->subMenuSidebar != null)? $this->loop($value->subMenuSidebar) : null,
-            'action'             => ($value->action != null)? $this->action_list($value->action) : null,
-            'action_role'        => ($value->action_role != null)? $this->action_list($value->action_role) : null
+            'action'             => ($value->action != null)? $this->actionList($value->action) : null,
+            'action_role'        => ($value->action_role != null)? $this->actionList($value->action_role) : null
          ];
       }
 
       return $data;
    }
 
-   public function action_list($data_action)
+   public function actionList($data_action)
    {
       // $array_raw = ['C','R','U','D','I','A','SA'];
       // $array_detail = ['create', 'read', 'update', 'delete', 'invite', 'approve', 'select_admin'];
