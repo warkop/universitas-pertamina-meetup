@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleStoreRequest;
 use App\Http\Resources\RoleListDataResource;
+use App\Http\Resources\RoleDetailDataResource;
 use App\Models\Role;
+use App\Models\RoleMenu;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -101,18 +104,58 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RoleStoreRequest $request, Role $nationality)
-    {
+     public function store(RoleStoreRequest $request, Role $role)
+     {
         $request->validated();
-        $nationality->name = $request->input('name');
-        $nationality->code = $request->input('code');
-        $nationality->save();
+        $status = $request->input('status');
+        if ($status != null) {
+           $role->status = $request->input('status');
+        } else {
+           $role->name = $request->input('name');
+        }
+        $role->save();
 
-        $this->responseCode = 200;
-        $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $nationality;
+        //MENU//
+        $menu = $request->input('menu');
+        RoleMenu::where('role_id', $role->id)->delete();
 
-        return response()->json($this->getResponse(), $this->responseCode);
+        if ($menu != null){
+           $arrayMenu = [];
+           $arrayParentMenu = [];
+           foreach ($menu as $key => $value) {
+             $dataMenu = Menu::find($value['id']);
+
+             if ($dataMenu->sub_menu != null){
+                if (!in_array($dataMenu->sub_menu, $arrayParentMenu)){
+                   $arrayMenu[] = [
+                      'menu_id' => $dataMenu->sub_menu,
+                      'role_id' => $role->id,
+                      'action'  => null
+                   ];
+
+                   $arrayParentMenu[] = $dataMenu->sub_menu;
+                }
+             }
+
+             $arrayAction = implode(",", $value['action']);
+
+             $arrayMenu[] = [
+                'menu_id' => $value['id'],
+                'role_id' => $role->id,
+                'action'  => $arrayAction
+             ];
+          }
+
+          RoleMenu::insert($arrayMenu);
+       }
+       ///////////////////////////////////////////////////////////////////////
+
+
+       $this->responseCode = 200;
+       $this->responseMessage = 'Data berhasil disimpan';
+       $this->responseData = new RoleDetailDataResource($role);
+
+       return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
@@ -124,7 +167,16 @@ class RoleController extends Controller
     public function show(Role $role)
     {
         $this->responseCode = 200;
-        $this->responseData = new RoleListDataResource($role);
+        $this->responseData = new RoleDetailDataResource($role);
+        $this->responseNote = [
+           'C' => 'Create',
+           'R' => 'Read',
+           'U' => 'Update',
+           'D' => 'Delete',
+           'I' => 'Invite',
+           'A' => 'Approve',
+           'SA'=> 'Select Admin',
+        ];
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -142,10 +194,10 @@ class RoleController extends Controller
 
     public function getAll()
     {
-        $nationality = Role::all()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
+        $role = Role::all()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
 
         $this->responseCode = 200;
-        $this->responseData = $nationality;
+        $this->responseData = $role;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -168,9 +220,9 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $nationality)
+    public function destroy(Role $role)
     {
-        $nationality->delete();
+        $role->delete();
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil dihapus';
