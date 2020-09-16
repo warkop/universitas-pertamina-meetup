@@ -11,42 +11,24 @@ use App\Models\User;
 class RegisterController extends Controller
 {
     /**
-     * Remove some word for safe username
-     *
-     * @param string $name Name from request name
-     * @return string
-     **/
-    private function safeUsername(string $name):string
-    {
-        $username = trim(str_replace(' ', '', strtolower($name)));
-        $username = str_replace("'", '', $username);
-        $username = str_replace("`", '', $username);
-        $username = str_replace(",", '', $username);
-        $username = str_replace("’", '', $username);
-
-        return $username;
-    }
-    /**
      * Creating User
      *
      * @param \Illuminate\Http\Request $request Description
      * @param array $spesific Description
-     * @return void
+     * @return string
      **/
     private function createUser($request, $spesific)
     {
         $user = new User();
 
-        $username = $this->safeUsername($request->name).$spesific['id'];
-
-        $user->username = $username;
+        $user->username = $request->email;
         $user->password = bcrypt($request->password);
         $user->type     = $spesific['type'];
         $user->role_id  = $spesific['role_id'];
         $user->owner_id = $spesific['id'];
         $user->save();
 
-        return $username;
+        return $request->email;
     }
 
     public function signUpInstitution(SignUpInstitutionRequest $request)
