@@ -9,13 +9,14 @@ use App\Models\Institution;
 use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\Regulation;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function getAnnouncement()
     {
         $limit = request()->get('limit');
-        $announcement = Announcement::take($limit)->get();
+        $announcement = Announcement::take($limit)->latest()->get();
 
         $this->responseCode = 200;
         $this->responseData = $announcement;
@@ -23,7 +24,7 @@ class DashboardController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function getOpeningOpportunity()
+    public function getOpportunity()
     {
         $limit = request()->get('limit');
         $opportunity = Opportunity::whereDate(
@@ -32,23 +33,29 @@ class DashboardController extends Controller
             'end_date', '>=', now()
         )->take($limit)->latest()->get();
 
+        $this->responseCode = 200;
+        $this->responseData = OpportunityListDataResource::collection($opportunity);
+
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function getOpeningOpportunity()
+    {
         $countOfOpportunity = Opportunity::whereDate(
             'start_date', '<=', now()
         )->whereDate(
             'end_date', '>=', now()
         )->count();
 
-        $this->responseCode                 = 200;
-        $this->responseData['oppportunity'] = OpportunityListDataResource::collection($opportunity);
-        $this->responseData['count']        = $countOfOpportunity;
-
+        $this->responseData = $countOfOpportunity;
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
     public function getInstitutional()
     {
         $limit = request()->get('limit');
-        $institution = Institution::take($limit)->get();
+        $institution = Institution::take($limit)->get()->shuffle();
 
         $this->responseCode = 200;
         $this->responseData = $institution;
@@ -79,7 +86,7 @@ class DashboardController extends Controller
             });
         }
 
-        $member = $member->latest()->get();
+        $member = $member->get()->shuffle();
 
         $this->responseCode = 200;
         $this->responseData = $member;
@@ -87,12 +94,25 @@ class DashboardController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function getRegulation()
+    public function getNewRegulation()
     {
-        $regulation = Regulation::get();
+        $date = Carbon::today()->subDays(7);
+        $countOfRegulation = Regulation::whereNotNull('publish_date')->where('publish_date', '>=', $date)->count();
 
         $this->responseCode = 200;
-        $this->responseData = $regulation;
+        $this->responseData = $countOfRegulation;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function getNewMember()
+    {
+        $date = Carbon::today()->subDays(7);
+        $countOfMember = Member::join('user', 'user.owner_id', '=', 'member.id')
+        ->where('confirm_at', '>=', $date)->count();
+
+        $this->responseCode = 200;
+        $this->responseData = $countOfMember;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
