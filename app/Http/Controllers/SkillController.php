@@ -7,6 +7,7 @@ use App\Http\Resources\SkillListDataResource;
 use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class SkillController extends Controller
 {
@@ -15,72 +16,17 @@ class SkillController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $rules['grid'] = 'required|in:default,datatable';
-        $rules['draw'] = 'required_if:grid,datatable|integer';
-        $rules['columns'] = 'required_if:grid,datatable';
-        $rules['start'] = 'required|integer|min:0';
-        $rules['length'] = 'required|integer|min:1|max:100';
-        $rules['options_active_only'] = 'boolean';
-
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            $this->responseCode = 400;
-            $this->responseStatus = 'Missing Param';
-            $this->responseMessage = 'Silahkan isi form dengan benar terlebih dahulu';
-            $this->responseData['error_log'] = $validator->errors();
-        } else {
-            $this->responseCode = 200;
-            $grid = ($request->input('grid') == 'datatable') ? 'datatable' : 'default';
-
-            if ($grid == 'datatable') {
-                $numbcol = $request->get('order');
-                $columns = $request->get('columns');
-
-                $echo = $request->get('draw');
-
-
-                $sort = $numbcol[0]['dir'];
-                $field = $columns[$numbcol[0]['column']]['data'];
-            } else {
-                $sort = $request->input('order_method');
-                $field = $request->input('order_column');
-            }
-
-            $start = $request->get('start');
-            $perpage = $request->get('length');
-
-            $search = $request->get('search_value');
-            $pattern = '/[^a-zA-Z0-9 !@#$%^&*\/\.\,\(\)-_:;?\+=]/u';
-            $search = preg_replace($pattern, '', $search);
-
-            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'type' => $request->get('type')];
-
-            $result = Skill::listData($start, $perpage, $search, false, $sort, $field, $options);
-            $total = Skill::listData($start, $perpage, $search, true, $sort, $field, $options);
-
-            if ($grid == 'datatable') {
-                $this->responseData['sEcho'] = $echo;
-                $this->responseData["iTotalRecords"] = $total;
-                $this->responseData["iTotalDisplayRecords"] = $total;
-                $this->responseData["aaData"] = SkillListDataResource::collection($result);
-                return response()->json($this->responseData, $this->responseCode);
-            } else {
-                $this->responseData['skill'] = SkillListDataResource::collection($result);
-                $pagination['row'] = count($result);
-                $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
-                $pagination['rowEnd'] = ($start + count($result));
-                $this->responseData['meta']['start'] = $start;
-                $this->responseData['meta']['perpage'] = $perpage;
-                $this->responseData['meta']['search'] = $search;
-                $this->responseData['meta']['total'] = $total;
-                $this->responseData['meta']['pagination'] = $pagination;
-            }
+        $type = strip_tags(request()->get('type'));
+        $model = new Skill;
+        if ($type == 0 || $type == 1) {
+            $model = $model->where('type', $type);
         }
 
-        return response()->json($this->getResponse(), $this->responseCode);
+        $model = $model->get();
+
+        return DataTables::of(SkillListDataResource::collection($model))->toJson();
     }
 
     /**

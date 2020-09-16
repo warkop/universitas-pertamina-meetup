@@ -69,12 +69,6 @@ class Opportunity extends Model
         ->join('institution', 'institution.id', '=', 'institution_id')
         ->whereNull('opportunity.deleted_at');
 
-        if (!empty($search)) {
-            $result = $result->where(function ($where) use ($search) {
-                $where->where('name', 'ILIKE', '%' . $search . '%');
-            });
-        }
-
         if (isset($options['profile']) && $options['profile'] == 1){
              $user = auth()->user();
 
