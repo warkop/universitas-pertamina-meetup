@@ -26,6 +26,7 @@ class RegulationStoreRequest extends FormRequest
         return [
             'name' => 'required',
             'code' => 'required',
+            'publish_date' => 'nullable|date_format:d-m-Y',
         ];
     }
 }

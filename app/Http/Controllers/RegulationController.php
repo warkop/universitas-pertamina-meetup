@@ -69,6 +69,7 @@ class RegulationController extends Controller
         $regulation->name           = $request->input('name');
         $regulation->code           = $request->input('code');
         $regulation->regulator      = $request->input('regulator');
+        $regulation->publish_date   = $request->input('publish_date');
         $regulation->save();
 
         $this->responseCode = 200;
