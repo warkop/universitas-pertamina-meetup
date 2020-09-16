@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ResearchUserListDataRequest;
 use App\Http\Resources\DatatableResource;
 use App\Http\Resources\MemberResource;
@@ -106,8 +107,9 @@ class ResearchUserController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function sendingInvitation(Request $request)
+    public function sendingInvitation(InvitationRequest $request)
     {
+        $request->validated();
         $email = $request->input('email');
 
         Mail::to($email)->send(new Invitation());

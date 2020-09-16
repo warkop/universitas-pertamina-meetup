@@ -1,7 +1,5 @@
 <?php
 
-use App\Mail\Invitation;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +17,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/get-announcement', 'DashboardController@getAnnouncement');
         Route::get('/get-opening-opportunity', 'DashboardController@getOpeningOpportunity');
+        Route::get('/get-opportunity', 'DashboardController@getOpportunity');
         Route::get('/get-institutional', 'DashboardController@getInstitutional');
         Route::get('/get-member', 'DashboardController@getMember');
-        Route::get('/get-regulation', 'DashboardController@getRegulation');
+        Route::get('/get-new-regulation', 'DashboardController@getNewRegulation');
+        Route::get('/get-new-member', 'DashboardController@getNewMember');
     });
 
     Route::group(['prefix' => 'title'], function () {
@@ -132,7 +132,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/skill', 'ResearchUserController@getSkill');
         Route::get('/department', 'ResearchUserController@getDepartment');
         Route::get('/{member}', 'ResearchUserController@show');
-        Route::post('/send-invitation', 'ResearchUserController@sendInvitation');
+        Route::post('/send-invitation', 'ResearchUserController@sendingInvitation');
         Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
@@ -170,8 +170,4 @@ Route::group(['prefix' => 'auth'], function () {
     Route::delete('/', 'AuthController@logout'); //logout
     Route::get('/', 'AuthController@me');
     Route::get('/refresh', 'AuthController@refresh');
-});
-
-Route::post('/send-email', function(){
-    Mail::to('navigator619@gmail.com')->send(new Invitation());
 });
