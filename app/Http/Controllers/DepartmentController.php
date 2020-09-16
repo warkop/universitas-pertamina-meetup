@@ -57,7 +57,13 @@ class DepartmentController extends Controller
             $pattern = '/[^a-zA-Z0-9 !@#$%^&*\/\.\,\(\)-_:;?\+=]/u';
             $search = preg_replace($pattern, '', $search);
 
-            $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only')];
+
+            if ($request->get('options_institution_login') == 1){
+               $user = auth()->user();
+               $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'institution_id' => $user->owner_id];
+            } else {
+               $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'institution_id' => null];
+            }
 
             $result = Department::listData($start, $perpage, $search, false, $sort, $field, $options);
             $total = Department::listData($start, $perpage, $search, true, $sort, $field, $options);
