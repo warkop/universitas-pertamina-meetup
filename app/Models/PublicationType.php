@@ -22,6 +22,8 @@ class PublicationType extends Model
     protected $hidden = [
         'created_by',
         'updated_by',
+        'deleted_by',
+        'deleted_at',
     ];
 
     public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])

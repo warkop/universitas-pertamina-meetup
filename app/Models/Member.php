@@ -64,12 +64,11 @@ class Member extends Model
         return $this->belongsToMany(Opportunity::class, 'member_opportunity');
     }
 
-    public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
+    public static function listData()
     {
         $user = auth()->user();
 
-        $result = DB::table('member')
-        ->select(
+        $result = Member::select(
             'member.*',
             'institution.name as institution_name',
             'department.name as department_name',
@@ -80,13 +79,7 @@ class Member extends Model
         ->join('institution', 'institution.id', '=', 'institution_id')
         ->join('nationality', 'nationality.id', '=', 'nationality_id')
         ->join('user', 'user.owner_id', '=', 'member.id')
-        ->whereNull('member.deleted_at');
-
-        if (!empty($search)) {
-            $result = $result->where(function ($where) use ($search) {
-                $where->where('name', 'ILIKE', '%' . $search . '%');
-            });
-        }
+        ;
 
         if ($user->type == 0 || $user->type == 1) {
             $member = Member::find($user->owner_id);
@@ -94,12 +87,6 @@ class Member extends Model
             $result = $result->where('institution_id', $department->institution_id);
         }
 
-        if ($count) {
-            $result = $result->count();
-        } else {
-            $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();
-        }
-
-        return $result;
+        return $result->get();
     }
 }
