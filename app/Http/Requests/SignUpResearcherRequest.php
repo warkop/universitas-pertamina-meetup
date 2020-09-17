@@ -28,7 +28,7 @@ class SignUpResearcherRequest extends FormRequest
             'title_id'              => 'required|exists:title,id',
             'department_id'         => 'required|exists:department,id',
             'nationality_id'        => 'required|exists:nationality,id',
-            'email'                 => 'required|email',
+            'email'                 => 'required|email|unique:user',
             'password'              => 'required|confirmed',
             'password_confirmation' => 'required|present',
         ];
