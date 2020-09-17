@@ -28,6 +28,6 @@ class Announcement extends Model
 
     public function comment()
     {
-        return $this->hasMany(AnnouncementComment::class)->latest();
+        return $this->hasMany(AnnouncementComment::class);
     }
 }
