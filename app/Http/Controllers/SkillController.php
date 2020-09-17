@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SkillStoreRequest;
 use App\Http\Resources\SkillListDataResource;
 use App\Models\Skill;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class SkillController extends Controller

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
 class Skill extends Model
@@ -25,27 +24,4 @@ class Skill extends Model
         'deleted_at',
         'deleted_by',
     ];
-
-    public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
-    {
-        $result = DB::table('skill')->whereNull('skill.deleted_at');
-
-        if (!empty($search)) {
-            $result = $result->where(function ($where) use ($search) {
-                $where->where('name', 'ILIKE', '%' . $search . '%');
-            });
-        }
-
-        if (isset($options['type'])){
-           $result = $result->where('type', $options['type']);
-        }
-
-        if ($count) {
-            $result = $result->count();
-        } else {
-            $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();
-        }
-
-        return $result;
-    }
 }
