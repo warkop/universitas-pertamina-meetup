@@ -19,14 +19,13 @@ class RegisterController extends Controller
      **/
     private function createUser($request, $spesific)
     {
-        $user = new User();
-
-        $user->username = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->type     = $spesific['type'];
-        $user->role_id  = $spesific['role_id'];
-        $user->owner_id = $spesific['id'];
-        $user->save();
+        User::create([
+            'email'     => $request->email,
+            'password'  => bcrypt($request->password),
+            'type'      => $spesific['type'],
+            'role_id'   => $spesific['role_id'],
+            'owner_id'  => $spesific['id'],
+        ])->sendEmailVerificationNotification();
 
         return $request->email;
     }
