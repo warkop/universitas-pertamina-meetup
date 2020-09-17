@@ -18,12 +18,26 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $model = Department::select(
-            'department.*',
-            'institution.name as institution_name'
-        )
-        ->leftJoin('institution', 'institution.id', '=', 'department.institution_id')
-        ->get();
+      $institution_id = strip_tags(request()->get('institution_id'));
+      $options_institution_login = strip_tags(request()->get('options_institution_login'));
+
+      $model = Department::select(
+          'department.*',
+          'institution.name as institution_name'
+      )
+      ->leftJoin('institution', 'institution.id', '=', 'department.institution_id');
+
+      if ($institution_id != null || $institution_id != '') {
+          $model = $model->where('institution.id', $institution_id);
+      }
+
+      if ($options_institution_login == 1){
+         $user = auth()->user();
+
+         $model = $model->where('institution.id', $user->owner_id);         
+      }
+
+      $model = $model->get();
 
         return DataTables::of(DepartmentListDataResource::collection($model))->toJson();
     }
