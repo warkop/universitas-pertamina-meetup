@@ -35,6 +35,7 @@ class ProfileMemberStoreRequest extends FormRequest
          'publication.*.publication_type_id' => 'exists:publication_type,id|required_with:publication.*.tittle, publication.*.author',
          'publication.*.author' => 'required_with:publication.*.tittle, publication.*.publication_type_id',
          'skill.*' => 'exists:skill,id',
+         'interest.*' => 'exists:skill,id',
          'department' => 'exists:department,id',
          'nationality' => 'exists:nationality,id',
          'position' => '',

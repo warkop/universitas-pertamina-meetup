@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SkillStoreRequest;
 use App\Http\Resources\SkillListDataResource;
+use App\Http\Resources\MasterSelectListDataResource;
+use App\Http\Requests\MasterListRequest;
 use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -27,6 +29,43 @@ class SkillController extends Controller
         $model = $model->get();
 
         return DataTables::of(SkillListDataResource::collection($model))->toJson();
+    }
+
+    public function selectList(MasterListRequest $request)
+    {
+      $request->validated();
+      $limit = strip_tags(request()->get('length'));
+      $search = strip_tags(request()->get('search_value'));
+      $active_only = strip_tags(request()->get('active_only'));
+      $type = strip_tags(request()->get('type'));
+
+      $model = Skill::select('*');
+
+      if ($limit != null || $limit != ''){
+         $model = $model->limit($limit);
+      }
+
+      if (!empty($search)) {
+          $model = $model->where(function ($where) use ($search) {
+             $where->where('name', 'ILIKE', '%' . $search . '%');
+          });
+      }
+
+      if ($type == 0 || $type == 1){
+         $model = $model->where('type', $type);
+      }
+
+      // if ($active_only == 1) {
+      //    $model = $model->where('status', 1);
+      // }
+
+      $model = $model->orderBy('name', 'ASC')->get();
+
+      $this->responseCode = 200;
+      $this->responseData = MasterSelectListDataResource::collection($model);
+
+
+      return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**

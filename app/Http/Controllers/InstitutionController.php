@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\InstitutionStoreRequest;
 use App\Http\Resources\InstitutionListDataResource;
+use App\Http\Resources\MasterSelectListDataResource;
+use App\Http\Requests\MasterListRequest;
 use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -21,6 +23,38 @@ class InstitutionController extends Controller
         $model = Institution::get();
 
         return DataTables::of(InstitutionListDataResource::collection($model))->toJson();
+    }
+
+    public function selectList(MasterListRequest $request)
+    {
+      $request->validated();
+      $limit = strip_tags(request()->get('length'));
+      $search = strip_tags(request()->get('search_value'));
+      $active_only = strip_tags(request()->get('active_only'));
+
+      $model = Institution::select('*');
+
+      if ($limit != null || $limit != ''){
+         $model = $model->limit($limit);
+      }
+
+      if (!empty($search)) {
+          $model = $model->where(function ($where) use ($search) {
+             $where->where('name', 'ILIKE', '%' . $search . '%');
+          });
+      }
+
+      // if ($active_only == 1) {
+      //    $model = $model->where('status', 1);
+      // }
+
+      $model = $model->orderBy('name', 'ASC')->get();
+
+      $this->responseCode = 200;
+      $this->responseData = MasterSelectListDataResource::collection($model);
+
+
+      return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
