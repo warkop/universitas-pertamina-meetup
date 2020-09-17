@@ -21,4 +21,9 @@ class AcademicDegreeListDataResource extends JsonResource
             'updated_at'    => $this->updated_at->format('d-m-Y'),
         ];
     }
+
+    public function withResponse($request, $response)
+    {
+        $response->header('X-Value', 'True');
+    }
 }
