@@ -54,38 +54,56 @@ class RoleController extends Controller
         $role->save();
 
         //MENU//
-        $menu = $request->input('menu');
-        RoleMenu::where('role_id', $role->id)->delete();
+        $menu_all = $request->input('menu_all');
+        //SPECIFIED MENU
+        if ($menu_all == 0){
+           $menu = $request->input('menu');
+           RoleMenu::where('role_id', $role->id)->delete();
 
-        if ($menu != null){
-           $arrayMenu = [];
-           $arrayParentMenu = [];
-           foreach ($menu as $key => $value) {
-             $dataMenu = Menu::find($value['id']);
+           if ($menu != null){
+             $arrayMenu = [];
+             $arrayParentMenu = [];
+             foreach ($menu as $key => $value) {
+                $dataMenu = Menu::find($value['id']);
 
-             if ($dataMenu->sub_menu != null){
-                if (!in_array($dataMenu->sub_menu, $arrayParentMenu)){
-                   $arrayMenu[] = [
-                      'menu_id' => $dataMenu->sub_menu,
-                      'role_id' => $role->id,
-                      'action'  => null
-                   ];
+                if ($dataMenu->sub_menu != null){
+                   if (!in_array($dataMenu->sub_menu, $arrayParentMenu)){
+                      $arrayMenu[] = [
+                        'menu_id' => $dataMenu->sub_menu,
+                        'role_id' => $role->id,
+                        'action'  => null
+                     ];
 
-                   $arrayParentMenu[] = $dataMenu->sub_menu;
-                }
-             }
+                     $arrayParentMenu[] = $dataMenu->sub_menu;
+                  }
+               }
 
-             $arrayAction = implode(",", $value['action']);
+               $arrayAction = implode(",", $value['action']);
 
-             $arrayMenu[] = [
-                'menu_id' => $value['id'],
-                'role_id' => $role->id,
-                'action'  => $arrayAction
-             ];
-          }
+               $arrayMenu[] = [
+                  'menu_id' => $value['id'],
+                  'role_id' => $role->id,
+                  'action'  => $arrayAction
+               ];
+            }
 
-          RoleMenu::insert($arrayMenu);
-       }
+            RoleMenu::insert($arrayMenu);
+         }
+      } elseif ($menu_all == 1) {
+         RoleMenu::where('role_id', $role->id)->delete();
+
+         $dataMenu = Menu::get();
+
+         foreach ($dataMenu as $key => $value) {
+            $arrayMenu[] = [
+               'menu_id' => $value['id'],
+               'role_id' => $role->id,
+               'action'  => $value['action']
+            ];
+         };
+
+         RoleMenu::insert($arrayMenu);
+      }
        ///////////////////////////////////////////////////////////////////////
 
 
