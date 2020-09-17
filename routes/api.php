@@ -153,6 +153,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::put('/{publicationType}', 'PublicationTypeController@store');
         Route::delete('/{publicationType}', 'PublicationTypeController@destroy');
     });
+    Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
@@ -171,3 +172,6 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('/', 'AuthController@me');
     Route::get('/refresh', 'AuthController@refresh');
 });
+
+Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
+
