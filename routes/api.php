@@ -99,6 +99,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/institution/{institution}', 'ProfileController@storeInstitution');
         Route::post('/member/{member}', 'ProfileController@storeMember');
         Route::get('/photo', 'ProfileController@showFile');
+        Route::post('/photo/update', 'ProfileController@storePhoto');
         Route::get('/files/member/{member}', 'ProfileController@showFileMember');
     });
 
