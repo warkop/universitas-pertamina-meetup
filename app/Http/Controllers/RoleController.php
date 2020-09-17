@@ -46,9 +46,9 @@ class RoleController extends Controller
           });
       }
 
-      // if ($active_only == 1) {
-      //    $model = $model->where('status', 1);
-      // }
+      if ($active_only == 1) {
+         $model = $model->where('status', 1);
+      }
 
       $model = $model->orderBy('name', 'ASC')->get();
 

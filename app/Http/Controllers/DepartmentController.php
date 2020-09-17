@@ -68,9 +68,9 @@ class DepartmentController extends Controller
           });
       }
 
-      // if ($active_only == 1) {
-      //    $model = $model->where('department.status', 1);
-      // }
+      if ($active_only == 1) {
+         $model = $model->where('department.status', 1);
+      }
 
       if ($limit != null || $limit != ''){
          $model = $model->limit($limit);
