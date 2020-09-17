@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\InstitutionStoreRequest;
 use App\Http\Resources\InstitutionListDataResource;
 use App\Models\Institution;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class InstitutionController extends Controller

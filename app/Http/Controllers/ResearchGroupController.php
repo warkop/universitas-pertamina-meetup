@@ -28,9 +28,11 @@ class ResearchGroupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ResearchGroupStoreRequest $request)
+    public function store(ResearchGroupStoreRequest $request, ResearchGroup $researchGroup)
     {
         $request->validated();
+
+
     }
 
     /**
@@ -51,18 +53,6 @@ class ResearchGroupController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(ResearchGroup $researchGroup)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ResearchGroup  $researchGroup
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ResearchGroup $researchGroup)
     {
         //
     }

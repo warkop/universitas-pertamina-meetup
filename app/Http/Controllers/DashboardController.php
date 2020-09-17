@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\InstitutionListDataResource;
 use App\Http\Resources\OpportunityListDataResource;
 use App\Models\Announcement;
 use App\Models\Institution;

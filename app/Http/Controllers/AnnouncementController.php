@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AnnouncementStoreRequest;
-use App\Http\Resources\AnnouncementCollection;
 use App\Http\Resources\AnnouncementListDataResource;
 use App\Http\Resources\CommentResource;
 use App\Models\Announcement;
