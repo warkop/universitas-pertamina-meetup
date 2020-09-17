@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Wildside\Userstamps\Userstamps;
 
 class Department extends Model
@@ -36,36 +35,6 @@ class Department extends Model
     public function member()
     {
         return $this->hasMany(Member::class);
-    }
-
-    public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
-    {
-        $result = DB::table('department')->select(
-            'department.*',
-            'institution.name as institution_name'
-        )
-        ->leftJoin('institution', 'institution.id', '=', 'department.institution_id')
-        ->whereNull('department.deleted_at')
-        ;
-
-        if (!empty($search)) {
-            $result = $result->where(function ($where) use ($search) {
-                $where->where('department.name', 'ILIKE', '%' . $search . '%');
-                $where->orWhere('institution.name', 'ILIKE', '%' . $search . '%');
-            });
-        }
-
-        if (isset($options['institution_id'])){
-           $result = $result->where('institution_id', $options['institution_id']);
-        }
-
-        if ($count) {
-            $result = $result->count();
-        } else {
-            $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();
-        }
-
-        return $result;
     }
 
     public function institution()

@@ -14,14 +14,15 @@ class AnnouncementListDataResource extends JsonResource
      */
     public function toArray($request)
     {
-        $limit = \request()->get('limit');
+        $comment_limit = \request()->get('comment_limit');
         return [
             'id'                => $this->id,
             'name'              => $this->announcement,
             'updated_at'        => date('d-m-Y H:i:s', strtotime($this->updated_at)),
             'translate_time'    => $this->updated_at->diffForHumans(),
-            'comment'           => CommentResource::collection($this->comment()->paginate($limit)),
+            'comment'           => CommentResource::collection($this->comment()->latest('id')->paginate($comment_limit)->reverse()),
             'total_comment'     => count($this->comment),
+            'path_file'         => $this->path_file,
         ];
     }
 }
