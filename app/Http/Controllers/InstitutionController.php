@@ -7,8 +7,6 @@ use App\Http\Resources\InstitutionListDataResource;
 use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Models\Institution;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class InstitutionController extends Controller

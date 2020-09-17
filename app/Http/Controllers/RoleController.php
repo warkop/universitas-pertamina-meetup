@@ -11,7 +11,6 @@ use App\Models\Role;
 use App\Models\RoleMenu;
 use App\Models\Menu;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoleController extends Controller
@@ -58,16 +57,6 @@ class RoleController extends Controller
 
 
       return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -171,17 +160,6 @@ class RoleController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
     public function getAll()
     {
         $role = Role::all()->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
@@ -190,18 +168,6 @@ class RoleController extends Controller
         $this->responseData = $role;
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**

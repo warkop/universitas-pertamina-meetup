@@ -9,9 +9,7 @@ use App\Models\Institution;
 use App\Models\Member;
 use App\Models\Regulation;
 use App\Models\RegulationFile;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class RegulationController extends Controller

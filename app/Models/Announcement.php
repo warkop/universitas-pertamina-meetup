@@ -30,23 +30,4 @@ class Announcement extends Model
     {
         return $this->hasMany(AnnouncementComment::class);
     }
-
-    public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
-    {
-        $result = DB::table('announcement')->whereNull('announcement.deleted_at');
-
-        if (!empty($search)) {
-            $result = $result->where(function ($where) use ($search) {
-                $where->where('name', 'ILIKE', '%' . $search . '%');
-            });
-        }
-
-        if ($count) {
-            $result = $result->count();
-        } else {
-            $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();
-        }
-
-        return $result;
-    }
 }

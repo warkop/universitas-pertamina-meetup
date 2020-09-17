@@ -7,8 +7,6 @@ use App\Http\Resources\AcademicDegreeListDataResource;
 use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Models\AcademicDegree;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class AcademicDegreeController extends Controller

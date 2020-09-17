@@ -25,12 +25,10 @@ class AnnouncementController extends Controller
             $announcement = $announcement->orderBy('updated_at', $order);
         }
 
-        $announcement = $announcement->with(['comment'])->get();
+        $announcement = $announcement->with(['comment'])->paginate();
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = AnnouncementListDataResource::collection($announcement);
-
-        return response()->json($this->getResponse(), $this->responseCode);
+        return AnnouncementListDataResource::collection($announcement);
     }
 
     public function getComment(Request $request, Announcement $announcement)

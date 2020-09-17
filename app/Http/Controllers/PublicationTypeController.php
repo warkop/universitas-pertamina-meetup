@@ -8,7 +8,6 @@ use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Models\PublicationType;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class PublicationTypeController extends Controller
@@ -58,16 +57,6 @@ class PublicationTypeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -99,29 +88,6 @@ class PublicationTypeController extends Controller
         $this->responseData = $publicationType;
 
         return response()->json($this->getResponse(), $this->responseCode);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
