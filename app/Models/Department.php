@@ -55,6 +55,10 @@ class Department extends Model
             });
         }
 
+        if (isset($options['institution_id'])){
+           $result = $result->where('institution_id', $options['institution_id']);
+        }
+
         if ($count) {
             $result = $result->count();
         } else {
