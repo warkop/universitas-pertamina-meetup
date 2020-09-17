@@ -24,7 +24,7 @@ class ProfileMemberStoreRequest extends FormRequest
    public function rules()
    {
       return [
-         'photo' => 'image',
+         // 'photo' => 'image',
          'name' => '',
          // 'email' => 'required',
          'desc' => '',

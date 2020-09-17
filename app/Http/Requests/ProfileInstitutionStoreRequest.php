@@ -24,7 +24,7 @@ class ProfileInstitutionStoreRequest extends FormRequest
     public function rules()
     {
         return [
-           'photo' => 'image',
+           // 'photo' => 'image',
            'name' => 'required',
            // 'email' => 'required',
            'country' => 'exists:nationality,id',
