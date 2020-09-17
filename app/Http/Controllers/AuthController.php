@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SidebarMenuDataResource;
-use App\Models\User;
 use App\Models\Menu;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+    private $sideBarMenu;
     /**
      * Create a new AuthController instance.
      *
@@ -65,7 +63,9 @@ class AuthController extends Controller
 
        $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
 
-       return $this->respondWithToken($token, SidebarMenuDataResource::collection($data));
+       $this->sideBarMenu = SidebarMenuDataResource::collection($data);
+
+       return $this->respondWithToken($token, $this->sideBarMenu);
     }
 
     /**
@@ -97,6 +97,6 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(Auth::refresh());
+        return $this->respondWithToken(Auth::refresh(), $this->sideBarMenu);
     }
 }
