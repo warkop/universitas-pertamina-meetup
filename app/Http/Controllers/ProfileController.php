@@ -70,15 +70,16 @@ class ProfileController extends Controller
          $institution->est = $request->input('est');
 
          //Department//
-         $department = $request->input('department');
+         $department = json_decode($request->input('department'));
          Department::where('institution_id', $institution->id)->delete();
 
          if ($department != null){
             foreach ($department as $key => $value) {
+               $value->id = ($value->id == '')? null: $value->id;
                Department::withTrashed()->updateOrCreate(
-                  ['institution_id' => $institution->id, 'id' => $value['id']],
+                  ['institution_id' => $institution->id, 'id' => $value->id],
                   [
-                     'name' => $value['name'],
+                     'name' => $value->name,
                      'deleted_at' => null,
                   ]
                );
