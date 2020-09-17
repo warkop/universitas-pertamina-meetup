@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SidebarMenuDataResource;
 use App\Models\User;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -26,12 +28,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken($token, $menu)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60
+            'expires_in' => Auth::factory()->getTTL() * 60,
+            'menu'       => $menu
         ]);
     }
 
@@ -48,7 +51,21 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+       $user = auth()->user();
+
+       $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+                            ->whereRaw('sub_menu is null')
+                            ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
+                            ->where('role_menu.role_id', $user->role_id);
+
+       $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
+                            ->whereRaw('sub_menu is null')
+                            ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
+                            ->where('role_menu_addition.user_id', $user->id);
+
+       $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
+
+       return $this->respondWithToken($token, SidebarMenuDataResource::collection($data));
     }
 
     /**
