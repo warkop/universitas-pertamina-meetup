@@ -12,6 +12,7 @@ use App\Http\Resources\ProfileMemberDataResource;
 use App\Models\Institution;
 use App\Models\Department;
 use App\Models\Member;
+use App\Models\Skill;
 use App\Models\MemberSkill;
 use App\Models\MemberEducation;
 use App\Models\MemberPublication;
@@ -165,22 +166,56 @@ class ProfileController extends Controller
 
          //SKILL//
          MemberSkill::where('member_id', $member->id)->delete();
-         $skill = [];
+         $array_skill = [];
          foreach ($request->input('skill') as $key => $value) {
-            $skill[] = [
-               'member_id' => $member->id,
-               'skill_id' => $value
-            ];
+            $check_skill = Skill::where('name', $value)->where('type', 1)->first();
+
+            if (!empty($check_skill)){
+               $array_skill[] = [
+                  'member_id' => $member->id,
+                  'skill_id' => $check_skill->id,
+               ];
+            } else {
+               $mSkill = new Skill;
+
+               $mSkill->name = $value;
+               $mSkill->type = 1;
+               $mSkill->status = 0;
+
+               $mSkill->save();
+
+               $array_skill[] = [
+                  'member_id' => $member->id,
+                  'skill_id' => $mSkill->id,
+               ];
+            }
          }
 
          foreach ($request->input('interest') as $key => $values) {
-            $skill[] = [
-               'member_id' => $member->id,
-               'skill_id' => $values
-            ];
+            $check_skill = Skill::where('name', $values)->where('type', 0)->first();
+
+            if (!empty($check_skill)){
+               $array_skill[] = [
+                  'member_id' => $member->id,
+                  'skill_id' => $check_skill->id,
+               ];
+            } else {
+               $mSkill = new Skill;
+
+               $mSkill->name = $values;
+               $mSkill->type = 0;
+               $mSkill->status = 0;
+
+               $mSkill->save();
+
+               $array_skill[] = [
+                  'member_id' => $member->id,
+                  'skill_id' => $mSkill->id,
+               ];
+            }
          }
 
-         MemberSkill::insert($skill);
+         MemberSkill::insert($array_skill);
          //////////////////////////////////////////////////
 
          //Publication//
