@@ -183,6 +183,13 @@ class ProfileController extends Controller
             ];
          }
 
+         foreach ($request->input('interest') as $key => $values) {
+            $skill[] = [
+               'member_id' => $member->id,
+               'skill_id' => $values
+            ];
+         }
+
          MemberSkill::insert($skill);
          //////////////////////////////////////////////////
 
