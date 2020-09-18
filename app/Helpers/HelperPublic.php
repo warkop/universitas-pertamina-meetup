@@ -253,8 +253,6 @@ class HelperPublic
             "note" => $note,
         );
 
-        self::setHeader($code, $status);
-
         return $result;
     }
 
@@ -297,11 +295,6 @@ class HelperPublic
         }
 
         return $hasil;
-    }
-
-    public static function setHeader($code = '200', $status = '')
-    {
-        header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $status);
     }
 
     public static function helpToNum($data)
