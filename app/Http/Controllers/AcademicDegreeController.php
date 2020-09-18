@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AcademicDegreeStoreRequest;
 use App\Http\Resources\AcademicDegreeListDataResource;
+use App\Http\Resources\MasterSelectListDataResource;
+use App\Http\Requests\MasterListRequest;
 use App\Models\AcademicDegree;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -19,6 +21,38 @@ class AcademicDegreeController extends Controller
         $model = AcademicDegree::get();
 
         return DataTables::of(AcademicDegreeListDataResource::collection($model))->toJson();
+    }
+
+    public function selectList(MasterListRequest $request)
+    {
+      $request->validated();
+      $limit = strip_tags(request()->get('length'));
+      $search = strip_tags(request()->get('search_value'));
+      $active_only = strip_tags(request()->get('active_only'));
+
+      $model = AcademicDegree::select('*');
+
+      if ($limit != null || $limit != ''){
+         $model = $model->limit($limit);
+      }
+
+      if (!empty($search)) {
+          $model = $model->where(function ($where) use ($search) {
+             $where->where('name', 'ILIKE', '%' . $search . '%');
+          });
+      }
+
+      if ($active_only == 1) {
+         $model = $model->where('status', 1);
+      }
+
+      $model = $model->orderBy('name', 'ASC')->get();
+
+      $this->responseCode = 200;
+      $this->responseData = MasterSelectListDataResource::collection($model);
+
+
+      return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
