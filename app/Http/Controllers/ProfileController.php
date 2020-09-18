@@ -113,7 +113,11 @@ class ProfileController extends Controller
         $file = $request->file('photo');
         if (!empty($file) && $file->isValid()) {
            $changedName = time().random_int(100,999).$file->getClientOriginalName();
-           $file->storeAs('profile/institution/' . $data->id, $changedName);
+           if ($user->type == 0) {
+             $file->storeAs('profile/institution/' . $data->id, $changedName);
+           } else if ($user->type == 1) {
+             $file->storeAs('profile/member/' . $data->id, $changedName);
+           }
 
            if ($data->path_photo != ''){
              if ($user->type == 0) {
