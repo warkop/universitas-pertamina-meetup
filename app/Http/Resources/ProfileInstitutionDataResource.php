@@ -16,7 +16,6 @@ class ProfileInstitutionDataResource extends JsonResource
     {
         $data = [
             'id'                 => $this->id,
-            'title'              => TitleListDataResource::collection($this->title),
             'name'               => $this->name,
             'email'              => $this->email,
             'address'            => $this->address,
