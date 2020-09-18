@@ -295,7 +295,6 @@ class ProfileController extends Controller
 
     public function showFileInstitution(Institution $institution)
     {
-      $data = Institution::find($institution->path_photo);
       $path = storage_path('app/profile/institution/'.$institution->id.'/'.$institution->path_photo);
 
       if ($institution->path_photo == ''){
@@ -309,7 +308,6 @@ class ProfileController extends Controller
 
     public function showFileMember(Member $member)
     {
-      $data = Institution::find($member->path_photo);
       $path = storage_path('app/profile/member/'.$member->id.'/'.$member->path_photo);
 
       if ($member->path_photo == ''){
