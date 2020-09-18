@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DepartmentStoreRequest;
 use App\Http\Resources\DepartmentListDataResource;
+use App\Http\Resources\MasterSelectListDataResource;
+use App\Http\Requests\MasterListRequest;
 use App\Models\Department;
 use App\Models\Institution;
 use Illuminate\Http\Request;
@@ -40,6 +42,47 @@ class DepartmentController extends Controller
       $model = $model->get();
 
         return DataTables::of(DepartmentListDataResource::collection($model))->toJson();
+    }
+
+    public function selectList(MasterListRequest $request)
+    {
+      $request->validated();
+      $limit = strip_tags(request()->get('length'));
+      $institution_id = strip_tags(request()->get('institution_id'));
+      $search = strip_tags(request()->get('search_value'));
+      $active_only = strip_tags(request()->get('active_only'));
+
+      $model = Department::select(
+          'department.*',
+          'institution.name as institution_name'
+      )
+      ->leftJoin('institution', 'institution.id', '=', 'department.institution_id');
+
+      if ($institution_id != null || $institution_id != '') {
+          $model = $model->where('institution.id', $institution_id);
+      }
+
+      if (!empty($search)) {
+          $model = $model->where(function ($where) use ($search) {
+             $where->where('department.name', 'ILIKE', '%' . $search . '%');
+          });
+      }
+
+      if ($active_only == 1) {
+         $model = $model->where('department.status', 1);
+      }
+
+      if ($limit != null || $limit != ''){
+         $model = $model->limit($limit);
+      }
+
+      $model = $model->orderBy('department.name', 'ASC')->get();
+
+      $this->responseCode = 200;
+      $this->responseData = MasterSelectListDataResource::collection($model);
+
+
+      return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
