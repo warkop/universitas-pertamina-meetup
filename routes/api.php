@@ -167,10 +167,10 @@ Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
 
 Route::group(['prefix' => 'public'], function () {
-    Route::get('/title', 'TitleController@getAll');
-    Route::get('/institution', 'InstitutionController@getAll');
-    Route::get('/nationality', 'NationalityController@getAll');
-    Route::get('/department', 'DepartmentController@getAll');
+    Route::get('/title', 'TitleController@selectList');
+    Route::get('/institution', 'InstitutionController@selectList');
+    Route::get('/nationality', 'NationalityController@selectList');
+    Route::get('/department', 'DepartmentController@selectList');
 });
 
 Route::group(['prefix' => 'auth'], function () {
