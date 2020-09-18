@@ -111,7 +111,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/', 'ProfileController@index');
         Route::post('/', 'ProfileController@store');
         Route::post('/institution/{institution}', 'ProfileController@storeInstitution');
+        Route::post('/institution/photo/{institution}', 'ProfileController@showFileInstitution');
         Route::post('/member/{member}', 'ProfileController@storeMember');
+        Route::post('/member/photo/{member}', 'ProfileController@showFileMember');
         Route::get('/photo', 'ProfileController@showFile');
         Route::post('/photo/update', 'ProfileController@storePhoto');
         Route::get('/files/member/{member}', 'ProfileController@showFileMember');
