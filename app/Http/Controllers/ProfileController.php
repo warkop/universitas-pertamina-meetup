@@ -292,4 +292,32 @@ class ProfileController extends Controller
          return response()->file($path);
       }
     }
+
+    public function showFileInstitution(Institution $institution)
+    {
+      $data = Institution::find($institution->path_photo);
+      $path = storage_path('app/profile/institution/'.$institution->id.'/'.$institution->path_photo);
+
+      if ($institution->path_photo == ''){
+         $this->responseCode = 404;
+         $this->responseStatus = 'File Not Found';
+         return response()->json($this->getResponse(), $this->responseCode);
+      } else {
+         return response()->file($path);
+      }
+    }
+
+    public function showFileMember(Member $member)
+    {
+      $data = Institution::find($member->path_photo);
+      $path = storage_path('app/profile/institution/'.$member->id.'/'.$member->path_photo);
+
+      if ($member->path_photo == ''){
+         $this->responseCode = 404;
+         $this->responseStatus = 'File Not Found';
+         return response()->json($this->getResponse(), $this->responseCode);
+      } else {
+         return response()->file($path);
+      }
+    }
 }
