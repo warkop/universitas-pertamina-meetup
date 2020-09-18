@@ -310,7 +310,7 @@ class ProfileController extends Controller
     public function showFileMember(Member $member)
     {
       $data = Institution::find($member->path_photo);
-      $path = storage_path('app/profile/institution/'.$member->id.'/'.$member->path_photo);
+      $path = storage_path('app/profile/member/'.$member->id.'/'.$member->path_photo);
 
       if ($member->path_photo == ''){
          $this->responseCode = 404;
