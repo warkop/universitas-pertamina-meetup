@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NationalityStoreRequest;
 use App\Http\Resources\NationalityListDataResource;
+use App\Http\Resources\MasterSelectListDataResource;
+use App\Http\Requests\MasterListRequest;
 use App\Models\Nationality;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -19,6 +21,38 @@ class NationalityController extends Controller
         $model = Nationality::get();
 
         return DataTables::of(NationalityListDataResource::collection($model))->toJson();
+    }
+
+    public function selectList(MasterListRequest $request)
+    {
+      $request->validated();
+      $limit = strip_tags(request()->get('length'));
+      $search = strip_tags(request()->get('search_value'));
+      $active_only = strip_tags(request()->get('active_only'));
+
+      $model = Nationality::select('*');
+
+      if ($limit != null || $limit != ''){
+         $model = $model->limit($limit);
+      }
+
+      if (!empty($search)) {
+          $model = $model->where(function ($where) use ($search) {
+             $where->where('name', 'ILIKE', '%' . $search . '%');
+          });
+      }
+
+      if ($active_only == 1) {
+         $model = $model->where('status', 1);
+      }
+
+      $model = $model->orderBy('name', 'ASC')->get();
+
+      $this->responseCode = 200;
+      $this->responseData = MasterSelectListDataResource::collection($model);
+
+
+      return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**

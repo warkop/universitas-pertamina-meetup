@@ -25,6 +25,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'title'], function () {
         Route::get('/', 'TitleController@index');
+        Route::get('/select-list', 'TitleController@selectList');
         Route::get('/{title}', 'TitleController@show');
         Route::post('/', 'TitleController@store');
         Route::put('/{title}', 'TitleController@store');
@@ -35,6 +36,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'nationality'], function () {
         Route::get('/', 'NationalityController@index');
+        Route::get('/select-list', 'NationalityController@selectList');
         Route::get('/{nationality}', 'NationalityController@show');
         Route::post('/', 'NationalityController@store');
         Route::put('/{nationality}', 'NationalityController@store');
@@ -43,6 +45,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'skill'], function () {
         Route::get('/', 'SkillController@index');
+        Route::get('/select-list', 'SkillController@selectList');
         Route::get('/{skill}', 'SkillController@show');
         Route::post('/', 'SkillController@store');
         Route::put('/{skill}', 'SkillController@store');
@@ -51,6 +54,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'department'], function () {
         Route::get('/', 'DepartmentController@index');
+        Route::get('/select-list', 'DepartmentController@selectList');
         Route::get('/get-list-institution', 'DepartmentController@getListInstitution');
         Route::get('/{department}', 'DepartmentController@show');
         Route::post('/', 'DepartmentController@store');
@@ -60,6 +64,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'institution'], function () {
         Route::get('/', 'InstitutionController@index');
+        Route::get('/select-list', 'InstitutionController@selectList');
         Route::get('/{institution}', 'InstitutionController@show');
         Route::post('/', 'InstitutionController@store');
         Route::put('/{institution}', 'InstitutionController@store');
@@ -119,6 +124,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'role'], function () {
         Route::get('/', 'RoleController@index');
+        Route::get('/select-list', 'RoleController@selectList');
         Route::get('/{role}', 'RoleController@show');
         Route::post('/', 'RoleController@store');
         Route::put('/{role}', 'RoleController@store');
@@ -140,6 +146,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'academic-degree'], function () {
         Route::get('/', 'AcademicDegreeController@index');
+        Route::get('/select-list', 'AcademicDegreeController@selectList');
         Route::get('/{academicDegree}', 'AcademicDegreeController@show');
         Route::post('/', 'AcademicDegreeController@store');
         Route::put('/{academicDegree}', 'AcademicDegreeController@store');
@@ -148,6 +155,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'publication-type'], function () {
         Route::get('/', 'PublicationTypeController@index');
+        Route::get('/select-list', 'PublicationTypeController@selectList');
         Route::get('/{publicationType}', 'PublicationTypeController@show');
         Route::post('/', 'PublicationTypeController@store');
         Route::put('/{publicationType}', 'PublicationTypeController@store');
