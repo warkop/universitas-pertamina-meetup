@@ -175,6 +175,11 @@ Route::group(['prefix' => 'public'], function () {
     Route::get('/department', 'DepartmentController@selectList');
 });
 
+Route::group(['prefix' => 'profile'], function () {
+    Route::get('/institution/photo/{institution}', 'ProfileController@showFileInstitution');
+    Route::get('/member/photo/{member}', 'ProfileController@showFileMember');
+});
+
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/', 'AuthController@login'); // login
     Route::delete('/', 'AuthController@logout'); //logout
