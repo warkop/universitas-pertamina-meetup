@@ -113,7 +113,11 @@ class ProfileController extends Controller
         $file = $request->file('photo');
         if (!empty($file) && $file->isValid()) {
            $changedName = time().random_int(100,999).$file->getClientOriginalName();
-           $file->storeAs('profile/institution/' . $data->id, $changedName);
+           if ($user->type == 0) {
+             $file->storeAs('profile/institution/' . $data->id, $changedName);
+           } else if ($user->type == 1) {
+             $file->storeAs('profile/member/' . $data->id, $changedName);
+           }
 
            if ($data->path_photo != ''){
              if ($user->type == 0) {
@@ -281,6 +285,32 @@ class ProfileController extends Controller
       }
 
       if ($data->path_photo == ''){
+         $this->responseCode = 404;
+         $this->responseStatus = 'File Not Found';
+         return response()->json($this->getResponse(), $this->responseCode);
+      } else {
+         return response()->file($path);
+      }
+    }
+
+    public function showFileInstitution(Institution $institution)
+    {
+      $path = storage_path('app/profile/institution/'.$institution->id.'/'.$institution->path_photo);
+
+      if ($institution->path_photo == ''){
+         $this->responseCode = 404;
+         $this->responseStatus = 'File Not Found';
+         return response()->json($this->getResponse(), $this->responseCode);
+      } else {
+         return response()->file($path);
+      }
+    }
+
+    public function showFileMember(Member $member)
+    {
+      $path = storage_path('app/profile/member/'.$member->id.'/'.$member->path_photo);
+
+      if ($member->path_photo == ''){
          $this->responseCode = 404;
          $this->responseStatus = 'File Not Found';
          return response()->json($this->getResponse(), $this->responseCode);

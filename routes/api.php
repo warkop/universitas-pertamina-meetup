@@ -111,7 +111,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/', 'ProfileController@index');
         Route::post('/', 'ProfileController@store');
         Route::post('/institution/{institution}', 'ProfileController@storeInstitution');
+        Route::get('/institution/photo/{institution}', 'ProfileController@showFileInstitution');
         Route::post('/member/{member}', 'ProfileController@storeMember');
+        Route::get('/member/photo/{member}', 'ProfileController@showFileMember');
         Route::get('/photo', 'ProfileController@showFile');
         Route::post('/photo/update', 'ProfileController@storePhoto');
         Route::get('/files/member/{member}', 'ProfileController@showFileMember');
@@ -184,10 +186,15 @@ Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
 
 Route::group(['prefix' => 'public'], function () {
-    Route::get('/title', 'TitleController@getAll');
-    Route::get('/institution', 'InstitutionController@getAll');
-    Route::get('/nationality', 'NationalityController@getAll');
-    Route::get('/department', 'DepartmentController@getAll');
+    Route::get('/title', 'TitleController@selectList');
+    Route::get('/institution', 'InstitutionController@selectList');
+    Route::get('/nationality', 'NationalityController@selectList');
+    Route::get('/department', 'DepartmentController@selectList');
+});
+
+Route::group(['prefix' => 'profile'], function () {
+    Route::get('/institution/photo/{institution}', 'ProfileController@showFileInstitution');
+    Route::get('/member/photo/{member}', 'ProfileController@showFileMember');
 });
 
 Route::group(['prefix' => 'auth'], function () {
