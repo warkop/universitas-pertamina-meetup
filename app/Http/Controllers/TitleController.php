@@ -7,6 +7,7 @@ use App\Http\Resources\TitleListDataResource;
 use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Models\Title;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class TitleController extends Controller
@@ -37,9 +38,7 @@ class TitleController extends Controller
       }
 
       if (!empty($search)) {
-          $model = $model->where(function ($where) use ($search) {
-             $where->where('name', 'ILIKE', '%' . $search . '%');
-          });
+          $model = $model->where(DB::raw('LOWER(name)'), 'like', '%' . strtolower($search) . '%');
       }
 
       if ($active_only == 1) {
