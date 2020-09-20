@@ -63,115 +63,32 @@ class HelperPublic
      */
     public static function helpTerbilang($num)
     {
-        $digits = [
-            0 => 'nol',
-            1 => 'satu',
-            2 => 'dua',
-            3 => 'tiga',
-            4 => 'empat',
-            5 => 'lima',
-            6 => 'enam',
-            7 => 'tujuh',
-            8 => 'delapan',
-            9 => 'sembilan'
-        ];
-        $orders = [
-            0 => '',
-            1 => 'puluh',
-            2 => 'ratus',
-            3 => 'ribu',
-            6 => 'juta',
-            9 => 'miliar',
-            12 => 'triliun',
-            15 => 'kuadriliun'
-        ];
-
-        $is_neg = $num < 0;
-        $num = "$num";
-
-        $int = '';
-        if (preg_match('!\d+!', $num, $m)) {
-            $int = $m;
+        $num = abs($num);
+        $angka = array('', 'satu', 'dua', 'tiga', 'empat', 'lima',
+        'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas');
+        $result = '';
+        if ($num <12) {
+            $result = ' '. $angka[$num];
+        } else if ($num <20) {
+            $result = self::helpTerbilang($num - 10). ' belas';
+        } else if ($num <100) {
+            $result = self::helpTerbilang($num/10).' puluh'. self::helpTerbilang($num % 10);
+        } else if ($num <200) {
+            $result = ' seratus' . self::helpTerbilang($num - 100);
+        } else if ($num <1000) {
+            $result = self::helpTerbilang($num/100) . ' ratus' . self::helpTerbilang($num % 100);
+        } else if ($num <2000) {
+            $result = ' seribu' . self::helpTerbilang($num - 1000);
+        } else if ($num <1000000) {
+            $result = self::helpTerbilang($num/1000) . ' ribu' . self::helpTerbilang($num % 1000);
+        } else if ($num <1000000000) {
+            $result = self::helpTerbilang($num/1000000) . ' juta' . self::helpTerbilang($num % 1000000);
+        } else if ($num <1000000000000) {
+            $result = self::helpTerbilang($num/1000000000) . ' milyar' . self::helpTerbilang(fmod($num,1000000000));
+        } else if ($num <1000000000000000) {
+            $result = self::helpTerbilang($num/1000000000000) . ' trilyun' . self::helpTerbilang(fmod($num,1000000000000));
         }
-
-        $mult = 0;
-        $wint = '';
-
-        while (preg_match('/(\d{1,3})$/', $int, $m)) {
-            $s = $m[1] % 10;
-            $p = ($m[1] % 100 - $s) / 10;
-            $r = ($m[1] - $p * 10 - $s) / 100;
-
-            if ($r == 0) {
-                $g = '';
-            } else if ($r == 1) {
-                $g = "se$orders[2]";
-            } else {
-                $g = $digits[$r] . " $orders[2]";
-            }
-
-            if ($p == 0) {
-                if ($s == 1) {
-                    $g = ($g ? "$g " . $digits[$s] : ($mult == 0 ? $digits[1] : 'se'));
-                } else if (!$s == 0) {
-                    $g = ($g ? "$g " : '') . $digits[$s];
-                }
-            } else if ($p == 1) {
-                if ($s == 0) {
-                    $g = ($g ? "$g " : '') . "se$orders[1]";
-                } else if ($s == 1) {
-                    $g = ($g ? "$g " : '') . 'sebelas';
-                } else {
-                    $g = ($g ? "$g " : '') . $digits[$s] . " belas";
-                }
-            } else {
-                $g = ($g ? "$g " : '') . $digits[$p] . " puluh" . ($s > 0 ? " " . $digits[$s] : '');
-            }
-            $temp_wint = '';
-            if ($g) {
-                $temp_wint .= $g;
-                if ($g == 'se') {
-                    $temp_wint .= '';
-                } else {
-                    $temp_wint .= ' ';
-                }
-
-                $temp_wint .= $orders[$mult];
-            } else {
-                $temp_wint .= '';
-            }
-
-            if ($wint) {
-                $temp_wint .= " $wint";
-            } else {
-                $temp_wint .= '';
-            }
-
-            $wint = $temp_wint;
-
-            $int = preg_replace('/\d{1,3}$/', '', $int);
-            $mult += 3;
-        }
-        if (!$wint) {
-            $wint = $digits[0];
-        }
-
-        $frac = '';
-        if (preg_match("/\.(\d+)/", $num, $m)) {
-            $frac = $m[1];
-        }
-        $wfrac = '';
-        for ($i = 0; $i < strlen($frac); $i++) {
-            $wfrac .= ($wfrac ? ' ' : '') . $digits[substr($frac, $i, 1)];
-        }
-
-        $hasil = '';
-        if ($is_neg) {
-            $hasil = 'minus ';
-        }
-        $hasil .= $wint;
-        $hasil .= ($wfrac ? " koma $wfrac" : '');
-        return str_replace("sejuta", "satu juta", $hasil);
+        return $result;
     }
 
     /**
@@ -192,6 +109,9 @@ class HelperPublic
                 $m = 'Sukses';
                 break;
             case '201':
+                $s = 'Created';
+                $m = 'Data berhasil dibuat';
+                break;
             case '202':
                 $s = 'Saved';
                 $m = 'Data berhasil disimpan';
@@ -220,6 +140,10 @@ class HelperPublic
                 $s = 'Not Found';
                 $m = 'Halaman tidak ditemukan';
                 break;
+            case '405':
+                $s = 'Method Not Allowed';
+                $m = 'Metode request tidak diizinkan';
+                break;
             case '414':
                 $s = 'Request URI Too Long';
                 $m = 'Data yang dikirim terlalu panjang';
@@ -236,6 +160,10 @@ class HelperPublic
                 $s = 'Service Unavailable';
                 $m = 'Server tidak dapat diakses';
                 break;
+            case '504':
+                $s = 'Gateway Timeout';
+                $m = 'Server tidak merespon';
+                break;
             default:
                 $s = 'Undefined';
                 $m = 'Undefined';
@@ -245,18 +173,18 @@ class HelperPublic
         $status = ($status != '') ? $status : $s;
         $msg = ($msg != '') ? $msg : $m;
         $result = array(
-            "status" => array(
-                "code" => $code,
-                "message" => $msg
+            'status' => array(
+                'code' => $code,
+                'message' => $msg
             ),
-            "data" => $data,
-            "note" => $note,
+            'data' => $data,
+            'note' => $note,
         );
 
         return $result;
     }
 
-    public static function rand_str($length = 10, $token = false)
+    public static function helpRandomString($length = 10, $token = false)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -322,7 +250,7 @@ class HelperPublic
         $alphabet =   array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
         if ($data <= 25) {
             return $alphabet[$data];
-        } elseif ($data > 25) {
+        } else {
             $dividend = ($data + 1);
             $alpha = '';
             $modulo = '';
@@ -356,33 +284,6 @@ class HelperPublic
         }
 
         return $result;
-    }
-
-    public static function slug($text)
-    {
-        // replace non letter or digits by -
-        $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-
-        // transliterate
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-
-        // remove unwanted characters
-        $text = preg_replace('[^-\w]+', '', $text);
-
-        // trim
-        $text = trim($text, '-');
-
-        // remove duplicate -
-        $text = preg_replace('-+', '-', $text);
-
-        // lowercase
-        $text = strtolower($text);
-
-        if (empty($text)) {
-            return 'n-a';
-        }
-
-        return $text;
     }
     // end by: dimas
 
