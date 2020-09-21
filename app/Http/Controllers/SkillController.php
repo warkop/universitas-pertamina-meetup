@@ -37,7 +37,7 @@ class SkillController extends Controller
       $active_only = strip_tags(request()->get('active_only'));
       $type = strip_tags(request()->get('type'));
 
-      $model = Skill::select('*');
+      $model = Skill::select('*')->where('input', 1);
 
       if ($limit != null || $limit != ''){
          $model = $model->limit($limit);

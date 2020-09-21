@@ -185,6 +185,7 @@ class ProfileController extends Controller
                $mSkill->name = $value;
                $mSkill->type = 1;
                $mSkill->status = 0;
+               $mSkill->input = 0;
 
                $mSkill->save();
 
@@ -209,6 +210,7 @@ class ProfileController extends Controller
                $mSkill->name = $values;
                $mSkill->type = 0;
                $mSkill->status = 0;
+               $mSkill->input = 0;
 
                $mSkill->save();
 
