@@ -53,7 +53,7 @@ class ProfileMemberDataResource extends JsonResource
             'id'       => $value->id,
             'name'     => $value->name,
             'type'     => $value->type,
-            'status'     => $value->status,
+            'input'     => $value->input,
          ];
       }
 
@@ -62,7 +62,7 @@ class ProfileMemberDataResource extends JsonResource
             'id'       => $value->id,
             'name'     => $value->name,
             'type'     => $value->type,
-            'status'     => $value->status,
+            'input'     => $value->input,
          ];
       }
 
