@@ -34,7 +34,7 @@ class ProfileInstitutionStoreRequest extends FormRequest
            'phone' => 'required',
            'est' => 'required',
            'department.*.id' => '',
-           'department.*.name' => 'required_with:departement.*.id',
+           'department.*.name' => 'required',
         ];
     }
 }
