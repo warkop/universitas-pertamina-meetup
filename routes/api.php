@@ -173,6 +173,7 @@ Route::group(['prefix' => 'public'], function () {
     Route::get('/institution', 'InstitutionController@selectList');
     Route::get('/nationality', 'NationalityController@selectList');
     Route::get('/department', 'DepartmentController@selectList');
+    Route::get('/announcement/{announcement}/show-file/', 'AnnouncementController@showFile');
 });
 
 Route::group(['prefix' => 'profile'], function () {

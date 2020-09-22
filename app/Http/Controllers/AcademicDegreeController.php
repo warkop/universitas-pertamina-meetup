@@ -18,7 +18,7 @@ class AcademicDegreeController extends Controller
      */
     public function index()
     {
-        $model = AcademicDegree::get();
+        $model = AcademicDegree::orderBy('id', 'DESC')->get();
 
         return DataTables::of(AcademicDegreeListDataResource::collection($model))->toJson();
     }
@@ -65,7 +65,12 @@ class AcademicDegreeController extends Controller
     {
         $request->validated();
 
-        $academicDegree->name           = $request->input('name');
+        $status = $request->input('status');
+        if ($status != null) {
+           $academicDegree->status = $request->input('status');
+        } else {
+           $academicDegree->name = $request->input('name');
+        }
         $academicDegree->save();
 
         $this->responseCode     = 200;
