@@ -7,7 +7,6 @@ use App\Http\Resources\SkillListDataResource;
 use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Models\Skill;
-use App\Models\Post;
 use Yajra\DataTables\Facades\DataTables;
 
 class SkillController extends Controller
@@ -20,10 +19,10 @@ class SkillController extends Controller
     public function index()
     {
         $type = strip_tags(request()->get('type'));
-        $model = new Post;
-        // if ($type == 0 || $type == 1) {
-        //     $model = $model->where('type', $type);
-        // }
+        $model = new Skill;
+        if ($type == 0 || $type == 1) {
+           $model = $model->where('type', $type);
+        }
 
         $model = $model->get();
 
