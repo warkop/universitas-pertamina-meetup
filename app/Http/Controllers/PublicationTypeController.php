@@ -65,8 +65,12 @@ class PublicationTypeController extends Controller
     public function store(PublicationTypeStoreRequest $request, PublicationType $publicationType)
     {
         $request->validated();
-
-        $publicationType->name           = $request->input('name');
+        $status = $request->input('status');
+        if ($status != null) {
+           $publicationType->status = $request->input('status');
+        } else {
+           $publicationType->name           = $request->input('name');
+        }
         $publicationType->save();
 
         $this->responseCode     = 200;

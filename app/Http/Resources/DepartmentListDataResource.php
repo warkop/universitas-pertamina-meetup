@@ -17,6 +17,7 @@ class DepartmentListDataResource extends JsonResource
         return [
             'id'            => $this->id,
             'name'          => $this->name,
+            'status'          => $this->status,
             'institution_name'   => $this->institution_name,
             'updated_at'    => date('d-m-Y', strtotime($this->updated_at)),
         ];

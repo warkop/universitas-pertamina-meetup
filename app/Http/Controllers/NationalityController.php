@@ -64,8 +64,14 @@ class NationalityController extends Controller
     public function store(NationalityStoreRequest $request, Nationality $nationality)
     {
         $request->validated();
-        $nationality->name = $request->input('name');
-        $nationality->code = $request->input('code');
+
+        $status = $request->input('status');
+        if ($status != null) {
+           $nationality->status = $request->input('status');
+        } else {
+           $nationality->name = $request->input('name');
+           $nationality->code = $request->input('code');
+        }
         $nationality->save();
 
         $this->responseCode = 200;

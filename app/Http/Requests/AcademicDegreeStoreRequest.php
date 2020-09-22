@@ -24,7 +24,8 @@ class AcademicDegreeStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required'
+           'name' => 'required_without:status',
+           'status' => 'required_without:name',
         ];
     }
 }
