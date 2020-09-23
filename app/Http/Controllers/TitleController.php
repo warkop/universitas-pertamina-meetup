@@ -7,7 +7,10 @@ use App\Http\Resources\TitleListDataResource;
 use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Models\Title;
+use App\Transformers\TitleTransformer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class TitleController extends Controller
@@ -19,9 +22,15 @@ class TitleController extends Controller
      */
     public function index()
     {
-        $model = Title::get();
+        $model = Title::query();
 
-        return DataTables::of(TitleListDataResource::collection($model))->toJson();
+        return DataTables::eloquent($model)
+        ->setTransformer(new TitleTransformer)
+        ->filterColumn('updated_at', function($query, $keyword) {
+            $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->toJson();
     }
 
     public function selectList(MasterListRequest $request)
