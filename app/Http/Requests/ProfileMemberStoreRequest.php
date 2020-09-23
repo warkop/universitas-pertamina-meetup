@@ -43,7 +43,6 @@ class ProfileMemberStoreRequest extends FormRequest
          'orcid_id' => '',
          'scopus_id' => '',
          'website' => '',
-         ''
       ];
    }
 }

@@ -28,12 +28,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token, $menu)
+    protected function respondWithToken($token, $change_mail, $menu)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::factory()->getTTL() * 60,
+            'change_mail'=> $change_mail,
             'menu'       => $menu
         ]);
     }
@@ -65,7 +66,7 @@ class AuthController extends Controller
 
        $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
 
-       return $this->respondWithToken($token, SidebarMenuDataResource::collection($data));
+       return $this->respondWithToken($token, $user->change_mail, SidebarMenuDataResource::collection($data));
     }
 
     /**

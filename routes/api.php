@@ -113,6 +113,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/institution/{institution}', 'ProfileController@storeInstitution');
         Route::get('/institution/photo/{institution}', 'ProfileController@showFileInstitution');
         Route::post('/member/{member}', 'ProfileController@storeMember');
+        Route::post('/change-mail/{id}', 'ProfileController@changeMail');
         Route::get('/member/photo/{member}', 'ProfileController@showFileMember');
         Route::get('/photo', 'ProfileController@showFile');
         Route::post('/photo/update', 'ProfileController@storePhoto');
@@ -167,6 +168,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
+Route::get('/change-email/approve', 'ProfileController@approveMail');
 
 Route::group(['prefix' => 'public'], function () {
     Route::get('/title', 'TitleController@selectList');

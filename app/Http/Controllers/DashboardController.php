@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\OpportunityListDataResource;
+use App\Http\Resources\MemberDashboardResource;
+use App\Http\Resources\AnnouncementDashboardResource;
 use App\Models\Announcement;
 use App\Models\Institution;
 use App\Models\Member;
@@ -18,7 +20,8 @@ class DashboardController extends Controller
         $announcement = Announcement::take($limit)->latest()->get();
 
         $this->responseCode = 200;
-        $this->responseData = $announcement;
+        $this->responseData = AnnouncementDashboardResource::collection($announcement);
+        // $this->responseData = $announcement;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -77,18 +80,24 @@ class DashboardController extends Controller
                 $query->where('institution_id', $institution->id);
             });
         } else if ($user->type == 1) {
-            $member = Member::with('department')->find($user->owner_id);
-            $institution_id = $member->department->institution_id;
+            $memberOld = Member::with('department')->find($user->owner_id);
+            $institution_id = $memberOld->department['institution_id'];
 
             $member = $member->whereHas('department', function($query) use($institution_id){
                 $query->where('institution_id', $institution_id);
             });
         }
 
+        $date = Carbon::today()->subYears(3);
+        $member = $member->withCount([
+           'publication as publication_count' => function ($query) use ($date) {
+             $query->where('member_publication.created_at', '>=', $date);
+          }]);
+
         $member = $member->get()->shuffle();
 
         $this->responseCode = 200;
-        $this->responseData = $member;
+        $this->responseData = MemberDashboardResource::collection($member);;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
