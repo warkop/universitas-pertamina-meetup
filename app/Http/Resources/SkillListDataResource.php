@@ -18,6 +18,7 @@ class SkillListDataResource extends JsonResource
             'id'            => $this->id,
             'name'          => $this->name,
             'type'          => $this->type,
+            'status'          => $this->status,
             'updated_at'    => date('d-m-Y', strtotime($this->updated_at)),
         ];
     }

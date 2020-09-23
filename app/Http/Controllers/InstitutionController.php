@@ -64,10 +64,16 @@ class InstitutionController extends Controller
     public function store(InstitutionStoreRequest $request, Institution $institution)
     {
         $request->validated();
-        $institution->name      = $request->input('name');
-        $institution->email     = $request->input('email');
-        $institution->address   = $request->input('address');
-        $institution->phone     = $request->input('phone');
+
+        $status = $request->input('status');
+        if ($status != null) {
+           $institution->status = $request->input('status');
+        } else {
+           $institution->name      = $request->input('name');
+           $institution->email     = $request->input('email');
+           $institution->address   = $request->input('address');
+           $institution->phone     = $request->input('phone');
+        }
         $institution->save();
 
         $this->responseCode = 200;

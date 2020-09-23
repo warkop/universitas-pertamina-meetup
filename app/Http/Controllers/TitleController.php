@@ -72,7 +72,14 @@ class TitleController extends Controller
     public function store(TitleStoreRequest $request, Title $title)
     {
         $request->validated();
-        $title->name = $request->input('name');
+
+        $status = $request->input('status');
+        if ($status != null) {
+           $title->status = $request->input('status');
+        } else {
+           $title->name = $request->input('name');
+        }
+        
         $title->save();
 
         $this->responseCode = 200;

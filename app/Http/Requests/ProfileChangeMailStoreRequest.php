@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AcademicDegreeStoreRequest extends FormRequest
+class ProfileChangeMailStoreRequest extends FormRequest
 {
    /**
    * Determine if the user is authorized to make this request.
@@ -23,17 +23,8 @@ class AcademicDegreeStoreRequest extends FormRequest
    */
    public function rules()
    {
-
-      $request = app('request');
-
-      if (!($request->filled(['status']))) {
-         return [
-            'name' => 'required',
-         ];
-      } else {
-         return [
-            'status'              => 'required|numeric|between:0,1',
-         ];
-      }
+      return [
+         'email' => 'email|required|unique:member,email|unique:institution,email',
+      ];
    }
 }

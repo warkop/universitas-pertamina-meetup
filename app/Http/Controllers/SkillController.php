@@ -21,7 +21,7 @@ class SkillController extends Controller
         $type = strip_tags(request()->get('type'));
         $model = new Skill;
         if ($type == 0 || $type == 1) {
-            $model = $model->where('type', $type);
+           $model = $model->where('type', $type);
         }
 
         $model = $model->get();
@@ -37,7 +37,7 @@ class SkillController extends Controller
       $active_only = strip_tags(request()->get('active_only'));
       $type = strip_tags(request()->get('type'));
 
-      $model = Skill::select('*');
+      $model = Skill::select('*')->where('input', 1);
 
       if ($limit != null || $limit != ''){
          $model = $model->limit($limit);
@@ -75,8 +75,14 @@ class SkillController extends Controller
     public function store(SkillStoreRequest $request, Skill $skill)
     {
         $request->validated();
-        $skill->name = $request->input('name');
-        $skill->type = $request->input('type');
+
+        $status = $request->input('status');
+        if ($status != null) {
+           $skill->status = $request->input('status');
+        } else {
+           $skill->name = $request->input('name');
+           $skill->type = $request->input('type');
+        }
         $skill->save();
 
         $this->responseCode = 200;

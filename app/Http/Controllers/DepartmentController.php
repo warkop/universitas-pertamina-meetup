@@ -94,8 +94,14 @@ class DepartmentController extends Controller
     public function store(DepartmentStoreRequest $request, Department $department)
     {
         $request->validated();
-        $department->name           = $request->input('name');
-        $department->institution_id = $request->input('institution_id');
+
+        $status = $request->input('status');
+        if ($status != null) {
+           $department->status = $request->input('status');
+        } else {
+           $department->name           = $request->input('name');
+           $department->institution_id = $request->input('institution_id');
+        }
         $department->save();
 
         $this->responseCode = 200;

@@ -17,6 +17,7 @@ class TitleListDataResource extends JsonResource
         return [
             'id'            => $this->id,
             'name'          => $this->name,
+            'status'          => $this->status,
             'updated_at'    => date('d-m-Y', strtotime($this->updated_at)),
         ];
     }
