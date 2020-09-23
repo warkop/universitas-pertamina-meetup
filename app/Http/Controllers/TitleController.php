@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TitleStoreRequest;
-use App\Http\Resources\TitleListDataResource;
 use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Models\Title;
 use App\Transformers\TitleTransformer;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class TitleController extends Controller
@@ -79,7 +76,7 @@ class TitleController extends Controller
         } else {
            $title->name = $request->input('name');
         }
-        
+
         $title->save();
 
         $this->responseCode = 200;
