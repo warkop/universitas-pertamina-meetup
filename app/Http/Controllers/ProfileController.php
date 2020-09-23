@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileInstitutionStoreRequest;
 use App\Http\Requests\ProfileMemberStoreRequest;
 use App\Http\Requests\ProfilePhotoStoreRequest;
+use App\Http\Requests\ProfileChangeMailStoreRequest;
 
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
 
+use App\Models\EmailReset;
+use App\Models\User;
 use App\Models\Institution;
 use App\Models\Department;
 use App\Models\Member;
@@ -17,6 +20,12 @@ use App\Models\MemberSkill;
 use App\Models\MemberEducation;
 use App\Models\MemberPublication;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Str;
+
+use Mail;
+use Carbon\Carbon;
+use DB;
 
 class ProfileController extends Controller
 {
@@ -320,4 +329,110 @@ class ProfileController extends Controller
          return response()->file($path);
       }
     }
+
+    public function sendMail(){
+      try {
+         $data = array('name' => 'Fahmi', 'email' => 'fahmirizal96@gmail.com');
+         Mail::send('emails.haptics', $data, function($message) use ($data){
+            $message->to($data['email'], $data['name'])->subject('Test Subject');
+         });
+
+         alert()->success('Email sending complete', 'message sent');
+         return back();
+      } catch (\Exception $e) {}
+   }
+
+   public function changeMail(ProfileChangeMailStoreRequest $request, $id)
+   {
+     $request->validated();
+
+     $email = $request->input('email');
+
+     $user = auth()->user();
+
+     if ($user->type == 0) {
+        $model = Institution::find($id);
+        $type = 'institution';
+     } else if ($user->type == 1) {
+        $model = Member::find($id);
+        $type = 'member';
+     }
+
+     $emailReset = EmailReset::updateOrCreate(
+         ['email' => $email],
+         [
+           'email' => $email,
+           'token' => Str::random(60),
+        ]);
+
+     $url = url('/api/change-email/approve?type='.$type.'&change_email_token='.$emailReset->token);
+
+     Mail::raw("Your Link To Approve Email : ".$url." . If you didn't request this, you can ignore this email message ", function($message) use ($email)
+     {
+        $message->subject('Verify Your Email');
+        $message->from('no-reply@up.com', 'Universitas Pertamina');
+        $message->to($email);
+     });
+
+     $model->email = $email;
+     $model->save();
+
+     $arrayUser = [
+        'change_mail'=> 1,
+     ];
+
+     if ($arrayUser == 0) {
+        User::where('owner_id', $id)->where('type', 0)
+            ->update($arrayUser);
+     } else if ($user->type == 1) {
+        User::where('owner_id', $id)->where('type', 1)
+            ->update($arrayUser);
+     }
+
+     $this->responseCode = 200;
+     $this->responseMessage = 'Success Change Email';
+     $this->responseData = $model;
+
+     return response()->json($this->getResponse(), $this->responseCode);
+   }
+
+   public function approveMail(request $request){
+      $token = $request->input('change_email_token');
+      $type = $request->input('type');
+      $emailReset = EmailReset::where('token', $token)->first();
+
+      if (!$emailReset){
+        $this->responseCode = 203;
+        $this->responseMessage = 'This token is invalid.';
+
+        return response()->json($this->getResponse(), $this->responseCode);
+     } elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
+        $emailReset->delete();
+        $this->responseCode = 404;
+        $this->responseMessage = 'This password reset token is expired.';
+
+        return response()->json($this->getResponse(), $this->responseCode);
+      }else {
+         $arrayUser = [
+            'change_mail'=> 0,
+            'new_email_verified_at' => date("Y-m-d H:i:s"),
+         ];
+
+         if ($type == 'institution') {
+            $data = DB::table('institution')->where('email', $emailReset->email)->first();
+            User::where('owner_id', $data->id)->where('type', 0)
+                ->update($arrayUser);
+         } else if ($type == 'member') {
+            $data = DB::table('member')->where('email', $emailReset->email)->first();
+            User::where('owner_id', $data->id)->where('type', 1)
+                ->update($arrayUser);
+         }
+         $emailReset->delete();
+
+         $this->responseCode = 200;
+         $this->responseMessage = 'Email Berhasil di Rubah';
+
+         return response()->json($this->getResponse(), $this->responseCode);
+      }
+   }
 }
