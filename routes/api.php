@@ -147,6 +147,22 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
     });
 
+    Route::group(['prefix' => 'research-group'], function () {
+        Route::get('/', 'ResearchGroupController@index');
+        Route::get('/list-of-member', 'ResearchGroupController@listOfMember');
+        Route::get('/{group}', 'ResearchGroupController@show');
+        Route::post('/{group}/join', 'ResearchGroupController@join');
+        Route::post('/{group}/select-as-admin', 'ResearchGroupController@selectAsAdmin');
+
+        Route::post('/{group}/create-discussion', 'ResearchGroupController@createDiscussion');
+        Route::patch('/{group}/close-discussion', 'ResearchGroupController@closeDiscussion');
+        Route::delete('/{group}/delete-discussion', 'ResearchGroupController@deleteDiscussion');
+
+        Route::get('/{group}/{discussion}/get-comment', 'ResearchGroupController@createDiscussion');
+        Route::post('/{group}/{discussion}/add-comment', 'ResearchGroupController@closeDiscussion');
+        Route::delete('/{group}/{discussion}/delete-comment', 'ResearchGroupController@deleteDiscussion');
+    });
+
     Route::group(['prefix' => 'academic-degree'], function () {
         Route::get('/', 'AcademicDegreeController@index');
         Route::get('/select-list', 'AcademicDegreeController@selectList');
@@ -164,6 +180,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::put('/{publicationType}', 'PublicationTypeController@store');
         Route::delete('/{publicationType}', 'PublicationTypeController@destroy');
     });
+    Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
@@ -189,3 +206,6 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('/', 'AuthController@me');
     Route::get('/refresh', 'AuthController@refresh');
 });
+
+Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
+

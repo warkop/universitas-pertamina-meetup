@@ -32,7 +32,35 @@ class ResearchGroupController extends Controller
     {
         $request->validated();
 
+        $researchGroup->name    = $request->input('name');
+        $researchGroup->desc    = $request->input('desc');
+        $researchGroup->topic   = $request->input('topic');
+        $researchGroup->save();
 
+        $this->responseCode     = 200;
+        $this->responseMessage  = 'Data berhasil disimpan';
+        $this->responseData     = $researchGroup->refresh();
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function join()
+    {
+        # code...
+    }
+
+    public function listOfMember(ResearchGroup $researchGroup)
+    {
+        $this->responseCode     = 200;
+        $this->responseMessage  = 'Data berhasil disimpan';
+        $this->responseData     = $researchGroup->load('memberGroup');
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function selectAsAdmin(ResearchGroup $researchGroup)
+    {
+        # code...
     }
 
     /**

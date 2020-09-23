@@ -25,7 +25,7 @@ class SignUpInstitutionRequest extends FormRequest
     {
         return [
             'name'                  => 'required|regex:/^[a-zA-Z0-9\-\s]+$/|unique:institution,name',
-            'email'                 => 'required|email',
+            'email'                 => 'required|email|unique:user',
             'password'              => 'required|confirmed',
             'password_confirmation' => 'required|present',
         ];

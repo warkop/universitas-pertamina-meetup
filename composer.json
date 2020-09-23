@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.0",
         "tymon/jwt-auth": "^1.0",
         "wildside/userstamps": "^2.0",
+        "yajra/laravel-datatables-fractal": "^1.6",
         "yajra/laravel-datatables-oracle": "^9.11"
     },
     "require-dev": {

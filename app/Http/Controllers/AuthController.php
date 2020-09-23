@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SidebarMenuDataResource;
-use App\Models\User;
 use App\Models\Menu;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+    private $sideBarMenu;
     /**
      * Create a new AuthController instance.
      *
@@ -46,7 +45,7 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $credentials = request()->only(['username', 'password']);
+        $credentials = request()->only(['email', 'password']);
 
         if (! $token = Auth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -76,7 +75,9 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        $token = JWTAuth::getToken();
+        $payload = JWTAuth::getPayload($token)->toArray();
+        return response()->json($payload);
     }
 
     /**
@@ -98,6 +99,6 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(Auth::refresh());
+        return $this->respondWithToken(Auth::refresh(), auth()->user()->change_mail, $this->sideBarMenu);
     }
 }
