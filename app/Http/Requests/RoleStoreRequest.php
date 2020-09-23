@@ -23,10 +23,17 @@ class RoleStoreRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name' => 'required_without:status',
-            'status' => 'required_without:name',
+      $request = app('request');
+
+      if (!($request->filled(['status']))) {
+         return [
+            'name' => 'required',
             'menu.*.id' => 'exists:menu,id'
-        ];
+         ];
+      } else {
+         return [
+            'status'              => 'required|numeric|between:0,1',
+         ];
+      }
     }
 }
