@@ -28,13 +28,8 @@ class ResearchGroup extends Model
         'deleted_by',
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-    ];
-
     public function memberGroup()
     {
-        return $this->belongsToMany(Member::class, 'research_group_member', 'member_id', 'research_group_id');
+        return $this->belongsToMany(Member::class, 'research_group_member', 'research_group_id','member_id');
     }
 }
