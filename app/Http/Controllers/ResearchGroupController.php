@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CommentRequest;
+use App\Http\Requests\DiscussionRequest;
 use App\Http\Requests\ResearchGroupStoreRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\ResearchGroupListDataResource;
@@ -91,7 +92,7 @@ class ResearchGroupController extends Controller
     public function listDiscussion(ResearchGroup $researchGroup)
     {
         $limit = request()->get('limit');
-        $order = request()->get('order');
+        $order = request()->get('order')??'asc';
         $discussion = ResearchGroupDiscussion::where('research_group_id', $researchGroup->id)
         ->take($limit)
         ->orderBy('id', $order)
@@ -99,6 +100,45 @@ class ResearchGroupController extends Controller
 
         $this->responseCode     = 200;
         $this->responseData     = $discussion;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function createDiscussion(DiscussionRequest $request, ResearchGroup $researchGroup)
+    {
+        $request->validated();
+        $researchGroupDiscussion = new ResearchGroupDiscussion();
+
+        $researchGroupDiscussion->research_group_id = $researchGroup->id;
+        $researchGroupDiscussion->name              = $request->name;
+        $researchGroupDiscussion->desc              = $request->desc;
+        $researchGroupDiscussion->save();
+
+        $this->responseCode     = 200;
+        $this->responseData     = $researchGroupDiscussion->refresh();
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function deleteDiscussion(ResearchGroupDiscussion $researchGroupDiscussion)
+    {
+        $researchGroupDiscussion->delete();
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Diskusi berhasil dihapus';
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function closeDiscussion(ResearchGroupDiscussion $researchGroupDiscussion)
+    {
+        $user = auth()->user();
+        $researchGroupDiscussion->closed_by = $user->id;
+        $researchGroupDiscussion->closed_at = now();
+        $researchGroupDiscussion->save();
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Diskusi berhasil ditutup';
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -115,9 +155,24 @@ class ResearchGroupController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function storeComment(CommentRequest $request, ResearchGroupDiscussion $researchGroupDiscussion, ResearchGroupComment $researchGroupComment)
+    public function storeComment(CommentRequest $request, ResearchGroupDiscussion $researchGroupDiscussion)
     {
         $request->validated();
+
+        if ($researchGroupDiscussion->closed_at) {
+            $this->responseCode = 403;
+            $this->responseMessage = 'Diskusi sudah ditutup, Anda tidak bisa menambahkan komentar pada diskusi ini!';
+        } else {
+            $comment = new ResearchGroupComment(['comment' => $request->input('comment')]);
+            $researchGroupDiscussion->comment()->save($comment);
+
+            $this->responseCode = 200;
+            $this->responseMessage = 'Data berhasil disimpan';
+            $this->responseData = new CommentResource($comment->refresh()->load('user.member'));
+        }
+
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 
     public function deleteComment(ResearchGroupComment $researchGroupComment)
@@ -141,7 +196,7 @@ class ResearchGroupController extends Controller
 
     public function selectAsAdmin(ResearchGroup $researchGroup)
     {
-        # code...
+        echo 'Under Construction';
     }
 
     /**

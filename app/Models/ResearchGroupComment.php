@@ -26,4 +26,18 @@ class ResearchGroupComment extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $with = [
+        'user.member'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }

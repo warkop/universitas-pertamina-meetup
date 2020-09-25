@@ -160,20 +160,22 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::get('/{researchGroup}/discussion', 'ResearchGroupController@listDiscussion');
         Route::post('/{researchGroup}/create-discussion', 'ResearchGroupController@createDiscussion');
+
+        Route::group(['prefix' => '/discussion'], function () {
+            Route::patch('/{researchGroupDiscussion}/close-discussion', 'ResearchGroupController@closeDiscussion');
+            Route::delete('/{researchGroupDiscussion}/delete-discussion', 'ResearchGroupController@deleteDiscussion');
+
+            Route::get('/{researchGroupDiscussion}/get-comment', 'ResearchGroupController@getComment');
+            Route::post('/{researchGroupDiscussion}/add-comment', 'ResearchGroupController@storeComment');
+
+            Route::group(['prefix' => '/discussion-comment'], function () {
+                Route::delete('/{researchGroupComment}/delete-comment', 'ResearchGroupController@deleteComment');
+                Route::get('/{researchGroupComment}/show-file', 'ResearchGroupController@getFileComment');
+            });
+        });
+
     });
 
-    Route::group(['prefix' => 'discussion'], function () {
-        Route::patch('/{researchGroupDiscussion}/close-discussion', 'ResearchGroupController@closeDiscussion');
-        Route::delete('/{researchGroupDiscussion}/delete-discussion', 'ResearchGroupController@deleteDiscussion');
-
-        Route::get('/{researchGroupDiscussion}/get-comment', 'ResearchGroupController@getComment');
-        Route::post('/{researchGroupDiscussion}/add-comment', 'ResearchGroupController@addComment');
-    });
-
-    Route::group(['prefix' => 'discussion-comment'], function () {
-        Route::delete('/{researchGroupComment}/delete-comment', 'ResearchGroupController@deleteComment');
-        Route::get('/{researchGroupComment}/show-file', 'ResearchGroupController@getFileComment');
-    });
 
     Route::group(['prefix' => 'academic-degree'], function () {
         Route::get('/', 'AcademicDegreeController@index');
