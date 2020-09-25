@@ -1,14 +1,29 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\ResearchGroupComment;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(ResearchGroupComment::class, function (Faker $faker) {
+class ResearchGroupCommentFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = ResearchGroupComment::class;
 
-    return [
-        'research_group_discussion_id' => 1,
-        'comment' => $faker->realText(),
-    ];
-});
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'research_group_discussion_id' => 1,
+            'comment' => $this->faker->realText(),
+        ];
+    }
+}

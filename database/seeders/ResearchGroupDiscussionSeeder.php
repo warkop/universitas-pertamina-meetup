@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\ResearchGroupDiscussion;
 use Illuminate\Database\Seeder;
 
