@@ -31,4 +31,13 @@ class ResearchGroupComment extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    protected $with = [
+        'user.member'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }

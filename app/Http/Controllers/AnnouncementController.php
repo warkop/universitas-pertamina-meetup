@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AnnouncementStoreRequest;
+use App\Http\Requests\CommentRequest;
 use App\Http\Resources\AnnouncementListDataResource;
 use App\Http\Resources\CommentResource;
 use App\Models\Announcement;
@@ -73,8 +74,10 @@ class AnnouncementController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function storeComment(Request $request, Announcement $announcement)
+    public function storeComment(CommentRequest $request, Announcement $announcement)
     {
+        $request->validated();
+
         $comment = new AnnouncementComment(['comment' => $request->input('comment')]);
         $announcement->comment()->save($comment);
 
