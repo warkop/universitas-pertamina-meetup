@@ -1,9 +1,11 @@
 <?php
 
-use App\Models\ResearchGroupComment;
+namespace Database\Seeders;
+
+use App\Models\Title;
 use Illuminate\Database\Seeder;
 
-class ResearchGroupCommentSeeder extends Seeder
+class TitleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,6 +14,6 @@ class ResearchGroupCommentSeeder extends Seeder
      */
     public function run()
     {
-        factory(ResearchGroupComment::class, 20)->create();
+        factory(Title::class, 100000)->create();
     }
 }

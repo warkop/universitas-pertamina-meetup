@@ -1,16 +1,32 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\ResearchGroup;
 use App\Models\ResearchGroupDiscussion;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(ResearchGroupDiscussion::class, function (Faker $faker) {
-    $researchGroup = ResearchGroup::inRandomOrder()->first();
-    return [
-        'research_group_id' => $researchGroup->id,
-        'name' => $faker->name(),
-        'desc' => $faker->realText(),
-    ];
-});
+class ResearchGoupDiscussionFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = ResearchGroupDiscussion::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        $researchGroup = ResearchGroup::inRandomOrder()->first();
+        return [
+            'research_group_id' => $researchGroup->id,
+            'name' => $this->faker->name(),
+            'desc' => $this->faker->realText(),
+        ];
+    }
+}

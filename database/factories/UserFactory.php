@@ -1,33 +1,38 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\User;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-/*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| This directory should contain each of the model factory definitions for
-| your application. Factories provide a convenient way to generate new
-| model instances for testing / seeding your application's database.
-|
-*/
+class UserFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = User::class;
 
-$factory->define(User::class, function (Faker $faker) {
-    return [
-        'email'             => $faker->unique()->safeEmail,
-        'type'              => $faker->numberBetween(0, 1),
-        'owner_id'          => $faker->numberBetween(2, 3),
-        'role_id'           => $faker->numberBetween(2, 3),
-        'password'          => bcrypt('qwerty'), // password
-        'remember_token'    => Str::random(10),
-        'email_verified_at' => now(),
-        'confirm_at'        => now(),
-        'created_at'        => now(),
-        'updated_at'        => now(),
-    ];
-});
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'email'             => $this->faker->unique()->safeEmail,
+            'type'              => $this->faker->numberBetween(0, 1),
+            'owner_id'          => $this->faker->numberBetween(2, 3),
+            'role_id'           => $this->faker->numberBetween(2, 3),
+            'password'          => bcrypt('qwerty'), // password
+            'remember_token'    => Str::random(10),
+            'email_verified_at' => now(),
+            'confirm_at'        => now(),
+            'created_at'        => now(),
+            'updated_at'        => now(),
+        ];
+    }
+}
