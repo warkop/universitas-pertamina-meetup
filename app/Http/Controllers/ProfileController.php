@@ -20,12 +20,11 @@ use App\Models\MemberSkill;
 use App\Models\MemberEducation;
 use App\Models\MemberPublication;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-use Mail;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -337,7 +336,6 @@ class ProfileController extends Controller
             $message->to($data['email'], $data['name'])->subject('Test Subject');
          });
 
-         alert()->success('Email sending complete', 'message sent');
          return back();
       } catch (\Exception $e) {}
    }
