@@ -22,8 +22,8 @@ class ProfileInstitutionDataResource extends JsonResource
             'phone'              => $this->phone,
             'est'                => $this->est,
             'country'            => [
-               'id'  => $this->nationality->id,
-               'name'=> $this->nationality->name,
+               'id'  => $this->nationality->id??null,
+               'name'=> $this->nationality->name??null,
             ],
             'city'               => $this->city,
             'postal_code'        => $this->postal_code,
