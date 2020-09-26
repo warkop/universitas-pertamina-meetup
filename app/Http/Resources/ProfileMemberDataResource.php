@@ -17,8 +17,8 @@ class ProfileMemberDataResource extends JsonResource
       $data = [
          'id'                 => $this->id,
          'title'              =>  [
-            'id'   => $this->title->id,
-            'name'  => $this->title->name,
+            'id'   => $this->title->id??null,
+            'name'  => $this->title->name??null,
          ],
          'name'               => $this->name,
          'email'              => $this->email,
@@ -72,8 +72,8 @@ class ProfileMemberDataResource extends JsonResource
             'title'     => $value->title,
             'author'     => $value->author,
             'publication_type' => [
-               'id'    => $value->publicationType->id,
-               'name'    => $value->publicationType->name,
+               'id'    => $value->publicationType->id??null,
+               'name'    => $value->publicationType->name??null,
             ]
          ];
       }

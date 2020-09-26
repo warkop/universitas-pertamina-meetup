@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\InvitationRequest;
 use App\Http\Resources\MemberResource;
+use App\Http\Resources\ProfileInstitutionDataResource;
+use App\Http\Resources\ProfileMemberDataResource;
 use App\Mail\Invitation;
+use App\Models\Institution;
 use App\Models\Member;
 use App\Models\MemberPublication;
 use App\Models\MemberSkill;
@@ -139,12 +142,22 @@ class ResearchUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Member $member)
     {
-        $member = Member::with(['department.institution', 'memberSkill', 'memberEducation.AcademicDegree', 'publication', 'memberResearchInterest'])->find($id);
+        $data = $member->load([
+            'title',
+            'memberSkill',
+            'memberResearchInterest',
+            'memberEducation',
+            'department',
+            'nationality',
+            'publication'
+        ])
+        ->refresh()
+        ;
+        $this->responseData = new ProfileMemberDataResource($data);
         $this->responseCode = 200;
-        $this->responseData = new MemberResource($member);
 
-        return response()->json($this->getResponse(), $this->responseCode);
+         return response()->json($this->getResponse(), $this->responseCode);
     }
 }
