@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\OpportunityListDataResource;
 use App\Http\Resources\MemberDashboardResource;
 use App\Http\Resources\AnnouncementDashboardResource;
+use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Models\Announcement;
 use App\Models\Institution;
 use App\Models\Member;
@@ -21,7 +22,6 @@ class DashboardController extends Controller
 
         $this->responseCode = 200;
         $this->responseData = AnnouncementDashboardResource::collection($announcement);
-        // $this->responseData = $announcement;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -121,6 +121,14 @@ class DashboardController extends Controller
 
         $this->responseCode = 200;
         $this->responseData = $countOfMember;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function profileInstitution(Institution $institution)
+    {
+        $this->responseCode = 200;
+        $this->responseData = new ProfileInstitutionDataResource($institution->load('department'));
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

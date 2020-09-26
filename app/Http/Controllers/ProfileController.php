@@ -40,7 +40,6 @@ class ProfileController extends Controller
         if ($user->type == 0) {
            $data = Institution::with('department')->find($user->owner_id);
            $this->responseData = new ProfileInstitutionDataResource($data);
-           // $this->responseData = $data;
         } else if ($user->type == 1) {
             $data = Member::with('title')->with('memberSkill')->with('memberResearchInterest')->with('memberEducation')->with('department')->with('nationality')->with('publication')->find($user->owner_id);
             $this->responseData = new ProfileMemberDataResource($data);
