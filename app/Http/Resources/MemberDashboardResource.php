@@ -28,6 +28,7 @@ class MemberDashboardResource extends JsonResource
             'publication_count' => $this->publication_count,
             'created_at'            => date('d-m-Y H:i:s', strtotime($this->created_at)),
             'updated_at'            => date('d-m-Y H:i:s', strtotime($this->updated_at)),
+            'path_photo'             => $this->path_photo,
         ];
     }
 }

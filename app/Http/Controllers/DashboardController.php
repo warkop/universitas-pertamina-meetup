@@ -36,7 +36,7 @@ class DashboardController extends Controller
         )->take($limit)->latest()->get();
 
         $this->responseCode = 200;
-        $this->responseData = OpportunityListDataResource::collection($opportunity);
+        $this->responseData = OpportunityListDataResource::collection($opportunity->load(['institution', 'opportunityType']));
 
 
         return response()->json($this->getResponse(), $this->responseCode);
