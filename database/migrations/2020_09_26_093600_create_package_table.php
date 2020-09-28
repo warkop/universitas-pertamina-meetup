@@ -16,11 +16,11 @@ class CreatePackageTable extends Migration
         Schema::create('package', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('profile');
+            $table->boolean('profile')->default(false);
             $table->integer('package_type')->nullable();
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('updated_by');
-            $table->unsignedBigInteger('deleted_by');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -27,9 +27,9 @@ class CreateInvoiceTable extends Migration
             $table->string('payment_attachment')->nullable();
             $table->datetime('payment_date')->nullable();
             $table->datetime('payment_confirm_at')->nullable();
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('updated_by');
-            $table->unsignedBigInteger('deleted_by');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
