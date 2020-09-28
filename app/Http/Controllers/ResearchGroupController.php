@@ -7,6 +7,7 @@ use App\Http\Requests\DiscussionRequest;
 use App\Http\Requests\ResearchGroupStoreRequest;
 use App\Http\Resources\AnnouncementListDataResource;
 use App\Http\Resources\CommentResource;
+use App\Http\Resources\DiscussionResource;
 use App\Http\Resources\ResearchGroupListDataResource;
 use App\Models\ResearchGroup;
 use App\Models\ResearchGroupComment;
@@ -101,7 +102,7 @@ class ResearchGroupController extends Controller
         ->get();
 
         $this->responseCode     = 200;
-        $this->responseData     = AnnouncementListDataResource::collection($discussion);
+        $this->responseData     = DiscussionResource::collection($discussion);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
