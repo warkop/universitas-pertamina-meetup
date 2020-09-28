@@ -148,6 +148,10 @@ class HelperPublic
                 $s = 'Request URI Too Long';
                 $m = 'Data yang dikirim terlalu panjang';
                 break;
+            case '422':
+                $s = 'Unprocessable Entity';
+                $m = 'Data yang Anda inputkan tidak sesuai ketentuan';
+                break;
             case '500':
                 $s = 'Internal Server Error';
                 $m = 'Maaf, terjadi kesalahan dalam mengolah data';
