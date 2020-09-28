@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CommentRequest;
 use App\Http\Requests\DiscussionRequest;
 use App\Http\Requests\ResearchGroupStoreRequest;
+use App\Http\Resources\AnnouncementListDataResource;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\ResearchGroupListDataResource;
 use App\Models\ResearchGroup;
@@ -13,6 +14,7 @@ use App\Models\ResearchGroupDiscussion;
 use App\Models\ResearchGroupMember;
 use App\Transformers\ResearchGroupTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class ResearchGroupController extends Controller
@@ -99,7 +101,7 @@ class ResearchGroupController extends Controller
         ->get();
 
         $this->responseCode     = 200;
-        $this->responseData     = $discussion;
+        $this->responseData     = AnnouncementListDataResource::collection($discussion);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -194,9 +196,27 @@ class ResearchGroupController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function selectAsAdmin(ResearchGroup $researchGroup)
+    public function selectAsAdmin(Request $request, ResearchGroup $researchGroup)
     {
-        echo 'Under Construction';
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $this->responseCode     = 422;
+            $this->responseData     = $validator->errors();
+
+            return response()->json($this->getResponse(), $this->responseCode);
+        } else {
+            $user_id = $request->input('user_id');
+            $researchGroup->memberGroup()->updateExistingPivot($user_id, ['is_admin' => true]);
+
+            $this->responseCode     = 200;
+            $this->responseData     = $researchGroup;
+
+            return response()->json($this->getResponse(), $this->responseCode);
+        }
+
     }
 
     /**
