@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Email Verification</title>
+    <title>Change Email</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--begin::Fonts -->
     <link
@@ -25,7 +25,7 @@
           <img
             src="http://up.mitratekno.co.id/assets/extends/media/img/logo-meetup/meetup-blue.png"
             alt="Meet UP"
-            width="150"
+            width="100"
             height="50"
             style="display: block"
           />
@@ -38,9 +38,8 @@
         >
           <p style="font-weight: 600; color: #777">Hello {{$name}},</p>
           <p style="color: #777">
-            Thanks for joining Meet-Up to gain access for your account, please
-            validate your email. Please click the button bellow to validate your
-            email :
+            You recently requested to change email for your Meet-Up account.
+            Click the button bellow to change your email :
           </p>
           <a
             href="{{$url}}"
@@ -59,15 +58,16 @@
               text-decoration: none;
             "
           >
-            Activate Account
+            Change Email
           </a>
           <p style="color: #aaa; margin: 0 0 0 0">
             if the button doesn't work, visit the link below :
           </p>
-          <a style="font-weight: 600; color: #0275d8; margin: 0 0 0 0"
-            >{{$url}}</a
-          >
-
+          <a href="{{$url}}" style="font-weight: 600; color: #0275d8; margin: 0 0 0 0">{{$url}}</a>
+          <p style="color: #777; margin: 3rem 0 0 0">
+            If you did not request to change your email, please ignore this
+            email.
+          </p>
           <p style="margin: 3rem 0 0 0">
             Thanks, <br /><span style="font-weight: 600">Meet-Up Team</span>
           </p>

@@ -367,7 +367,7 @@ class ProfileController extends Controller
         ]);
 
      $dataUser = $model->toArray();
-     $url = url('/api/change-email/approve?type='.$type.'&change_email_token='.$emailReset->token);
+     $url = env('URL_FRONTEND').'/check-change-email/approve?type='.$type.'&change_email_token='.$emailReset->token;
      $dataUser['url'] = $url;
 
      Mail::to($email)->send(new VerifyChangeMail($dataUser));
