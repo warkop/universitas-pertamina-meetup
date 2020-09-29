@@ -32,6 +32,7 @@ class DiscussionResource extends JsonResource
             'comment'           => CommentResource::collection($this->comment()->latest('id')->paginate($comment_limit)->reverse()),
             'total_comment'     => count($this->comment),
             'path_file'         => $this->path_file,
+            'closed_at'         => $this->closed_at,
         ];
     }
 }
