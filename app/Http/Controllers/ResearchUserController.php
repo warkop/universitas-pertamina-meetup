@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\InvitationRequest;
+use App\Http\Requests\changeInstitutionRequest;
 use App\Http\Resources\MemberResource;
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
@@ -13,6 +14,7 @@ use App\Models\MemberPublication;
 use App\Models\MemberSkill;
 use App\Models\Skill;
 use App\Models\User;
+use App\Models\ChangeDept;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
@@ -160,4 +162,39 @@ class ResearchUserController extends Controller
 
          return response()->json($this->getResponse(), $this->responseCode);
     }
+
+    public function changeInstitution(changeInstitutionRequest $request, Member $member)
+    {
+      $request->validated();
+
+      $member->department_id = $request->input('department');
+
+      $files = $request->file('files');
+      if (!empty($files)) {
+         foreach ($files as $key => $value) {
+            $changeDept = new ChangeDept();
+
+            $changedName = time().random_int(100,999).$value->getClientOriginalName();
+
+            $value->storeAs('change-dept/' . $member->id, $changedName);
+            // }
+            $arrayData = [
+               'member_id'       => $member->id,
+               'department_id'   => $request->input('department'),
+               'path_file'       => $changedName,
+               'status'          => 1,
+            ];
+
+            $changeDept->create($arrayData);
+         }
+      }
+
+      $member->save();
+
+      $this->responseCode = 200;
+      $this->responseMessage = 'Institusi Berhasil Dirubah';
+
+
+      return response()->json($this->getResponse(), $this->responseCode);
+   }
 }
