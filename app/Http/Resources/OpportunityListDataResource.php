@@ -20,7 +20,7 @@ class OpportunityListDataResource extends JsonResource
             'desc'                  => $this->desc,
             'contact_person'        => $this->contact_person,
             'total_funding'         => $this->total_funding,
-            'opportunity_type_name' => $this->opportunityType->name,
+            'opportunity_type_name' => $this->opportunityType,
             'institution_name'      => $this->institution->name,
             'institution_id'        => $this->institution->id,
             'institution_photo'     => $this->institution->path_photo,
