@@ -63,7 +63,7 @@
           <p style="color: #aaa; margin: 0 0 0 0">
             if the button doesn't work, visit the link below :
           </p>
-          <a style="font-weight: 600; color: #0275d8; margin: 0 0 0 0"
+          <a href="{{$url}}" style="font-weight: 600; color: #0275d8; margin: 0 0 0 0"
             >{{$url}}</a
           >
           <p style="color: #777; margin: 3rem 0 0 0">
