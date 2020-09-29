@@ -26,6 +26,8 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+use App\Mail\VerifyChangeMail;
+
 class ProfileController extends Controller
 {
     /**
@@ -368,12 +370,7 @@ class ProfileController extends Controller
      $url = url('/api/change-email/approve?type='.$type.'&change_email_token='.$emailReset->token);
      $dataUser['url'] = $url;
 
-     Mail::send("emails.verifikasi-email", $dataUser, function($message) use ($email)
-     {
-        $message->subject('Verify Your Email');
-        $message->from(env('MAIL_FROM'), env('MAIL_FROM_NAME'));
-        $message->to($email);
-     });
+     Mail::to($email)->send(new VerifyChangeMail($dataUser));
 
      $model->email = $email;
      $model->save();
@@ -387,7 +384,7 @@ class ProfileController extends Controller
 
      $this->responseCode = 200;
      $this->responseMessage = 'Success Change Email';
-     $this->responseData = $model;
+     // $this->responseData = $model;
 
      return response()->json($this->getResponse(), $this->responseCode);
    }
