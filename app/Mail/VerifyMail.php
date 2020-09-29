@@ -30,6 +30,6 @@ class VerifyMail extends Mailable
      */
     public function build()
     {
-        return $this->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))->view('emails.verifikasi-email');
+        return $this->from('meetup@universitas-pertamina.co.id')->view('emails.verifikasi-email');
     }
 }
