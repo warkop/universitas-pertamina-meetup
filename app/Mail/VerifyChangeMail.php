@@ -30,6 +30,6 @@ class VerifyChangeMail extends Mailable
      */
     public function build()
     {
-        return $this->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))->view('emails.change-email', $this->user);
+        return $this->from('meetup@universitas-pertamina.co.id')->view('emails.change-email', $this->user);
     }
 }
