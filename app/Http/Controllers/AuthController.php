@@ -65,7 +65,9 @@ class AuthController extends Controller
 
        $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
 
-       return $this->respondWithToken($token, $user->change_mail, SidebarMenuDataResource::collection($data));
+       $change_mail = ($user->new_email != null)? TRUE : FALSE;
+
+       return $this->respondWithToken($token, $change_mail, SidebarMenuDataResource::collection($data));
     }
 
     /**
