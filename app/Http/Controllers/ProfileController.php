@@ -345,7 +345,7 @@ class ProfileController extends Controller
    {
      $request->validated();
 
-     $email = $request->input('email');
+     $email = strtolower($request->input('email'));
 
      $user = auth()->user();
 
@@ -368,6 +368,8 @@ class ProfileController extends Controller
 
      $dataUser = $model->toArray();
      $url = env('URL_FRONTEND').'/check-change-email/approve?type='.$type.'&change_email_token='.$emailReset->token;
+
+     $url = url('/api/change-email/approve?type='.$type.'&change_email_token='.$emailReset->token);
      $dataUser['url'] = $url;
 
      Mail::to($email)->send(new VerifyChangeMail($dataUser));
@@ -395,38 +397,49 @@ class ProfileController extends Controller
       $emailReset = EmailReset::where('token', $token)->first();
 
       if (!$emailReset){
-        $this->responseCode = 203;
-        $this->responseMessage = 'This token is invalid.';
-
-        return response()->json($this->getResponse(), $this->responseCode);
-     } elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
-        $emailReset->delete();
-        $this->responseCode = 404;
-        $this->responseMessage = 'This token is expired.';
-
-        return response()->json($this->getResponse(), $this->responseCode);
-      }else {
-         $arrayUser = [
-            'email'=> $emailReset->email,
-            'new_email'=> null,
-            'email_verified_at' => date("Y-m-d H:i:s"),
-         ];
-
-         if ($type == 'institution') {
-            $data = DB::table('institution')->where('email', $emailReset->email)->first();
-            User::where('owner_id', $data->id)->where('type', 0)
-                ->update($arrayUser);
-         } else if ($type == 'member') {
-            $data = DB::table('member')->where('email', $emailReset->email)->first();
-            User::where('owner_id', $data->id)->where('type', 1)
-                ->update($arrayUser);
-         }
-         $emailReset->delete();
-
-         $this->responseCode = 200;
-         $this->responseMessage = 'Email Berhasil di Rubah';
+         $this->responseCode = 404;
+         $this->responseMessage = 'This token is invalid.';
 
          return response()->json($this->getResponse(), $this->responseCode);
+      } elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
+         $emailReset->delete();
+         $this->responseCode = 400;
+         $this->responseMessage = 'This token is expired.';
+
+         return response()->json($this->getResponse(), $this->responseCode);
+      }else {
+         if ($type == 'institution') {
+            $data = DB::table('institution')->where('email', $emailReset->email)->first();
+         } else if ($type == 'member') {
+            $data = DB::table('member')->where('email', $emailReset->email)->first();
+         }
+
+         if (!empty($data)){
+            $arrayUser = [
+               'email'=> $emailReset->email,
+               'new_email'=> null,
+               'email_verified_at' => date("Y-m-d H:i:s"),
+            ];
+
+            if ($type == 'institution') {
+               User::where('owner_id', $data->id)->where('type', 0)->update($arrayUser);
+            } else if ($type == 'member') {
+               User::where('owner_id', $data->id)->where('type', 1)->update($arrayUser);
+            }
+            $emailReset->delete();
+
+            $this->responseCode = 200;
+            $this->responseMessage = 'Email berhasil di rubah';
+
+            return response()->json($this->getResponse(), $this->responseCode);
+         } else {
+            $emailReset->delete();
+            $this->responseCode = 404;
+            $this->responseMessage = 'This token is invalid.';
+
+            return response()->json($this->getResponse(), $this->responseCode);
+         }
+
       }
    }
 }
