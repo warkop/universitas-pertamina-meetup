@@ -201,7 +201,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
-Route::get('/change-email/approve', 'ProfileController@approveMail');
+Route::get('/change-mail/approve', 'ProfileController@approveMail');
 
 Route::group(['prefix' => 'public'], function () {
     Route::get('/title', 'TitleController@selectList');
