@@ -144,6 +144,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/{member}', 'ResearchUserController@show');
         Route::post('/send-invitation', 'ResearchUserController@sendingInvitation');
         Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
+        Route::post('/change-institution/{member}', 'ResearchUserController@changeInstitution');
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
     });
@@ -223,4 +224,3 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
-

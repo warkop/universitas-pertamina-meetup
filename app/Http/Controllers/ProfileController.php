@@ -355,19 +355,23 @@ class ProfileController extends Controller
         $type = 'member';
      }
 
-     $emailReset = EmailReset::updateOrCreate(
+     $emailReset = EmailReset::withTrashed()->updateOrCreate(
          ['email' => $email],
          [
            'email' => $email,
            'token' => Str::random(60),
+           'deleted_at' => null,
+           'deleted_by' => null,
         ]);
 
+     $dataUser = $model->toArray();
      $url = url('/api/change-email/approve?type='.$type.'&change_email_token='.$emailReset->token);
+     $dataUser['url'] = $url;
 
-     Mail::raw("Your Link To Approve Email : ".$url." . If you didn't request this, you can ignore this email message ", function($message) use ($email)
+     Mail::send("emails.verifikasi-email", $dataUser, function($message) use ($email)
      {
         $message->subject('Verify Your Email');
-        $message->from('no-reply@up.com', 'Universitas Pertamina');
+        $message->from(env('MAIL_FROM'), env('MAIL_FROM_NAME'));
         $message->to($email);
      });
 
@@ -375,16 +379,11 @@ class ProfileController extends Controller
      $model->save();
 
      $arrayUser = [
-        'change_mail'=> 1,
+        'new_email'=> $email,
      ];
 
-     if ($arrayUser == 0) {
-        User::where('owner_id', $id)->where('type', 0)
-            ->update($arrayUser);
-     } else if ($user->type == 1) {
-        User::where('owner_id', $id)->where('type', 1)
-            ->update($arrayUser);
-     }
+     User::where('id', $user->id)
+         ->update($arrayUser);
 
      $this->responseCode = 200;
      $this->responseMessage = 'Success Change Email';
@@ -406,13 +405,14 @@ class ProfileController extends Controller
      } elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
         $emailReset->delete();
         $this->responseCode = 404;
-        $this->responseMessage = 'This password reset token is expired.';
+        $this->responseMessage = 'This token is expired.';
 
         return response()->json($this->getResponse(), $this->responseCode);
       }else {
          $arrayUser = [
-            'change_mail'=> 0,
-            'new_email_verified_at' => date("Y-m-d H:i:s"),
+            'email'=> $emailReset->email,
+            'new_email'=> null,
+            'email_verified_at' => date("Y-m-d H:i:s"),
          ];
 
          if ($type == 'institution') {

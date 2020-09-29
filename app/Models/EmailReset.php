@@ -17,12 +17,10 @@ class EmailReset extends Model
     protected $primaryKey = 'email';
 
     protected $fillable = [
-      'email', 'token'
+      'email', 'token', 'deleted_at', 'deleted_by'
    ];
     protected $hidden = [
         'created_by',
         'updated_by',
-        'deleted_at',
-        'deleted_by',
     ];
 }
