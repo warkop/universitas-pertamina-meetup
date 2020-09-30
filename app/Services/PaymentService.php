@@ -6,7 +6,7 @@ use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
-class Payment
+class PaymentService
 {
     public function generateInvoiceNumber(): string
     {

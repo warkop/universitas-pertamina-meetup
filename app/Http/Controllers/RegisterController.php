@@ -9,7 +9,7 @@ use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Package;
 use App\Models\User;
-use App\Services\Payment;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
 
 class RegisterController extends Controller
@@ -38,7 +38,7 @@ class RegisterController extends Controller
     {
         $package = Package::find($package_id);
 
-        $payment = new Payment;
+        $payment = new PaymentService;
         $number = $payment->generateInvoiceNumber($user);
 
         $invoice = new Invoice();
