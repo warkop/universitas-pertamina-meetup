@@ -330,17 +330,6 @@ class ProfileController extends Controller
       }
     }
 
-    public function sendMail(){
-      try {
-         $data = array('name' => 'Fahmi', 'email' => 'fahmirizal96@gmail.com');
-         Mail::send('emails.haptics', $data, function($message) use ($data){
-            $message->to($data['email'], $data['name'])->subject('Test Subject');
-         });
-
-         return back();
-      } catch (\Exception $e) {}
-   }
-
    public function changeMail(ProfileChangeMailStoreRequest $request, $id)
    {
      $request->validated();
@@ -358,9 +347,8 @@ class ProfileController extends Controller
      }
 
      $emailReset = EmailReset::withTrashed()->updateOrCreate(
-         ['email' => $email],
+         ['email' => $email, 'type' => 3, 'user_id' => $user->id],
          [
-           'email' => $email,
            'token' => Str::random(60),
            'deleted_at' => null,
            'deleted_by' => null,
@@ -393,20 +381,22 @@ class ProfileController extends Controller
    public function approveMail(request $request){
       $token = $request->input('change_email_token');
       $type = $request->input('type');
-      $emailReset = EmailReset::where('token', $token)->first();
+      $emailReset = EmailReset::where('token', $token)->where('type', 3)->first();
 
       if (!$emailReset){
          $this->responseCode = 404;
          $this->responseMessage = 'This token is invalid.';
 
          return response()->json($this->getResponse(), $this->responseCode);
-      } elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
-         $emailReset->delete();
-         $this->responseCode = 400;
-         $this->responseMessage = 'This token is expired.';
-
-         return response()->json($this->getResponse(), $this->responseCode);
-      }else {
+      }
+      // elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
+      //    $emailReset->delete();
+      //    $this->responseCode = 400;
+      //    $this->responseMessage = 'This token is expired.';
+      //
+      //    return response()->json($this->getResponse(), $this->responseCode);
+      // }
+      else {
          if ($type == 'institution') {
             $data = DB::table('institution')->where('email', $emailReset->email)->first();
          } else if ($type == 'member') {
@@ -425,6 +415,7 @@ class ProfileController extends Controller
             } else if ($type == 'member') {
                User::where('owner_id', $data->id)->where('type', 1)->update($arrayUser);
             }
+
             $emailReset->delete();
 
             $this->responseCode = 200;
@@ -438,7 +429,6 @@ class ProfileController extends Controller
 
             return response()->json($this->getResponse(), $this->responseCode);
          }
-
       }
    }
 }

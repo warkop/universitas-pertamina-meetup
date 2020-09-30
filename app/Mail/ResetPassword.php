@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class VerifyMail extends Mailable
+class ResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,6 +30,6 @@ class VerifyMail extends Mailable
      */
     public function build()
     {
-        return $this->from('meetup@universitas-pertamina.co.id')->view('emails.verifikasi-email', $this->user);
+        return $this->from('meetup@universitas-pertamina.co.id')->view('emails.forgot-password', $this->user);
     }
 }
