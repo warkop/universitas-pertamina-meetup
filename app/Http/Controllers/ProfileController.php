@@ -26,6 +26,8 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+use App\Mail\VerifyChangeMail;
+
 class ProfileController extends Controller
 {
     /**
@@ -328,22 +330,11 @@ class ProfileController extends Controller
       }
     }
 
-    public function sendMail(){
-      try {
-         $data = array('name' => 'Fahmi', 'email' => 'fahmirizal96@gmail.com');
-         Mail::send('emails.haptics', $data, function($message) use ($data){
-            $message->to($data['email'], $data['name'])->subject('Test Subject');
-         });
-
-         return back();
-      } catch (\Exception $e) {}
-   }
-
    public function changeMail(ProfileChangeMailStoreRequest $request, $id)
    {
      $request->validated();
 
-     $email = $request->input('email');
+     $email = strtolower($request->input('email'));
 
      $user = auth()->user();
 
@@ -355,40 +346,34 @@ class ProfileController extends Controller
         $type = 'member';
      }
 
-     $emailReset = EmailReset::updateOrCreate(
-         ['email' => $email],
+     $emailReset = EmailReset::withTrashed()->updateOrCreate(
+         ['email' => $email, 'type' => 3, 'user_id' => $user->id],
          [
-           'email' => $email,
            'token' => Str::random(60),
+           'deleted_at' => null,
+           'deleted_by' => null,
         ]);
 
-     $url = url('/api/change-email/approve?type='.$type.'&change_email_token='.$emailReset->token);
+     $dataUser = $model->toArray();
+     $url = env('URL_FRONTEND').'/check-change-email/approve?type='.$type.'&change_email_token='.$emailReset->token;
 
-     Mail::raw("Your Link To Approve Email : ".$url." . If you didn't request this, you can ignore this email message ", function($message) use ($email)
-     {
-        $message->subject('Verify Your Email');
-        $message->from('no-reply@up.com', 'Universitas Pertamina');
-        $message->to($email);
-     });
+     $dataUser['url'] = $url;
+
+     Mail::to($email)->send(new VerifyChangeMail($dataUser));
 
      $model->email = $email;
      $model->save();
 
      $arrayUser = [
-        'change_mail'=> 1,
+        'new_email'=> $email,
      ];
 
-     if ($arrayUser == 0) {
-        User::where('owner_id', $id)->where('type', 0)
-            ->update($arrayUser);
-     } else if ($user->type == 1) {
-        User::where('owner_id', $id)->where('type', 1)
-            ->update($arrayUser);
-     }
+     User::where('id', $user->id)
+         ->update($arrayUser);
 
      $this->responseCode = 200;
      $this->responseMessage = 'Success Change Email';
-     $this->responseData = $model;
+     // $this->responseData = $model;
 
      return response()->json($this->getResponse(), $this->responseCode);
    }
@@ -396,40 +381,54 @@ class ProfileController extends Controller
    public function approveMail(request $request){
       $token = $request->input('change_email_token');
       $type = $request->input('type');
-      $emailReset = EmailReset::where('token', $token)->first();
+      $emailReset = EmailReset::where('token', $token)->where('type', 3)->first();
 
       if (!$emailReset){
-        $this->responseCode = 203;
-        $this->responseMessage = 'This token is invalid.';
-
-        return response()->json($this->getResponse(), $this->responseCode);
-     } elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
-        $emailReset->delete();
-        $this->responseCode = 404;
-        $this->responseMessage = 'This password reset token is expired.';
-
-        return response()->json($this->getResponse(), $this->responseCode);
-      }else {
-         $arrayUser = [
-            'change_mail'=> 0,
-            'new_email_verified_at' => date("Y-m-d H:i:s"),
-         ];
-
-         if ($type == 'institution') {
-            $data = DB::table('institution')->where('email', $emailReset->email)->first();
-            User::where('owner_id', $data->id)->where('type', 0)
-                ->update($arrayUser);
-         } else if ($type == 'member') {
-            $data = DB::table('member')->where('email', $emailReset->email)->first();
-            User::where('owner_id', $data->id)->where('type', 1)
-                ->update($arrayUser);
-         }
-         $emailReset->delete();
-
-         $this->responseCode = 200;
-         $this->responseMessage = 'Email Berhasil di Rubah';
+         $this->responseCode = 404;
+         $this->responseMessage = 'This token is invalid.';
 
          return response()->json($this->getResponse(), $this->responseCode);
+      }
+      // elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
+      //    $emailReset->delete();
+      //    $this->responseCode = 400;
+      //    $this->responseMessage = 'This token is expired.';
+      //
+      //    return response()->json($this->getResponse(), $this->responseCode);
+      // }
+      else {
+         if ($type == 'institution') {
+            $data = DB::table('institution')->where('email', $emailReset->email)->first();
+         } else if ($type == 'member') {
+            $data = DB::table('member')->where('email', $emailReset->email)->first();
+         }
+
+         if (!empty($data)){
+            $arrayUser = [
+               'email'=> $emailReset->email,
+               'new_email'=> null,
+               'email_verified_at' => date("Y-m-d H:i:s"),
+            ];
+
+            if ($type == 'institution') {
+               User::where('owner_id', $data->id)->where('type', 0)->update($arrayUser);
+            } else if ($type == 'member') {
+               User::where('owner_id', $data->id)->where('type', 1)->update($arrayUser);
+            }
+
+            $emailReset->delete();
+
+            $this->responseCode = 200;
+            $this->responseMessage = 'Email berhasil di rubah';
+
+            return response()->json($this->getResponse(), $this->responseCode);
+         } else {
+            $emailReset->delete();
+            $this->responseCode = 404;
+            $this->responseMessage = 'This token is invalid.';
+
+            return response()->json($this->getResponse(), $this->responseCode);
+         }
       }
    }
 }

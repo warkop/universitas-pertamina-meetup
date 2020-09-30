@@ -144,6 +144,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/{member}', 'ResearchUserController@show');
         Route::post('/send-invitation', 'ResearchUserController@sendingInvitation');
         Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
+        Route::post('/change-institution/{member}', 'ResearchUserController@changeInstitution');
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
     });
@@ -212,7 +213,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
-Route::get('/change-email/approve', 'ProfileController@approveMail');
+Route::get('/change-mail/approve', 'ProfileController@approveMail');
+
+//FORGET PASSWORD
+Route::group(['prefix' => 'forget-password'], function () {
+    Route::post('/', 'ForgetPasswordController@resetPassword');
+    Route::get('/check-token', 'ForgetPasswordController@checkResetPasswordToken');
+    Route::post('/change-password/{user_id}', 'ForgetPasswordController@changePassword');
+});
 
 Route::group(['prefix' => 'public'], function () {
     Route::get('/title', 'TitleController@selectList');
@@ -237,4 +245,3 @@ Route::group(['prefix' => 'auth'], function () {
 Route::get('package', 'PackageController@index');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
-
