@@ -203,6 +203,13 @@ Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
 Route::get('/change-mail/approve', 'ProfileController@approveMail');
 
+//FORGET PASSWORD
+Route::group(['prefix' => 'forget-password'], function () {
+    Route::post('/', 'ForgetPasswordController@resetPassword');
+    Route::get('/check-token', 'ForgetPasswordController@checkResetPasswordToken');
+    Route::post('/change-password/{user_id}', 'ForgetPasswordController@changePassword');
+});
+
 Route::group(['prefix' => 'public'], function () {
     Route::get('/title', 'TitleController@selectList');
     Route::get('/institution', 'InstitutionController@selectList');

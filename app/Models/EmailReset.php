@@ -11,13 +11,12 @@ class EmailReset extends Model
     use SoftDeletes;
     use Userstamps;
 
-    public $incrementing = false;
     protected $table = 'email_reset';
 
-    protected $primaryKey = 'email';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-      'email', 'token', 'deleted_at', 'deleted_by'
+      'email', 'token', 'deleted_at', 'deleted_by', 'type', 'user_id'
    ];
     protected $hidden = [
         'created_by',
