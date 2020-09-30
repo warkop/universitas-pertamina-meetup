@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePaymentRequest;
 use App\Models\Invoice;
 use App\Models\User;
-use App\Services\Payment;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -37,7 +37,7 @@ class PaymentController extends Controller
     public function storePayment(StorePaymentRequest $request, Invoice $invoice)
     {
         $request->validated();
-        $payment = new Payment;
+        $payment = new PaymentService;
         $user = User::find($invoice->user_id);
         $payment->savePayment($user, $request);
 
@@ -50,7 +50,7 @@ class PaymentController extends Controller
 
     public function acceptPayment(Invoice $invoice)
     {
-        $payment = new Payment;
+        $payment = new PaymentService;
         $payment->acceptPayment($invoice);
 
         $this->responseCode = 200;
