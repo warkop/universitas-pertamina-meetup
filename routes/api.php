@@ -158,7 +158,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/{researchGroup}', 'ResearchGroupController@show');
         Route::post('/{researchGroup}/join', 'ResearchGroupController@join');
         Route::delete('/{researchGroup}/leave', 'ResearchGroupController@leave');
-        Route::post('/{researchGroup}/select-as-admin', 'ResearchGroupController@selectAsAdmin');
+        Route::patch('/{researchGroup}/select-as-admin', 'ResearchGroupController@selectAsAdmin');
 
         Route::get('/{researchGroup}/discussion', 'ResearchGroupController@listDiscussion');
         Route::post('/{researchGroup}/create-discussion', 'ResearchGroupController@createDiscussion');

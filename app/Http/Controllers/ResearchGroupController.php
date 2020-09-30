@@ -201,24 +201,32 @@ class ResearchGroupController extends Controller
     public function selectAsAdmin(Request $request, ResearchGroup $researchGroup)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required'
+            'active'    => 'required',
+            'member_id' => 'required'
         ]);
 
         if ($validator->fails()) {
             $this->responseCode     = 422;
             $this->responseData     = $validator->errors();
-
-            return response()->json($this->getResponse(), $this->responseCode);
         } else {
-            $user_id = $request->input('user_id');
-            $researchGroup->memberGroup()->updateExistingPivot($user_id, ['is_admin' => true]);
+            $researchGroupMember = ResearchGroupMember::where(['member_id' => $request->member_id, 'research_group_id' => $researchGroup->id])->first();
+            if ($researchGroupMember) {
+                $researchGroup->memberGroup()->updateExistingPivot($request->member_id, ['is_admin' => $request->active]);
 
-            $this->responseCode     = 200;
-            $this->responseData     = $researchGroup;
+                $this->responseCode     = 200;
 
-            return response()->json($this->getResponse(), $this->responseCode);
+                if ($request->active) {
+                    $this->responseMessage  = 'Member berhasil menjadi admin';
+                } else {
+                    $this->responseMessage  = 'Member tidak lagi menjadi admin';
+                }
+            } else {
+                $this->responseCode     = 400;
+                $this->responseMessage  = 'User atau group tidak ditemukan';
+            }
         }
 
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
