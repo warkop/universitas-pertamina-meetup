@@ -50,7 +50,7 @@ class MailService
          'expirationDate' => date("F j, Y", strtotime($invoice->valid_until)),
          'packageName' => $package->name,
          'price' => $invoice->price,
-         'url' => env('URL_FRONTEND').'/renew-package';,
+         'url' => env('URL_FRONTEND').'/renew-package',
       ]
 
       Mail::to($user->email)->send(new Invoice($dataMail));
