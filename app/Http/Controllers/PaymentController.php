@@ -6,7 +6,7 @@ use App\Http\Requests\StorePaymentRequest;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Services\PaymentService;
-use Illuminate\Http\Request;
+use App\Transformers\InvoiceTransformer;
 use Yajra\DataTables\Facades\DataTables;
 
 class PaymentController extends Controller
@@ -15,15 +15,26 @@ class PaymentController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->type == 0) {
+        if ($user->type == 0 || $user->type == 1) {
+            $model = Invoice::query();
+            $datatable = DataTables::eloquent($model->where('user_id', $user->id))
+            ->setTransformer(new InvoiceTransformer)
+            ->filterColumn('created_at', function($query, $keyword) {
+                $sql = "TO_CHAR(created_at, 'dd-mm-yyyy') like ?";
+                $query->whereRaw($sql, ["%{$keyword}%"]);
+            })
+            ->toJson();
+        } else {
+            $type = request()->type;
 
-        } else if ($user->type == 1) {
-
+            $model = Invoice::query();
+            $datatable = DataTables::eloquent($model
+            ->where('type', $type))
+            ->setTransformer(new InvoiceTransformer)
+            ->toJson();
         }
 
-        $model = Invoice::query();
-
-        return DataTables::eloquent($model)->toJson();
+        return $datatable;
     }
 
     public function detailPayment(Invoice $invoice)

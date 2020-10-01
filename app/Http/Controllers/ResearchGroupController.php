@@ -9,6 +9,7 @@ use App\Http\Resources\AnnouncementListDataResource;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\DetailGroupResource;
 use App\Http\Resources\DiscussionResource;
+use App\Http\Resources\ListMemberGroupResource;
 use App\Http\Resources\ResearchGroupListDataResource;
 use App\Models\ResearchGroup;
 use App\Models\ResearchGroupComment;
@@ -191,9 +192,8 @@ class ResearchGroupController extends Controller
 
     public function listOfMember(ResearchGroup $researchGroup)
     {
-        $this->responseCode     = 200;
-        $this->responseMessage  = 'Data berhasil disimpan';
-        $this->responseData     = $researchGroup->load('memberGroup');
+        $this->responseCode = 200;
+        $this->responseData = $researchGroup->listOfMember($researchGroup->id);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
