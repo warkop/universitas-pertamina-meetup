@@ -193,7 +193,7 @@ class ResearchGroupController extends Controller
     public function listOfMember(ResearchGroup $researchGroup)
     {
         $this->responseCode = 200;
-        $this->responseData = $researchGroup->listOfMember();
+        $this->responseData = $researchGroup->listOfMember($researchGroup->id);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
