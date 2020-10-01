@@ -32,4 +32,11 @@ class ResearchGroup extends Model
     {
         return $this->belongsToMany(Member::class, 'research_group_member', 'research_group_id','member_id');
     }
+
+    public function listOfMember()
+    {
+        return ResearchGroupMember::join('member', 'member.id', '=', 'member_id')
+        ->join('research_group', 'research_group.id', '=', 'research_group_id')
+        ->get(['member.id','member.name', 'is_admin']);
+    }
 }
