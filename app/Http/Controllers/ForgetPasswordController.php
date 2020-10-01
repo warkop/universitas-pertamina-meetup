@@ -86,11 +86,11 @@ class ForgetPasswordController extends Controller
       }
    }
 
-   public function changePassword(request $request, $id){
+   public function changePassword(request $request, $token){
 
       $password = ['password' => bcrypt($request->password)];
 
-      $token = $request->input('token');
+      // $token = $request->input('token');
 
       $emailReset = EmailReset::where('token', $token)->where('type', 2)->first();
 
@@ -98,9 +98,8 @@ class ForgetPasswordController extends Controller
          $this->responseCode = 404;
          $this->responseMessage = 'This token is invalid.';
       } else {
-         $user = User::find($id);
+         User::where('id', $emailReset->user_id)->update($password);
 
-         User::where('id', $id)->update($password);
          $emailReset->delete();
 
          $this->responseCode = 200;
