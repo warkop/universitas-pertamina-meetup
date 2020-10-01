@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SignUpInstitutionRequest;
 use App\Http\Requests\SignUpResearcherRequest;
+use App\Models\Bank;
 use App\Models\Institution;
 use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Package;
 use App\Models\User;
 use App\Models\EmailReset;
-
+use App\Models\PaymentToken;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 
@@ -62,11 +63,15 @@ class RegisterController extends Controller
         $user = $this->createUser($request, $spesific);
 
         // register package
-        $this->paymentService->registerPackage($package_id, $user);
+        $paymentToken = $this->paymentService->registerPackage($package_id, $user);
 
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
         $this->responseData['registration'] = $institution->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
+        $this->responseData['upload_link'] = [
+            'method' => 'POST',
+            'link' => url('api/upload-payment?token='.$paymentToken),
+        ];
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -103,25 +108,48 @@ class RegisterController extends Controller
         $user = $this->createUser($request, $spesific);
 
         // register package
-        $this->paymentService->registerPackage($package_id, $user);
+        $paymentToken = $this->paymentService->registerPackage($package_id, $user);
 
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
         $this->responseData['registration'] = $member->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
+        $this->responseData['upload_link'] = [
+            'method' => 'POST',
+            'link' => url('api/upload-payment?token='.$paymentToken),
+        ];
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function uploadPayment(Request $request, Invoice $invoice)
+    public function listBank()
     {
-        $result = $this->paymentService->uploadPayment($request->file('attachment'), $invoice);
-        if ($result) {
-            $this->responseCode     = 200;
-            $this->responseMessage  = 'Bukti pembayaran berhasil diunggah';
+        $this->responseCode = 200;
+        $this->responseData = Bank::get(['id', 'name']);
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function uploadPayment(Request $request)
+    {
+        $token = $request->get('token');
+        $paymentToken = PaymentToken::where('token', $token)->first();
+        if ($paymentToken) {
+            $invoice = Invoice::find($paymentToken->invoice_id);
+            $user = User::find($invoice->user_id);
+
+            $result = $this->paymentService->savePayment($user, $request);
+            if ($result) {
+                $this->responseCode     = 200;
+                $this->responseMessage  = 'Bukti pembayaran berhasil diunggah';
+            } else {
+                $this->responseCode     = 400;
+                $this->responseMessage  = 'Kirim bukti pembayaran gagal, silahkan hubungi administrator!';
+            }
         } else {
-            $this->responseCode     = 400;
-            $this->responseMessage  = 'Bukti pembayaran wajib diunggah!';
+            $this->responseCode     = 403;
+            $this->responseMessage  = 'Token tidak valid!';
         }
+
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

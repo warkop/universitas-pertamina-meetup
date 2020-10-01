@@ -100,7 +100,8 @@
         </div>
           <div style="width: 318px;
           display: block;
-          float: right;margin:1rem 0 2rem 0"><p style="margin:0"><span style="font-weight: 600;">Expiration Limit:</span><br>{{$expirationDate}}</p><br>
+          float: right;margin:1rem 0 2rem 0">
+          <p style="margin:0"><span style="font-weight: 600;"></span><br></p><br>
           <p style="margin:0"><span style="font-weight: 600;">Package:</span><br>{{$packageName}}</p>
           </div>
           <h4 style="color: #aaa;margin: 0 0 0 0;">HERE'S WHAT YOU ORDERED:</h4>
