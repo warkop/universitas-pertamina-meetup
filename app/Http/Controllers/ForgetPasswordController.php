@@ -12,6 +12,8 @@ use App\Mail\ResetPassword;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+use App\Services\MailService;
+
 use Carbon\Carbon;
 
 class ForgetPasswordController extends Controller
@@ -44,12 +46,8 @@ class ForgetPasswordController extends Controller
             $model = Member::find($chekUser->owner_id);
          }
 
-         $dataUser = $model->toArray();
-         $url = env('URL_FRONTEND').'/check-reset-password?reset_password_token='.$emailReset->token;
-
-         $dataUser['url'] = $url;
-
-         Mail::to($email)->send(new ResetPassword($dataUser));
+         $mail = new MailService;
+         $mail->sendForgetPassword($model, $emailReset);
 
          $this->responseCode = 200;
          $this->responseMessage = 'Please Check Email for Reset Password';
