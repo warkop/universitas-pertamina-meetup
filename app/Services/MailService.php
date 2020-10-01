@@ -51,7 +51,7 @@ class MailService
          'packageName' => $package->name,
          'price' => $invoice->price,
          'url' => env('URL_FRONTEND').'/renew-package',
-      ]
+      ];
 
       Mail::to($user->email)->send(new Invoice($dataMail));
    }
