@@ -26,7 +26,7 @@ class SignUpResearcherRequest extends FormRequest
         return [
             'name'                  => 'required|regex:/^[a-zA-Z0-9\-\s]+$/|unique:member,name',
             'title_id'              => 'required|exists:title,id',
-            'department_id'         => 'required|exists:department,id',
+            'department_id'         => 'nullable|exists:department,id',
             'nationality_id'        => 'required|exists:nationality,id',
             'email'                 => 'required|email|unique:user',
             'password'              => 'required|confirmed',

@@ -196,7 +196,19 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::put('/{publicationType}', 'PublicationTypeController@store');
         Route::delete('/{publicationType}', 'PublicationTypeController@destroy');
     });
+
     Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
+
+    Route::post('register/upload-payment/{invoice}', 'RegisterController@uploadPayment');
+
+    Route::group(['prefix' => 'payment'], function () {
+        Route::get('/', 'PaymentController@index');
+        Route::get('/{invoice}', 'PaymentController@detailPayment');
+        Route::get('/{invoice}/show-file', 'PaymentController@showFile');
+        Route::post('/{invoice}', 'PaymentController@storePayment');
+        Route::patch('/{invoice}/approve', 'PaymentController@acceptPayment');
+        Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment');
+    });
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
@@ -230,5 +242,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('/', 'AuthController@me');
     Route::get('/refresh', 'AuthController@refresh');
 });
+
+Route::get('package', 'PackageController@index');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
