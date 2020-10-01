@@ -39,21 +39,21 @@
               background-color: #0275d8;
               color: #fefefe;
               align-self: center;
-              
+
               font-size: 1rem;
-  
+
               padding: 1rem 2rem;
               border-radius: 0.3rem;
               border: none;
-              
+
               text-align: center;
-              
+
             "
           >
             <p>
               <h2>MEET UP BILLING INFORMATION</h2>
             </p>
-            
+
           </div>
           </td>
       </tr>
@@ -70,7 +70,7 @@
               margin-bottom: 0; ;
             "
           >
-            Hi [nama],
+            Hi {{$name}},
           </p>
           <p style="font-size: 1rem; color: #777;margin-top: 0;">
             Your package almost over, you can
@@ -85,7 +85,7 @@
           >
             YOUR ORDER INFORMATION
           </p>
-          
+
         </td>
       </tr>
       <tr>
@@ -93,51 +93,51 @@
             <div style="width: 318px;
             display: block;
             float: left;margin:1rem 0 2rem 0">
-            <p style="margin:0"><span style="font-weight: 600;">Order Date:</span><br>June 5,2020</p><br>
-            <p style="margin:0"><span style="font-weight: 600;">Bill To:</span><br>[email]</p>
-            
-            
+            <p style="margin:0"><span style="font-weight: 600;">Order Date:</span><br>{{$orderDate}}</p><br>
+            <p style="margin:0"><span style="font-weight: 600;">Bill To:</span><br>{{$email}}</p>
+
+
         </div>
           <div style="width: 318px;
           display: block;
-          float: right;margin:1rem 0 2rem 0"><p style="margin:0"><span style="font-weight: 600;">Expiration Limit:</span><br>June 5,2021</p><br>
-          <p style="margin:0"><span style="font-weight: 600;">Package:</span><br>Silver Package</p>
+          float: right;margin:1rem 0 2rem 0"><p style="margin:0"><span style="font-weight: 600;">Expiration Limit:</span><br>{{$expirationDate}}</p><br>
+          <p style="margin:0"><span style="font-weight: 600;">Package:</span><br>{{$packageName}}</p>
           </div>
           <h4 style="color: #aaa;margin: 0 0 0 0;">HERE'S WHAT YOU ORDERED:</h4>
-        
+
           <div  style="display: block;
           float: left;width: 302px;background-color: #eee;padding:0 1rem 0 1rem;margin: 1rem 0 0 0;">
           <p >Description</p>
-          
+
          </div>
           <div style="display: block;
           float: right;background-color: #eee;width: 302px;padding:0 1rem 0 1rem;margin: 1rem 0 0 0;">
           <p style="text-align: right; ">Price</p>
-          
+
           </div>
 
         <div  style="display: block;
         float: left;width: 302px;padding:0 1rem 0 1rem">
-        <p >Silver Package</p>
+        <p >{{$packageName}}</p>
         <p style="text-align: right;font-weight: 800;
         font-size: 1.2rem;margin:2rem 0 2rem 0">TOTAL</p>
        </div>
         <div style="display: block;
         float: right;width: 302px;padding:0 1rem 0 1rem;">
-        <p style="text-align: right; ">IDR 1.500.000,00</p>
+        <p style="text-align: right; ">IDR {{$price}}</p>
         <p style="text-align: right;
         font-weight: 800;
-        font-size: 1.2rem;margin:2rem 0 2rem 0">IDR 1.500.000,00</p>
+        font-size: 1.2rem;margin:2rem 0 2rem 0">IDR {{$price}}</p>
         </div>
-          
-          
+
+
         </td>
-        
+
       </tr>
       <tr>
           <td bgcolor="#fff" style="font-size: 1rem; padding: 0 1rem 1rem 1rem">
         <a
-        href=""
+        href="{{$url}}"
         style="
           background-color: #0275d8;
           color: #fefefe;
@@ -155,7 +155,7 @@
       >
         Renew Package
       </a>
-      <p>Regards, <br /><span style="font-weight: 600">Meet-Up Team</span></p> 
+      <p>Regards, <br /><span style="font-weight: 600">Meet-Up Team</span></p>
       </td></tr>
       <tr>
         <td

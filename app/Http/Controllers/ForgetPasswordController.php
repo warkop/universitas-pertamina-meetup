@@ -52,11 +52,11 @@ class ForgetPasswordController extends Controller
          Mail::to($email)->send(new ResetPassword($dataUser));
 
          $this->responseCode = 200;
-         $this->responseMessage = 'Silahkan Check Email Untuk Reset Password';
+         $this->responseMessage = 'Please Check Email for Reset Password';
          $this->responseData = $emailReset;
       } else {
          $this->responseCode = 400;
-         $this->responseMessage = 'Email Tidak Ditemukan';
+         $this->responseMessage = 'Email Not Found';
       }
       // $this->responseData = $model;
 
