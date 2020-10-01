@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Mail\Invoice;
+use App\Mail\Invoice as MailInvoice;
 use App\Mail\VerifyChangeMail;
 use App\Mail\ResetPassword;
 use App\Models\Invoice;
@@ -53,6 +53,6 @@ class MailService
          'url' => env('URL_FRONTEND').'/renew-package',
       ];
 
-      Mail::to($user->email)->send(new Invoice($dataMail));
+      Mail::to($user->email)->send(new MailInvoice($dataMail));
    }
 }
