@@ -11,7 +11,7 @@ class Invoice extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    public $dataPayment;
 
     /**
      * Create a new message instance.
