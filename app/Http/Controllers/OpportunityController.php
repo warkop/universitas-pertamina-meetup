@@ -64,14 +64,10 @@ class OpportunityController extends Controller
            $grid = ($request->input('grid') == 'datatable') ? 'datatable' : 'default';
 
            if ($grid == 'datatable') {
-               $numbcol = $request->get('order');
-               $columns = $request->get('columns');
-
                $echo = $request->get('draw');
 
-
-               $sort = $numbcol[0]['dir'];
-               $field = $columns[$numbcol[0]['column']]['data'];
+               $sort = $request->input('order_method');
+               $field = $request->input('order_column');
            } else {
                $sort = $request->input('order_method');
                $field = $request->input('order_column');
