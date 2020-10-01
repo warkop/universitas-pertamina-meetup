@@ -213,6 +213,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
+Route::get('/verify-email', 'RegisterController@verifyMail');
 Route::get('/change-mail/approve', 'ProfileController@approveMail');
 
 //FORGET PASSWORD

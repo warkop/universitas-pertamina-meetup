@@ -57,9 +57,9 @@
           <p>
             <h2>MEET UP BILLING INFORMATION</h2>
           </p>
-          
+
         </div>
-        <p style="font-size:1rem;font-weight: 600; color: #777;margin-bottom: 0;;">Hi [nama],</p>
+        <p style="font-size:1rem;font-weight: 600; color: #777;margin-bottom: 0;;">Hi {{$name}},</p>
         <p style="font-size:1rem;color: #777">
           Your package almost over, you can <span style="color:#0275d8;font-weight: 600;">renew</span> package or <span style="color:#0275d8;font-weight: 600;">upgrade</span> package<br>
           for still using all service
@@ -74,9 +74,9 @@
               flex-direction: row;
             "
           >
-            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Order Date:</span><br>June 5,2020</p>
-            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Expiration Limit:</span><br>June 5,2021</p>
-            
+            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Order Date:</span><br>{{$orderDate}}</p>
+            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Expiration Limit:</span><br>{{$expirationDate}}</p>
+
           </div>
           <div
             style="
@@ -85,11 +85,11 @@
               flex-direction: row;
             "
           >
-            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Bill To:</span><br>[email]</p>
-            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Package:</span><br>Silver Package</p>
-            
+            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Bill To:</span><br>{{$email}}</p>
+            <p style="flex: 1;margin:0"><span style="font-weight: 600;">Package:</span><br>{{$packageName}}</p>
+
           </div>
-        
+
         <h4 style="color: #aaa">HERE'S WHAT YOU ORDERED:</h4>
         <div>
           <div
@@ -106,8 +106,8 @@
         </div>
         <div>
           <div style="padding: 1rem; display: flex; flex-direction: row">
-            <p style="flex: 1">Silver Package</p>
-            <p style="text-align: right; flex: 1">IDR 1.500.000,00</p>
+            <p style="flex: 1">{{$packageName}}</p>
+            <p style="text-align: right; flex: 1">IDR {{$price}}</p>
           </div>
           <div
             style="
@@ -137,7 +137,7 @@
                 font-size: 1.2rem;
               "
             >
-              IDR 1.500.000,00
+              IDR {{$price}}
             </p>
           </div>
         </div>

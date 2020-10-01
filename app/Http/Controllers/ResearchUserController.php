@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\InvitationRequest;
-use App\Http\Requests\changeInstitutionRequest;
+use App\Http\Requests\ChangeInstitutionRequest;
 use App\Http\Resources\MemberResource;
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
@@ -163,7 +163,7 @@ class ResearchUserController extends Controller
          return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function changeInstitution(changeInstitutionRequest $request, Member $member)
+    public function changeInstitution(ChangeInstitutionRequest $request, Member $member)
     {
       $request->validated();
 
