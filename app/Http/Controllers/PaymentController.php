@@ -11,6 +11,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PaymentController extends Controller
 {
+    public function __construct()
+    {
+        $this->payment = new PaymentService;
+    }
+
     public function index()
     {
         $user = auth()->user();
@@ -48,9 +53,8 @@ class PaymentController extends Controller
     public function storePayment(StorePaymentRequest $request, Invoice $invoice)
     {
         $request->validated();
-        $payment = new PaymentService;
         $user = User::find($invoice->user_id);
-        $payment->savePayment($user, $request);
+        $this->payment->savePayment($user, $request);
 
         $this->responseCode = 200;
         $this->responseMessage = 'Pembayaran berhasil disimpan';
@@ -61,12 +65,21 @@ class PaymentController extends Controller
 
     public function acceptPayment(Invoice $invoice)
     {
-        $payment = new PaymentService;
-        $payment->acceptPayment($invoice);
+        $this->payment->acceptPayment($invoice);
 
         $this->responseCode = 200;
         $this->responseMessage = 'Pembayaran berhasil disetujui';
         $this->responseData = $invoice;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function rejectPayment(Invoice $invoice)
+    {
+        $this->payment->rejectPayment($invoice);
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Pembayaran ditolak';
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
