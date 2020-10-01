@@ -14,6 +14,10 @@ use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
+    public function __construct()
+    {
+        $this->paymentService = new PaymentService;
+    }
     /**
      * Creating User
      *
@@ -32,25 +36,6 @@ class RegisterController extends Controller
         ]);
 
         return $user;
-    }
-
-    private function registerPackage($package_id, $user)
-    {
-        $package = Package::find($package_id);
-
-        $payment = new PaymentService;
-        $number = $payment->generateInvoiceNumber($user);
-
-        $invoice = new Invoice();
-        $invoice->create([
-            'package_id'    => $package_id,
-            'user_id'       => $user->id,
-            'price'         => $package->price,
-            'number'        => $number,
-        ]);
-
-
-        $payment->sendInvoice($user);
     }
 
     public function signUpInstitution(SignUpInstitutionRequest $request)
@@ -73,7 +58,9 @@ class RegisterController extends Controller
         ];
         // create user
         $user = $this->createUser($request, $spesific);
-        $this->registerPackage($package_id, $user);
+
+        // register package
+        $this->paymentService->registerPackage($package_id, $user);
 
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
@@ -90,9 +77,14 @@ class RegisterController extends Controller
 
         $member = new Member();
 
+        if ($request->department_id) {
+            $member->department_id      = $request->department_id;
+        } else {
+            $member->is_independent = true;
+        }
+
         $member->name               = $request->name;
         $member->title_id           = $request->title_id;
-        $member->department_id      = $request->department_id;
         $member->nationality_id     = $request->nationality_id;
         $member->employee_number    = $request->employee_number;
         $member->office_address     = $request->office_address;
@@ -107,7 +99,9 @@ class RegisterController extends Controller
         ];
         // create user
         $user = $this->createUser($request, $spesific);
-        $this->registerPackage($package_id, $user);
+
+        // register package
+        $this->paymentService->registerPackage($package_id, $user);
 
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
@@ -118,24 +112,15 @@ class RegisterController extends Controller
 
     public function uploadPayment(Request $request, Invoice $invoice)
     {
-        $file = $request->file('attachment');
-
-        if (!empty($file) && $file->isValid()) {
-            $changedName = time().random_int(100,999).$file->getClientOriginalName();
-            $file->storeAs('payment/' . $invoice->id, $changedName);
-
-            $invoice->payment_attachment = $changedName;
-            $invoice->save();
-
+        $result = $this->paymentService->uploadPayment($request->file('attachment'), $invoice);
+        if ($result) {
             $this->responseCode     = 200;
             $this->responseMessage  = 'Bukti pembayaran berhasil diunggah';
-
-            return response()->json($this->getResponse(), $this->responseCode);
         } else {
             $this->responseCode     = 400;
             $this->responseMessage  = 'Bukti pembayaran wajib diunggah!';
-
-            return response()->json($this->getResponse(), $this->responseCode);
         }
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 }
