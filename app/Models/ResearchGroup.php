@@ -37,6 +37,6 @@ class ResearchGroup extends Model
     {
         return ResearchGroupMember::join('member', 'member.id', '=', 'member_id')
         ->join('research_group', 'research_group.id', '=', 'research_group_id')
-        ->get(['member.id','member.name', 'is_admin']);
+        ->get(['member.id','member.name', 'member.email','is_admin']);
     }
 }
