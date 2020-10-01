@@ -10,6 +10,8 @@ use App\Http\Requests\ProfileChangeMailStoreRequest;
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
 
+use App\Services\MailService;
+
 use App\Models\EmailReset;
 use App\Models\User;
 use App\Models\Institution;
@@ -354,12 +356,8 @@ class ProfileController extends Controller
            'deleted_by' => null,
         ]);
 
-     $dataUser = $model->toArray();
-     $url = env('URL_FRONTEND').'/check-change-email/approve?type='.$type.'&change_email_token='.$emailReset->token;
-
-     $dataUser['url'] = $url;
-
-     Mail::to($email)->send(new VerifyChangeMail($dataUser));
+     $mail = new MailService;
+     $mail->sendChangeEmail($model, $emailReset, $type);
 
      $model->email = $email;
      $model->save();

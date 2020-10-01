@@ -11,14 +11,16 @@ class Invoice extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $user;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($dataPayment)
     {
-        //
+        $this->dataPayment = $dataPayment;
     }
 
     /**
@@ -28,6 +30,6 @@ class Invoice extends Mailable
      */
     public function build()
     {
-        return $this->view('invoice');
+        return $this->from('meetup@universitas-pertamina.co.id')->view('emails.invoice', $this->dataPayment);
     }
 }

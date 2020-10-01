@@ -51,23 +51,33 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-       $user = auth()->user();
+        $user = auth()->user();
 
-       $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-                            ->whereRaw('sub_menu is null')
-                            ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-                            ->where('role_menu.role_id', $user->role_id);
+        if (!$user->email_verified_at) {
+           auth()->logout();
 
-       $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
-                            ->whereRaw('sub_menu is null')
-                            ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
-                            ->where('role_menu_addition.user_id', $user->id);
+           $this->responseCode = 401;
+           $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
 
-       $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
+           return response()->json($this->getResponse(), $this->responseCode);
+        } else {
+           $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+           ->whereRaw('sub_menu is null')
+           ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
+           ->where('role_menu.role_id', $user->role_id);
 
-       $change_mail = ($user->new_email != null)? TRUE : FALSE;
+           $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
+           ->whereRaw('sub_menu is null')
+           ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
+           ->where('role_menu_addition.user_id', $user->id);
 
-       return $this->respondWithToken($token, $change_mail, SidebarMenuDataResource::collection($data));
+           $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
+
+           $change_mail = ($user->new_email != null)? TRUE : FALSE;
+
+           return $this->respondWithToken($token, $change_mail, SidebarMenuDataResource::collection($data));
+        }
+
     }
 
     /**

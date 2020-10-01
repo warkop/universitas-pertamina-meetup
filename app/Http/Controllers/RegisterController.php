@@ -9,6 +9,8 @@ use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Package;
 use App\Models\User;
+use App\Models\EmailReset;
+
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 
@@ -138,4 +140,38 @@ class RegisterController extends Controller
             return response()->json($this->getResponse(), $this->responseCode);
         }
     }
+
+    public function verifyMail(request $request){
+      $token = $request->input('email_verify_token');
+
+      $emailReset = EmailReset::where('token', $token)->where('type', 1)->first();
+
+      if (!$emailReset){
+         $this->responseCode = 404;
+         $this->responseMessage = 'This token is invalid.';
+
+         return response()->json($this->getResponse(), $this->responseCode);
+      }
+      // elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
+      //    $emailReset->delete();
+      //    $this->responseCode = 400;
+      //    $this->responseMessage = 'This token is expired.';
+      //
+      //    return response()->json($this->getResponse(), $this->responseCode);
+      // }
+      else {
+         $arrayUser = [
+            'email_verified_at' => date("Y-m-d H:i:s"),
+         ];
+
+         User::where('id', $emailReset->user_id)->update($arrayUser);
+
+         $emailReset->delete();
+
+         $this->responseCode = 200;
+         $this->responseMessage = 'Email Verify';
+
+         return response()->json($this->getResponse(), $this->responseCode);
+      }
+   }
 }
