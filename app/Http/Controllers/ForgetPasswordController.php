@@ -51,7 +51,6 @@ class ForgetPasswordController extends Controller
 
          $this->responseCode = 200;
          $this->responseMessage = 'Please Check Email for Reset Password';
-         $this->responseData = $emailReset;
       } else {
          $this->responseCode = 400;
          $this->responseMessage = 'Email Not Found';
