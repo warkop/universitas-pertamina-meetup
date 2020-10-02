@@ -8,6 +8,7 @@ use App\Http\Resources\AnnouncementDashboardResource;
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Models\Announcement;
 use App\Models\Institution;
+use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\Regulation;
@@ -42,13 +43,34 @@ class DashboardController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
+    public function getNewPayment()
+    {
+        $type = request()->type??1;
+
+        $countOfPayment = Invoice::join('user', 'user.id', '=', 'user_id')
+        ->where('type', $type)
+        ->whereNotNull('payment_date')
+        ->whereNull('valid_until')
+        ->count();
+
+        $this->responseData['total'] = $countOfPayment;
+        $this->responseData['_link'] = [
+            'method' => 'GET',
+            'link' => url('api/payment?type='.$type)
+        ];
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
     public function getOpeningOpportunity()
     {
+        $type = request()->type;
         $countOfOpportunity = Opportunity::whereDate(
             'start_date', '<=', now()
         )->whereDate(
             'end_date', '>=', now()
-        )->count();
+        )
+        ->where('opportunity_type_id', $type)
+        ->count();
 
         $this->responseData = $countOfOpportunity;
         return response()->json($this->getResponse(), $this->responseCode);

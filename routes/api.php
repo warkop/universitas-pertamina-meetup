@@ -23,6 +23,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/get-member', 'DashboardController@getMember');
         Route::get('/get-new-regulation', 'DashboardController@getNewRegulation');
         Route::get('/get-new-member', 'DashboardController@getNewMember');
+        Route::get('/get-new-payment', 'DashboardController@getNewPayment');
         Route::get('/institution/{institution}', 'DashboardController@profileInstitution');
     });
 
