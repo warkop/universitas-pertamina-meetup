@@ -36,14 +36,14 @@
           bgcolor="#fff"
           style="font-size: 1rem; padding: 1rem 1rem 1rem 1rem"
         >
-          <p style="font-weight: 600; color: #777">Hello [nama],</p>
+          <p style="font-weight: 600; color: #777">Hello {{$name}},</p>
           <p style="color: #777; margin: 0 0 3rem 0">
             Glad to meet you<br />
             Unfortunately, Meet UP team has chosen not to move forward with your
             account.<br />
             <br />
             <span style="font-weight: 600; color: #666">Reason</span><br />
-            your email is recorded as spam
+            {{$reason}}
           </p>
         </td>
       </tr>
