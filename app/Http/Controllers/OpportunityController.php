@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -59,7 +60,7 @@ class OpportunityController extends Controller
                 'institution_id'        => $item->institution_id??null,
                 'institution_photo'     => $item->institution_path_photo??null,
                 'start_date'            => $item->start_date,
-                'end_date'              => $item->end_date,
+                'end_date'              => Carbon::parse($item->end_date)->format('d F Y'),
                 'created_at'            => date('d-m-Y H:i:s', strtotime($item->created_at)),
                 'updated_at'            => date('d-m-Y H:i:s', strtotime($item->updated_at)),
             ];
