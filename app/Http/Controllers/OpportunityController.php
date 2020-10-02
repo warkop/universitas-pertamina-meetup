@@ -56,7 +56,7 @@ class OpportunityController extends Controller
                 'desc'                  => $item->desc,
                 'contact_person'        => $item->contact_person,
                 'total_funding'         => $item->total_funding,
-                'item_type_name'        => $item->item_type_name??null,
+                'opportunity_type_name' => $item->opportunity_type_name??null,
                 'institution_name'      => $item->institution_name??null,
                 'institution_id'        => $item->institution_id??null,
                 'institution_photo'     => $item->institution_path_photo??null,
@@ -68,6 +68,14 @@ class OpportunityController extends Controller
         })
         ->filterColumn('updated_at', function($query, $keyword) {
             $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('opportunity_type_name', function($query, $keyword) {
+            $sql = "opportunity_type.name like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('institution_name', function($query, $keyword) {
+            $sql = "institution.name like ?";
             $query->whereRaw($sql, ["%{$keyword}%"]);
         })
         ->toJson();
