@@ -16,7 +16,7 @@ class TitleTransformer extends TransformerAbstract
         return [
             'id'        => $titleTransformer->id,
             'name'      => $titleTransformer->name,
-            'status'    => $this->status,
+            'status'    => $titleTransformer->status,
             'updated_at'=> date('d-m-Y', strtotime($titleTransformer->updated_at)),
         ];
     }
