@@ -10,7 +10,6 @@ use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
-use App\Transformers\OpportunityTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -47,7 +46,6 @@ class OpportunityController extends Controller
         ];
         $model = Opportunity::listData($options);
 
-
         return DataTables::of($model)
         ->setTransformer(function($item){
             return [
@@ -67,6 +65,7 @@ class OpportunityController extends Controller
             ];
         })
         ->filterColumn('updated_at', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
             $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
             $query->whereRaw($sql, ["%{$keyword}%"]);
         })
