@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OpportunityStoreFilesRequest;
 use App\Http\Requests\OpportunityStoreRequest;
-use App\Http\Resources\OpportunityListDataResource;
 use App\Models\Institution;
 use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -40,6 +37,11 @@ class OpportunityController extends Controller
         return $institution_id;
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         $options = [
@@ -84,75 +86,6 @@ class OpportunityController extends Controller
             $query->whereRaw($sql, ["%{$keyword}%"]);
         })
         ->toJson();
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index2(Request $request)
-    {
-      $rules['grid'] = 'required|in:default,datatable';
-      $rules['draw'] = 'required_if:grid,datatable|integer';
-      $rules['columns'] = 'required_if:grid,datatable';
-      $rules['start'] = 'required|integer|min:0';
-      $rules['length'] = 'required|integer|min:1|max:100';
-      $rules['options_active_only'] = 'boolean';
-
-      $validator = Validator::make($request->all(), $rules);
-
-      if ($validator->fails()) {
-           $this->responseCode = 400;
-           $this->responseStatus = 'Missing Param';
-           $this->responseMessage = 'Silahkan isi form dengan benar terlebih dahulu';
-           $this->responseData['error_log'] = $validator->errors();
-      } else {
-           $this->responseCode = 200;
-           $grid = ($request->input('grid') == 'datatable') ? 'datatable' : 'default';
-
-           if ($grid == 'datatable') {
-               $echo = $request->get('draw');
-
-               $sort = $request->input('order_method');
-               $field = $request->input('order_column');
-           } else {
-               $sort = $request->input('order_method');
-               $field = $request->input('order_column');
-           }
-
-           $start = $request->get('start');
-           $perpage = $request->get('length');
-
-           $search = $request->get('search_value');
-           $pattern = '/[^a-zA-Z0-9 !@#$%^&*\/\.\,\(\)-_:;?\+=]/u';
-           $search = preg_replace($pattern, '', $search);
-
-           $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'profile' => $request->get('profile')];
-
-           $result = Opportunity::listData($start, $perpage, $search, false, $sort, $field, $options);
-           $total = Opportunity::listData($start, $perpage, $search, true, $sort, $field, $options);
-
-           if ($grid == 'datatable') {
-               $this->responseData['sEcho'] = $echo;
-               $this->responseData["iTotalRecords"] = $total;
-               $this->responseData["iTotalDisplayRecords"] = $total;
-               $this->responseData["aaData"] = OpportunityListDataResource::collection($result);
-               return response()->json($this->responseData, $this->responseCode);
-           } else {
-               $this->responseData['opportunity'] = OpportunityListDataResource::collection($result);
-               $pagination['row'] = count($result);
-               $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
-               $pagination['rowEnd'] = ($start + count($result));
-               $this->responseData['meta']['start'] = $start;
-               $this->responseData['meta']['perpage'] = $perpage;
-               $this->responseData['meta']['search'] = $search;
-               $this->responseData['meta']['total'] = $total;
-               $this->responseData['meta']['pagination'] = $pagination;
-           }
-      }
-
-      return response()->json($this->getResponse(), $this->responseCode);
     }
 
     /**
