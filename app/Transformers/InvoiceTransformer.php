@@ -32,10 +32,16 @@ class InvoiceTransformer extends TransformerAbstract
             $necessity = 'Free Tier';
         }
 
+        $to = null;
+
+        if ($invoice->bank)  {
+            $to = $invoice->bank->name.' - '.$invoice->bank->account_number;
+        }
+
         return [
             'id'            => $invoice->id,
             'package'       => $invoice->package->name,
-            'to'            => $invoice->bank->name.' - '.$invoice->bank->account_number,
+            'to'            => $to,
             'number'        => $invoice->number,
             'necessity'     => $necessity,
             'status'        => $status,

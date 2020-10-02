@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use App\Services\PaymentService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -200,8 +202,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
 
-    Route::post('register/upload-payment/{invoice}', 'RegisterController@uploadPayment');
-
     Route::group(['prefix' => 'payment'], function () {
         Route::get('/', 'PaymentController@index');
         Route::get('/{invoice}', 'PaymentController@detailPayment');
@@ -229,6 +229,7 @@ Route::group(['prefix' => 'public'], function () {
     Route::get('/institution', 'InstitutionController@selectList');
     Route::get('/nationality', 'NationalityController@selectList');
     Route::get('/department', 'DepartmentController@selectList');
+    Route::get('/bank', 'RegisterController@listBank');
     Route::get('/announcement/{announcement}/show-file/', 'AnnouncementController@showFile');
 });
 
@@ -245,5 +246,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::get('package', 'PackageController@index');
+Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
+
