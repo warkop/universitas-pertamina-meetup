@@ -4,6 +4,8 @@ namespace App\Services;
 use App\Mail\Invoice as MailInvoice;
 use App\Mail\VerifyChangeMail;
 use App\Mail\ResetPassword;
+use App\Mail\Approved;
+use App\Mail\Disapproved;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\User;
@@ -30,6 +32,28 @@ class MailService
 
       Mail::to($emailReset->email)->send(new ResetPassword($dataUser));
    }
+
+   public function sendApproved($dataUser, $email)
+   {
+      $dataUser = $dataUser->toArray();
+      $url = env('URL_FRONTEND').'/login';
+
+      $dataUser['url'] = $url;
+
+      Mail::to($email)->send(new Approved($dataUser));
+   }
+
+   public function sendDecline($dataUser, $email, $reason)
+   {
+      $dataUser = $dataUser->toArray();
+      $url = env('URL_FRONTEND').'/login';
+
+      $dataUser['url'] = $url;
+      $dataUser['reason'] = $reason;
+
+      Mail::to($email)->send(new Disapproved($dataUser));
+   }
+
 
    public function sendInvoice(Invoice $invoice): void
    {

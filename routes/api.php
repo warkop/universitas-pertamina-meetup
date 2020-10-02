@@ -147,6 +147,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/change-institution/{member}', 'ResearchUserController@changeInstitution');
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
+        Route::post('/decline/{member}', 'ResearchUserController@declineMember');
     });
 
     Route::group(['prefix' => 'research-group'], function () {
