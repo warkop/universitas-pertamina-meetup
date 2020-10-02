@@ -82,11 +82,13 @@ class AuthController extends Controller
             $modelLogin = Institution::find($user->owner_id);
          } else if ($user->type == 1) {
             $modelLogin = Member::find($user->owner_id);
+         } else {
+            $modelLogin = null;
          }
 
          $dataLogin = [
             'type' => $user->type,
-            'name' => $modelLogin->name,
+            'name' => $modelLogin->name??null,
          ];
 
          return $this->respondWithToken($token, $change_mail, SidebarMenuDataResource::collection($data), $dataLogin);

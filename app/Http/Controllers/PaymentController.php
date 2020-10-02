@@ -33,10 +33,74 @@ class PaymentController extends Controller
             $type = request()->type;
 
             $model = Invoice::query();
-            $datatable = DataTables::eloquent($model
-            ->where('type', $type))
-            ->setTransformer(new InvoiceTransformer)
-            ->toJson();
+            if ($type == 0) {
+                $datatable = DataTables::eloquent($model
+                ->select(
+                    'institution.*',
+                    'invoice.*',
+                    'invoice.id as invoice_id'
+                )
+                ->join('user', 'user.id', '=', 'user_id')
+                ->join('institution', 'institution.id', '=', 'owner_id')
+                ->where('user.type', $type))
+                ->setTransformer(function($item){
+                    if ($item->valid_until != null && $item->payment_date != null) {
+                        $status = 'Accepted';
+                    } else if ($item->payment_date != null && $item->valid_until == null) {
+                        $status = 'Pending';
+                    } else {
+                        $status = 'Unpaid';
+                    }
+
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                        'phone' => $item->phone,
+                        'email' => $item->email,
+                        'address' => $item->address,
+                        'status' => $status,
+                        'invoice_id' => $item->invoice_id,
+                    ];
+                })
+                ->toJson();
+            } else if ($type == 1) {
+                $datatable = DataTables::eloquent($model
+                ->select(
+                    'member.*',
+                    'invoice.*',
+                    'institution.name as institution_name',
+                    'department.name as department_name',
+                    'invoice.id as invoice_id'
+                )
+                ->join('user', 'user.id', '=', 'user_id')
+                ->join('member', 'member.id', '=', 'owner_id')
+                ->join('department', 'department.id', '=', 'department_id')
+                ->join('institution', 'institution.id', '=', 'institution_id')
+                ->where('user.type', $type))
+                ->setTransformer(function($item){
+                    if ($item->valid_until != null && $item->payment_date != null) {
+                        $status = 'Accepted';
+                    } else if ($item->payment_date != null && $item->valid_until == null) {
+                        $status = 'Pending';
+                    } else {
+                        $status = 'Unpaid';
+                    }
+
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                        'email' => $item->email,
+                        'institution_name' => $item->institution_name,
+                        'department_name' => $item->department_name,
+                        'status' => $status,
+                        'invoice_id' => $item->invoice_id,
+                    ];
+                })
+                ->toJson();
+            } else {
+                $datatable = null;
+            }
+
         }
 
         return $datatable;
