@@ -36,13 +36,13 @@
           bgcolor="#fff"
           style="font-size: 1rem; padding: 1rem 1rem 1rem 1rem"
         >
-          <p style="font-weight: 600; color: #777">Hello [nama],</p>
+          <p style="font-weight: 600; color: #777">Hello {{$name}},</p>
           <p style="color: #777">
             Your user account is now active. Click the button bellow to login to
             you’re Meet-Up account :
           </p>
           <a
-            href=""
+            href="{{$url}}"
             style="
               background-color: #0275d8;
               color: #fefefe;
@@ -63,8 +63,8 @@
           <p style="color: #aaa; margin: 0 0 0 0">
             if the button doesn't work, visit the link below :
           </p>
-          <a style="font-weight: 600; color: #0275d8; margin: 0 0 0 0"
-            >[link]</a
+          <a href="{{$url}}" style="font-weight: 600; color: #0275d8; margin: 0 0 0 0"
+            >{{$url}}</a
           >
 
           <p style="margin: 3rem 0 0 0">

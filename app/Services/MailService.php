@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Mail\VerifyChangeMail;
 use App\Mail\ResetPassword;
+use App\Mail\Approved;
+use App\Mail\Disapproved;
 use App\Mail\Invoice as MailInvoice;
 use App\Models\Institution;
 use App\Models\Invoice;
@@ -33,27 +35,50 @@ class MailService
       Mail::to($emailReset->email)->send(new ResetPassword($dataUser));
    }
 
-    public function sendInvoice(Invoice $invoice): void
-    {
-        $user = User::find($invoice->user_id);
-        if ($user->type == 0) {
-            $model = Institution::find($user->owner_id);
-        } else if ($user->type == 1) {
-            $model = Member::find($user->owner_id);
-        }
+   public function sendApproved($dataUser, $email)
+   {
+      $dataUser = $dataUser->toArray();
+      $url = env('URL_FRONTEND').'/login';
 
-        $package = Package::find($invoice->package_id);
+      $dataUser['url'] = $url;
 
-        $dataMail = [
-            'name' => $model->name,
-            'email' => $model->email,
-            'orderDate' => date("F j, Y", strtotime($invoice->created_at)),
-            'expirationDate' => date("F j, Y", strtotime($invoice->valid_until)),
-            'packageName' => $package->name,
-            'price' => $invoice->price,
-            'url' => env('URL_FRONTEND').'/renew-package',
-        ];
+      Mail::to($email)->send(new Approved($dataUser));
+   }
 
-        Mail::to($user->email)->send(new MailInvoice($dataMail));
+   public function sendDecline($dataUser, $email, $reason)
+   {
+      $dataUser = $dataUser->toArray();
+      $url = env('URL_FRONTEND').'/login';
+
+      $dataUser['url'] = $url;
+      $dataUser['reason'] = $reason;
+
+      Mail::to($email)->send(new Disapproved($dataUser));
+   }
+
+
+   public function sendInvoice(Invoice $invoice): void
+   {
+      $user = User::find($invoice->user_id);
+
+      if ($user->type == 0) {
+         $model = Institution::find($id);
+      } else if ($user->type == 1) {
+         $model = Member::find($id);
+      }
+
+      $package = Package::find($invoice->package_id);
+
+      $dataMail = [
+         'name' => $model->name,
+         'email' => $model->email,
+         'oderDate' => date("F j, Y", strtotime($invoice->created_at)),
+         'expirationDate' => date("F j, Y", strtotime($invoice->valid_until)),
+         'packageName' => $package->name,
+         'price' => $invoice->price,
+         'url' => env('URL_FRONTEND').'/renew-package',
+      ];
+
+      Mail::to($user->email)->send(new MailInvoice($dataMail));
    }
 }
