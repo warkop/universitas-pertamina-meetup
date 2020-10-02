@@ -48,8 +48,24 @@ class OpportunityController extends Controller
         $model = Opportunity::listData($options);
 
 
-        return DataTables::eloquent($model)
-        ->setTransformer(new OpportunityTransformer)
+        return DataTables::of($model)
+        ->setTransformer(function($item){
+            return [
+                'id'                    => $item->id,
+                'name'                  => $item->name,
+                'desc'                  => $item->desc,
+                'contact_person'        => $item->contact_person,
+                'total_funding'         => $item->total_funding,
+                'item_type_name'        => $item->item_type_name??null,
+                'institution_name'      => $item->institution_name??null,
+                'institution_id'        => $item->institution_id??null,
+                'institution_photo'     => $item->institution_path_photo??null,
+                'start_date'            => $item->start_date,
+                'end_date'              => $item->end_date,
+                'created_at'            => date('d-m-Y H:i:s', strtotime($item->created_at)),
+                'updated_at'            => date('d-m-Y H:i:s', strtotime($item->updated_at)),
+            ];
+        })
         ->filterColumn('updated_at', function($query, $keyword) {
             $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
             $query->whereRaw($sql, ["%{$keyword}%"]);
