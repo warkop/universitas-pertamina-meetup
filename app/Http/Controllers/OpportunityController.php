@@ -69,6 +69,11 @@ class OpportunityController extends Controller
             $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
             $query->whereRaw($sql, ["%{$keyword}%"]);
         })
+        ->filterColumn('end_date', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(end_date, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
         ->filterColumn('opportunity_type_name', function($query, $keyword) {
             $sql = "opportunity_type.name like ?";
             $query->whereRaw($sql, ["%{$keyword}%"]);
