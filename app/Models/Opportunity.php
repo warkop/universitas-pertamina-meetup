@@ -57,13 +57,15 @@ class Opportunity extends Model
         return $this->belongsToMany(Institution::class, 'opportunity_target', 'institution_id', 'opportunity_id');
     }
 
-    public static function listData($start, $length, $search = '', $count = false, $sort, $field, $options = [])
+    public static function listData($options = [])
     {
-        $result = DB::table('opportunity')
-        ->select(
+        $result = Opportunity::
+        select(
             'opportunity.*',
             'opportunity_type.name as opportunity_type_name',
-            'institution.name as institution_name'
+            'institution.name as institution_name',
+            'institution.id as institution_id',
+            'institution.path_photo as institution_path_photo',
         )
         ->join('opportunity_type', 'opportunity_type.id', '=', 'opportunity_type_id')
         ->join('institution', 'institution.id', '=', 'institution_id')
@@ -74,12 +76,6 @@ class Opportunity extends Model
 
              $result = $result->leftJoin('member_opportunity', 'opportunity_id', 'opportunity.id')->where('member_opportunity.member_id', $user->owner_id);
        }
-
-        if ($count) {
-            $result = $result->count();
-        } else {
-            $result  = $result->offset($start)->limit($length)->orderBy($field, $sort)->get();
-        }
 
         return $result;
     }

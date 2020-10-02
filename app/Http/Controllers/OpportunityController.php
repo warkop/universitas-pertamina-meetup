@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
+use App\Transformers\OpportunityTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -38,12 +39,30 @@ class OpportunityController extends Controller
 
         return $institution_id;
     }
+
+    public function index()
+    {
+        $options = [
+            'profile' => request()->profile
+        ];
+        $model = Opportunity::listData($options);
+
+
+        return DataTables::eloquent($model)
+        ->setTransformer(new OpportunityTransformer)
+        ->filterColumn('updated_at', function($query, $keyword) {
+            $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->toJson();
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index2(Request $request)
     {
       $rules['grid'] = 'required|in:default,datatable';
       $rules['draw'] = 'required_if:grid,datatable|integer';
