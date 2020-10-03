@@ -6,12 +6,15 @@ use App\Mail\ResetPassword;
 use App\Mail\Approved;
 use App\Mail\Disapproved;
 use App\Mail\Invoice as MailInvoice;
+use App\Mail\VerifyMail;
+use App\Models\EmailReset;
 use App\Models\Institution;
 use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Package;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class MailService
 {
@@ -56,15 +59,39 @@ class MailService
       Mail::to($email)->send(new Disapproved($dataUser));
    }
 
+    public function sendVerify($user)
+    {
+        $emailReset = EmailReset::withTrashed()->updateOrCreate(
+        ['email' => $user->email, 'type' => 1, 'user_id' => $user->id],
+        [
+            'token' => Str::random(60),
+            'deleted_at' => null,
+            'deleted_by' => null,
+        ]);
+
+        if ($user->type == 0){
+            $model = Institution::find($user->owner_id);
+         } elseif ($user->type == 1) {
+            $model = Member::find($user->owner_id);
+         }
+
+        $dataUser = $model->toArray();
+
+        $url = env('URL_FRONTEND').'/verify-email?email_verify_token='.$emailReset->token;
+
+        $dataUser['url'] = $url;
+
+        Mail::to($user->email)->send(new VerifyMail($dataUser));
+    }
 
    public function sendInvoice(Invoice $invoice): void
    {
       $user = User::find($invoice->user_id);
 
       if ($user->type == 0) {
-         $model = Institution::find($id);
+         $model = Institution::find($user->owner_id);
       } else if ($user->type == 1) {
-         $model = Member::find($id);
+         $model = Member::find($user->owner_id);
       }
 
       $package = Package::find($invoice->package_id);
@@ -72,8 +99,7 @@ class MailService
       $dataMail = [
          'name' => $model->name,
          'email' => $model->email,
-         'oderDate' => date("F j, Y", strtotime($invoice->created_at)),
-         'expirationDate' => date("F j, Y", strtotime($invoice->valid_until)),
+         'orderDate' => date("F j, Y", strtotime($invoice->created_at)),
          'packageName' => $package->name,
          'price' => $invoice->price,
          'url' => env('URL_FRONTEND').'/renew-package',
