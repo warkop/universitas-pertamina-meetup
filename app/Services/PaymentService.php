@@ -1,13 +1,10 @@
 <?php
 namespace App\Services;
 
-use App\Helpers\HelperPublic;
-use App\Mail\Invoice as MailInvoice;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\PaymentToken;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
 
 class PaymentService
 {
@@ -15,18 +12,23 @@ class PaymentService
     {
         $package = Package::find($package_id);
 
-        $number = $this->generateInvoiceNumber($user);
+        if ($package->price > 0) {
+            $number = $this->generateInvoiceNumber($user);
 
-        $invoice = Invoice::create([
-            'package_id'    => $package_id,
-            'user_id'       => $user->id,
-            'price'         => $package->price,
-            'number'        => $number,
-        ]);
+            $invoice = Invoice::create([
+                'package_id'    => $package_id,
+                'user_id'       => $user->id,
+                'price'         => $package->price,
+                'number'        => $number,
+            ]);
 
-        $mailService = new MailService;
-        $mailService->sendInvoice($invoice);
-        return $this->generatePaymentToken($invoice);
+            $mailService = new MailService;
+
+            $mailService->sendInvoice($invoice);
+            return $this->generatePaymentToken($invoice);
+        }
+
+        return null;
     }
 
     public function generateInvoiceNumber(): string
@@ -52,11 +54,6 @@ class PaymentService
         $paymentToken->save();
 
         return $token;
-    }
-
-    public function sendInvoice(User $user): void
-    {
-        Mail::to($user->email)->send(new MailInvoice($user));
     }
 
     public function savePayment(User $user, $request)
