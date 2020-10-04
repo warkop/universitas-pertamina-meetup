@@ -15,11 +15,13 @@ use App\Models\MemberSkill;
 use App\Models\Skill;
 use App\Models\User;
 use App\Models\ChangeDept;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 use App\Services\MailService;
+use App\Services\InstitutionService;
 
 class ResearchUserController extends Controller
 {
@@ -197,32 +199,54 @@ class ResearchUserController extends Controller
     {
       $request->validated();
 
-      $member->department_id = $request->input('department');
+      $idDepartment = $request->input('department');
 
-      $files = $request->file('files');
-      if (!empty($files)) {
-         foreach ($files as $key => $value) {
-            $changeDept = new ChangeDept();
+      $institutionService = new InstitutionService;
+      $checkAvail = $institutionService->checkAvailMember($idDepartment);
 
-            $changedName = time().random_int(100,999).$value->getClientOriginalName();
+      $this->responseMessage = 'Institusi Berhasil Dirubah';
 
-            $value->storeAs('change-dept/' . $member->id, $changedName);
-            // }
-            $arrayData = [
-               'member_id'       => $member->id,
-               'department_id'   => $request->input('department'),
-               'path_file'       => $changedName,
-               'status'          => 1,
-            ];
+      if ($checkAvail == 1){
+         $this->responseCode = 400;
+         $this->responseMessage = 'Institution Payment Not Complete';
+      } elseif ($checkAvail == 2) {
+         $member->department_id = $idDepartment;
 
-            $changeDept->create($arrayData);
+         $files = $request->file('files');
+         if (!empty($files)) {
+            foreach ($files as $key => $value) {
+               $changeDept = new ChangeDept();
+
+               $changedName = time().random_int(100,999).$value->getClientOriginalName();
+
+               $value->storeAs('change-dept/' . $member->id, $changedName);
+
+               $arrayData = [
+                  'member_id'       => $member->id,
+                  'department_id'   => $request->input('department'),
+                  'path_file'       => $changedName,
+                  'status'          => 1,
+               ];
+
+               $changeDept->create($arrayData);
+            }
          }
+
+         $member->save();
+
+         $this->responseCode = 200;
+         $this->responseMessage = 'Institusi Berhasil Dirubah';
+      } elseif ($checkAvail == 3) {
+         $this->responseCode = 401;
+         $this->responseMessage = 'Institution Has Max Member';
       }
 
-      $member->save();
+      // if ($chackMember){
 
-      $this->responseCode = 200;
-      $this->responseMessage = 'Institusi Berhasil Dirubah';
+      // } else {
+      //    $this->responseCode = 400;
+      //    $this->responseMessage = 'Institution Member Full';
+      // }
 
 
       return response()->json($this->getResponse(), $this->responseCode);
