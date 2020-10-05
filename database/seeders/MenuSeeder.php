@@ -41,7 +41,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => null,
                 'order'  => 3,
                 'icon'  => 'flaticon2-calendar-5',
-                'url'  => 'research-opportunity',
+                'url'  => 'opportunity',
                 'id_element'  => 'opportunity-nav',
                 'action' => 'C,R,U,D'
             ],
@@ -61,7 +61,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => null,
                 'order'  => 5,
                 'icon'  => 'flaticon2-protection',
-                'url'  => 'institution',
+                'url'  => 'master-institution',
                 'id_element'  => 'institution-nav',
                 'action' => 'C,R,U,D,A'
             ],
@@ -129,7 +129,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => 8,
                 'order'  => 12,
                 'icon'  => null,
-                'url'  => 'master-departement',
+                'url'  => 'master-department',
                 'id_element'  => null,
                 'action' => 'C,R,U,D'
             ],[
@@ -156,7 +156,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => 8,
                 'order'  => 15,
                 'icon'  => null,
-                'url'  => 'academic-degree',
+                'url'  => 'master-degree',
                 'id_element'  => null,
                 'action' => 'C,R,U,D'
             ],[

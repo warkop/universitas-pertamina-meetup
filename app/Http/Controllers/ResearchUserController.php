@@ -6,6 +6,7 @@ use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ChangeInstitutionRequest;
 use App\Http\Requests\RoleUserRequest;
 use App\Http\Resources\MemberResource;
+use App\Http\Resources\MenuDataResource;
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
 use App\Mail\Invitation;
@@ -316,6 +317,42 @@ class ResearchUserController extends Controller
 
       $this->responseCode = 200;
       $this->responseMessage = 'Data berhasil disimpan';
+
+      return response()->json($this->getResponse(), $this->responseCode);
+   }
+
+   public function roleUser(Member $member)
+   {
+      $userModel = User::select('user.id as id', 'role.id as role_id', 'role.name as name_role')
+                       ->where('type', 1)
+                       ->leftJoin('role', 'role.id', 'user.role_id')
+                       ->where('owner_id', $member->id)
+                       ->first();
+
+      $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
+                           ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
+                           ->where('role_menu_addition.user_id', $userModel->id)
+                           ->orderBy('order', 'asc')
+                           ->get();
+
+      $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+                           ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
+                           ->where('role_menu.role_id', $userModel->role_id)
+                           ->orderBy('order', 'asc')
+                           ->get();
+
+      $returnData = [
+         'Role' => [
+            'id'     => $userModel->role_id,
+            'name'   => $userModel->name_role,
+         ],
+         'menu_role' => MenuDataResource::collection($data_by_role),
+         'menu_user' => MenuDataResource::collection($data_by_user),
+      ];
+
+      $this->responseCode = 200;
+      $this->responseMessage = 'Data berhasil disimpan';
+      $this->responseData = $returnData;
 
       return response()->json($this->getResponse(), $this->responseCode);
    }
