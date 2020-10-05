@@ -151,6 +151,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
         Route::post('/decline/{member}', 'ResearchUserController@declineMember');
+        Route::post('/role/{member}', 'ResearchUserController@changeRole');
     });
 
     Route::group(['prefix' => 'research-group'], function () {
@@ -250,4 +251,3 @@ Route::get('package', 'PackageController@index');
 Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
-
