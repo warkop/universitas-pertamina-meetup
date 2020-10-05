@@ -57,7 +57,7 @@ class AuthController extends Controller
       $user = auth()->user();
 
       if (!$user->email_verified_at) {
-         auth()->logout();
+         Auth::logout();
 
          $this->responseCode = 401;
          $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
@@ -82,11 +82,13 @@ class AuthController extends Controller
             $modelLogin = Institution::find($user->owner_id);
          } else if ($user->type == 1) {
             $modelLogin = Member::find($user->owner_id);
+         } else {
+            $modelLogin = null;
          }
 
          $dataLogin = [
             'type' => $user->type,
-            'name' => $modelLogin->name,
+            'name' => $modelLogin->name??null,
          ];
 
          return $this->respondWithToken($token, $change_mail, SidebarMenuDataResource::collection($data), $dataLogin);
@@ -101,9 +103,12 @@ class AuthController extends Controller
    */
    public function me()
    {
-      $token = JWTAuth::getToken();
-      $payload = JWTAuth::getPayload($token)->toArray();
-      return response()->json($payload);
+        $token = JWTAuth::getToken();
+        $payload = JWTAuth::getPayload($token)->toArray();
+        return response()->json([
+            'payload' => $payload,
+            'user' => auth()->user()
+        ]);
    }
 
    /**
@@ -125,6 +130,6 @@ class AuthController extends Controller
    */
    public function refresh()
    {
-      return $this->respondWithToken(Auth::refresh(), auth()->user()->change_mail, $this->sideBarMenu);
+      return $this->respondWithToken(Auth::refresh(), auth()->user()->change_mail, $this->sideBarMenu, auth()->user());
    }
 }

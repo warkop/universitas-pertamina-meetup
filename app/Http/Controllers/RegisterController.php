@@ -17,9 +17,9 @@ use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
-    public function __construct()
+    public function __construct(PaymentService $paymentService)
     {
-        $this->paymentService = new PaymentService;
+        $this->paymentService = $paymentService;
     }
     /**
      * Creating User
@@ -68,10 +68,15 @@ class RegisterController extends Controller
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
         $this->responseData['registration'] = $institution->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
-        $this->responseData['upload_link'] = [
-            'method' => 'POST',
-            'link' => url('api/upload-payment?token='.$paymentToken),
-        ];
+
+        $uploadLink = null;
+        if ($paymentToken) {
+            $uploadLink = [
+                'method' => 'POST',
+                'link' => url('api/upload-payment?token='.$paymentToken),
+            ];
+        }
+        $this->responseData['upload_link'] = $uploadLink;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -113,10 +118,14 @@ class RegisterController extends Controller
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
         $this->responseData['registration'] = $member->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
-        $this->responseData['upload_link'] = [
-            'method' => 'POST',
-            'link' => url('api/upload-payment?token='.$paymentToken),
-        ];
+        $uploadLink = null;
+        if ($paymentToken) {
+            $uploadLink = [
+                'method' => 'POST',
+                'link' => url('api/upload-payment?token='.$paymentToken),
+            ];
+        }
+        $this->responseData['upload_link'] = $uploadLink;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

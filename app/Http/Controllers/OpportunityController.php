@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OpportunityStoreFilesRequest;
 use App\Http\Requests\OpportunityStoreRequest;
-use App\Http\Resources\OpportunityListDataResource;
 use App\Models\Institution;
 use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -38,73 +36,56 @@ class OpportunityController extends Controller
 
         return $institution_id;
     }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-      $rules['grid'] = 'required|in:default,datatable';
-      $rules['draw'] = 'required_if:grid,datatable|integer';
-      $rules['columns'] = 'required_if:grid,datatable';
-      $rules['start'] = 'required|integer|min:0';
-      $rules['length'] = 'required|integer|min:1|max:100';
-      $rules['options_active_only'] = 'boolean';
+        $options = [
+            'profile' => request()->profile
+        ];
+        $model = Opportunity::listData($options);
 
-      $validator = Validator::make($request->all(), $rules);
-
-      if ($validator->fails()) {
-           $this->responseCode = 400;
-           $this->responseStatus = 'Missing Param';
-           $this->responseMessage = 'Silahkan isi form dengan benar terlebih dahulu';
-           $this->responseData['error_log'] = $validator->errors();
-      } else {
-           $this->responseCode = 200;
-           $grid = ($request->input('grid') == 'datatable') ? 'datatable' : 'default';
-
-           if ($grid == 'datatable') {
-               $echo = $request->get('draw');
-
-               $sort = $request->input('order_method');
-               $field = $request->input('order_column');
-           } else {
-               $sort = $request->input('order_method');
-               $field = $request->input('order_column');
-           }
-
-           $start = $request->get('start');
-           $perpage = $request->get('length');
-
-           $search = $request->get('search_value');
-           $pattern = '/[^a-zA-Z0-9 !@#$%^&*\/\.\,\(\)-_:;?\+=]/u';
-           $search = preg_replace($pattern, '', $search);
-
-           $options = ['grid' => $grid, 'active_only' => $request->get('options_active_only'), 'profile' => $request->get('profile')];
-
-           $result = Opportunity::listData($start, $perpage, $search, false, $sort, $field, $options);
-           $total = Opportunity::listData($start, $perpage, $search, true, $sort, $field, $options);
-
-           if ($grid == 'datatable') {
-               $this->responseData['sEcho'] = $echo;
-               $this->responseData["iTotalRecords"] = $total;
-               $this->responseData["iTotalDisplayRecords"] = $total;
-               $this->responseData["aaData"] = OpportunityListDataResource::collection($result);
-               return response()->json($this->responseData, $this->responseCode);
-           } else {
-               $this->responseData['opportunity'] = OpportunityListDataResource::collection($result);
-               $pagination['row'] = count($result);
-               $pagination['rowStart'] = ((count($result) > 0) ? ($start + 1) : 0);
-               $pagination['rowEnd'] = ($start + count($result));
-               $this->responseData['meta']['start'] = $start;
-               $this->responseData['meta']['perpage'] = $perpage;
-               $this->responseData['meta']['search'] = $search;
-               $this->responseData['meta']['total'] = $total;
-               $this->responseData['meta']['pagination'] = $pagination;
-           }
-      }
-
-      return response()->json($this->getResponse(), $this->responseCode);
+        return DataTables::of($model)
+        ->setTransformer(function($item){
+            return [
+                'id'                    => $item->id,
+                'name'                  => $item->name,
+                'desc'                  => $item->desc,
+                'contact_person'        => $item->contact_person,
+                'total_funding'         => $item->total_funding,
+                'opportunity_type_name' => $item->opportunity_type_name??null,
+                'institution_name'      => $item->institution_name??null,
+                'institution_id'        => $item->institution_id??null,
+                'institution_photo'     => $item->institution_path_photo??null,
+                'start_date'            => $item->start_date,
+                'end_date'              => Carbon::parse($item->end_date)->format('d F Y'),
+                'created_at'            => date('d-m-Y H:i:s', strtotime($item->created_at)),
+                'updated_at'            => date('d-m-Y H:i:s', strtotime($item->updated_at)),
+            ];
+        })
+        ->filterColumn('updated_at', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('end_date', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(end_date, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('opportunity_type_name', function($query, $keyword) {
+            $sql = "opportunity_type.name like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('institution_name', function($query, $keyword) {
+            $sql = "institution.name like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->toJson();
     }
 
     /**
