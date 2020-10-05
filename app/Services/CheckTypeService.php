@@ -9,10 +9,8 @@ use App\Models\User;
 
 class CheckTypeService
 {
-   public function chackAvailMember($idDepartment)
+   public function findUser($id)
    {
-      $department = Department::find($idDepartment)->toArray();
 
-      var_dump($department);
    }
 }
