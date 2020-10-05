@@ -63,6 +63,13 @@ class AuthController extends Controller
          $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
 
          return response()->json($this->getResponse(), $this->responseCode);
+      } elseif (!$user->confirm_at) {
+         Auth::logout();
+
+         $this->responseCode = 402;
+         $this->responseMessage = 'Your account not activate, please contact Admin for more information';
+
+         return response()->json($this->getResponse(), $this->responseCode);
       } else {
          $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
          ->whereRaw('sub_menu is null')
