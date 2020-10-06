@@ -15,6 +15,7 @@
         "guzzlehttp/guzzle": "^7.0",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
+        "orangehill/iseed": "^2.6",
         "tymon/jwt-auth": "^1.0",
         "wildside/userstamps": "^2.1",
         "yajra/laravel-datatables-fractal": "^1.6",
