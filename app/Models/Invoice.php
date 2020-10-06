@@ -46,4 +46,18 @@ class Invoice extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getLastInvoice(User $user)
+    {
+        return Invoice::where(['user_id' => $user->id])->latest()->first();
+    }
+
+    public function getUnpaid(User $user)
+    {
+        return Invoice::where('user_id', $user->id)
+        ->whereNull('payment_date')
+        ->whereNull('valid_until')
+        ->latest()
+        ->first();
+    }
 }

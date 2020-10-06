@@ -11,12 +11,11 @@ class PackageController extends Controller
 {
     public function index()
     {
-        $package = Package::all();
+        $package = Package::where('package_type', request()->type)->get();
 
         $this->responseCode = 200;
         $this->responseData = $package;
 
-
-      return response()->json($this->getResponse(), $this->responseCode);
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 }

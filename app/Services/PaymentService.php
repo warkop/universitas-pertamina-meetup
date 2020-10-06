@@ -67,7 +67,13 @@ class PaymentService
         $invoice->payment_date      = date('Y-m-d H:i:s', strtotime($request->payment_date));
         $invoice->save();
 
+        return true;
+    }
+
+    public function saveUploadPayment(User $user, $request)
+    {
         $file = $request->file('payment_attachment');
+        $invoice = Invoice::where('user_id', $user->id)->latest()->first();
         if (!empty($file) && $file->isValid()) {
             $changedName = time().random_int(100,999).$file->getClientOriginalName();
             $file->storeAs('payment/' . $invoice->id, $changedName);
@@ -106,6 +112,46 @@ class PaymentService
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function generateInvoice(User $user)
+    {
+        $invoice = (new Invoice)->getUnpaid($user);
+        return $invoice;
+    }
+
+    public function myStatus(User $user)
+    {
+        if ($user->type != 2) {
+            $invoices = Invoice::where('user_id', $user->id)->latest()->get();
+
+            if ($invoices->count() == 1 && $invoices[0]->valid_until == null) {
+                $status = 'New Member';
+                $status_id = 1;
+                $package = Package::find($invoices[0]->package_id);
+                $packageName = $package->name;
+            } else if ($invoices->count() > 1 && $invoices[0]->valid_until == null) {
+                $status = 'Renew';
+                $status_id = 2;
+                $package = Package::find($invoices[0]->package_id);
+                $packageName = $package->name;
+            } else {
+                $status = 'Active Member';
+                $status_id = 0;
+
+                $package = Package::find($invoices[0]->package_id);
+                $packageName = $package->name;
+            }
+
+            return [
+                'status' => $status,
+                'status_id' => $status_id,
+                'package_id' => $invoices[0]->package_id,
+                'package_name' => $packageName,
+            ];
+        } else {
+            return null;
         }
     }
 }
