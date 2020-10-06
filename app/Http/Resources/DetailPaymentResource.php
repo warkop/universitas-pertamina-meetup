@@ -14,6 +14,13 @@ class DetailPaymentResource extends JsonResource
      */
     public function toArray($request)
     {
+        if ($this->valid_until != null && $this->payment_date != null) {
+            $status = 'Accepted';
+        } else if ($this->payment_date != null && $this->valid_until == null) {
+            $status = 'Pending';
+        } else {
+            $status = 'Unpaid';
+        }
         return [
             'id' => $this->id,
             'package_name' => $this->package->name??null,
@@ -31,6 +38,7 @@ class DetailPaymentResource extends JsonResource
             'payment_confirm_at' => $this->payment_confirm_at,
             'valid_until' => $this->valid_until,
             'created_at' => $this->created_at,
+            'status' => $status,
         ];
     }
 }

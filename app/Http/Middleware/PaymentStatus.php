@@ -20,7 +20,7 @@ class PaymentStatus
     public function handle(Request $request, Closure $next)
     {
         $user = auth()->user();
-        if ($user->type != 2) {
+        if ($user != null && $user->type != 2) {
             $invoice = new Invoice;
             $lastInvoice = $invoice->getLastInvoice($user);
             if ($lastInvoice != null && $lastInvoice->valid_until == null) {

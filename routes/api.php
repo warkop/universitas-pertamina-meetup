@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\User;
-use App\Services\PaymentService;
 use Illuminate\Support\Facades\Route;
 
 /*
