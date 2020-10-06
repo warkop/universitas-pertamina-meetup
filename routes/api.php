@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::group(['middleware' => ['jwt.verify']], function () {
+Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/get-announcement', 'DashboardController@getAnnouncement');
         Route::get('/get-opening-opportunity', 'DashboardController@getOpeningOpportunity');
@@ -205,12 +205,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['prefix' => 'payment'], function () {
         Route::get('/', 'PaymentController@index');
+        Route::get('/my-payment-status', 'PaymentController@myPaymentStatus');
         Route::get('/{invoice}', 'PaymentController@detailPayment');
         Route::get('/{invoice}/show-file', 'PaymentController@showFile');
         Route::post('/{invoice}', 'PaymentController@storePayment');
         Route::patch('/{invoice}/approve', 'PaymentController@acceptPayment');
         Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment');
     });
+
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
@@ -251,3 +253,8 @@ Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
 
+Route::get('test', function(){
+    $paymentService = new PaymentService;
+    $user = User::find(1);
+    dd($paymentService->generateInvoice($user));
+});
