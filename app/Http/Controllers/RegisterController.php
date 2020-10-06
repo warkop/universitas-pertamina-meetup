@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SendDataPaymentRequest;
 use App\Http\Requests\SignUpInstitutionRequest;
 use App\Http\Requests\SignUpResearcherRequest;
+use App\Http\Requests\uploadPaymentRequest;
 use App\Models\Bank;
 use App\Models\Institution;
 use App\Models\Invoice;
@@ -124,8 +126,14 @@ class RegisterController extends Controller
                 'method' => 'POST',
                 'link' => url('api/upload-payment?token='.$paymentToken),
             ];
+
+            $dataLink = [
+                'method_data' => 'POST',
+                'url_data' => url('api/register/send-data-payment?token='.$paymentToken),
+            ];
         }
         $this->responseData['upload_link'] = $uploadLink;
+        $this->responseData['send_data_link'] = $dataLink;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -138,15 +146,16 @@ class RegisterController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function uploadPayment(Request $request)
+    public function uploadPayment(uploadPaymentRequest $request)
     {
+        $request->validated();
         $token = $request->get('token');
         $paymentToken = PaymentToken::where('token', $token)->first();
         if ($paymentToken) {
             $invoice = Invoice::find($paymentToken->invoice_id);
             $user = User::find($invoice->user_id);
 
-            $result = $this->paymentService->savePayment($user, $request);
+            $result = $this->paymentService->saveUploadPayment($user, $request);
             if ($result) {
                 $this->responseCode     = 200;
                 $this->responseMessage  = 'Bukti pembayaran berhasil diunggah';
@@ -159,6 +168,30 @@ class RegisterController extends Controller
             $this->responseMessage  = 'Token tidak valid!';
         }
 
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function sendDataPayment(SendDataPaymentRequest $request)
+    {
+        $request->validated();
+        $token = $request->get('token');
+        $paymentToken = PaymentToken::where('token', $token)->first();
+        if ($paymentToken) {
+            $invoice = Invoice::find($paymentToken->invoice_id);
+            $user = User::find($invoice->user_id);
+
+            $result = $this->paymentService->savePayment($user, $request);
+            if ($result) {
+                $this->responseCode     = 200;
+                $this->responseMessage  = 'Bukti data pembayaran berhasil disimpan';
+            } else {
+                $this->responseCode     = 400;
+                $this->responseMessage  = 'Kirim bukti pembayaran gagal, silahkan hubungi administrator!';
+            }
+        } else {
+            $this->responseCode     = 403;
+            $this->responseMessage  = 'Token tidak valid!';
+        }
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

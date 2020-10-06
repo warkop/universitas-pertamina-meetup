@@ -67,7 +67,13 @@ class PaymentService
         $invoice->payment_date      = date('Y-m-d H:i:s', strtotime($request->payment_date));
         $invoice->save();
 
+        return true;
+    }
+
+    public function saveUploadPayment(User $user, $request)
+    {
         $file = $request->file('payment_attachment');
+        $invoice = Invoice::where('user_id', $user->id)->latest()->first();
         if (!empty($file) && $file->isValid()) {
             $changedName = time().random_int(100,999).$file->getClientOriginalName();
             $file->storeAs('payment/' . $invoice->id, $changedName);

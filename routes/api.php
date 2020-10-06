@@ -250,6 +250,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::get('package', 'PackageController@index');
 Route::post('register/upload-payment', 'RegisterController@uploadPayment');
+Route::post('register/send-data-payment', 'RegisterController@sendDataPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
 
