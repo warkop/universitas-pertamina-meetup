@@ -132,6 +132,10 @@ class HelperPublic
                 $s = 'Unauthorized';
                 $m = 'Silahkan login terlebih dahulu';
                 break;
+            case '402':
+                $s = 'Payment Needed';
+                $m = 'User harus melakukan pembayaran terlebih dahulu';
+                break;
             case '403':
                 $s = 'Forbidden';
                 $m = 'Anda tidak dapat mengakses halaman ini, silahkan hubungi Administrator';
