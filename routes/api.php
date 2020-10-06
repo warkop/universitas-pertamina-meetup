@@ -151,6 +151,8 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::post('/{member}', 'ResearchUserController@store');
         Route::patch('/{member}', 'ResearchUserController@acceptMember');
         Route::post('/decline/{member}', 'ResearchUserController@declineMember');
+        Route::post('/role/{member}', 'ResearchUserController@changeRole');
+        Route::get('/role/detail/{member}', 'ResearchUserController@RoleUser');
     });
 
     Route::group(['prefix' => 'research-group'], function () {
@@ -253,9 +255,3 @@ Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 Route::post('register/send-data-payment', 'RegisterController@sendDataPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
-
-Route::get('test', function(){
-    $paymentService = new PaymentService;
-    $user = User::find(1);
-    dd($paymentService->generateInvoice($user));
-});
