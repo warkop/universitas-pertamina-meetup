@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
 use App\Models\Invoice;
+use App\Models\Package;
 use App\Models\User;
 use App\Services\PaymentService;
 use App\Transformers\InvoiceTransformer;
@@ -72,10 +73,10 @@ class PaymentController extends Controller
                     'department.name as department_name',
                     'invoice.id as invoice_id'
                 )
-                ->join('user', 'user.id', '=', 'user_id')
-                ->join('member', 'member.id', '=', 'owner_id')
-                ->join('department', 'department.id', '=', 'department_id')
-                ->join('institution', 'institution.id', '=', 'institution_id')
+                ->leftJoin('user', 'user.id', '=', 'user_id')
+                ->leftJoin('member', 'member.id', '=', 'owner_id')
+                ->leftJoin('department', 'department.id', '=', 'department_id')
+                ->leftJoin('institution', 'institution.id', '=', 'institution_id')
                 ->where('user.type', $type))
                 ->setTransformer(function($item){
                     if ($item->valid_until != null && $item->payment_date != null) {
@@ -152,5 +153,19 @@ class PaymentController extends Controller
     {
         $path = storage_path('app/payment/'.$invoice->id.'/'.$invoice->payment_attachment);
         return response()->file($path);
+    }
+
+    public function createInvoice()
+    {
+
+    }
+
+    public function myPaymentStatus()
+    {
+        $user = auth()->user();
+
+        $this->responseData = $this->payment->myStatus($user);
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 }
