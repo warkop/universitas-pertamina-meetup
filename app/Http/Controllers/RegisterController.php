@@ -89,7 +89,7 @@ class RegisterController extends Controller
 
         $member = new Member();
 
-        if ($request->department_id) {
+        if ($request->department_id != null) {
             $member->department_id      = $request->department_id;
         } else {
             $member->is_independent = true;
