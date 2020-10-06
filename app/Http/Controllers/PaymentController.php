@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
+use App\Http\Resources\DetailPaymentResource;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\User;
@@ -110,7 +111,7 @@ class PaymentController extends Controller
     public function detailPayment(Invoice $invoice)
     {
         $this->responseCode = 200;
-        $this->responseData = $invoice;
+        $this->responseData = new DetailPaymentResource($invoice);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
