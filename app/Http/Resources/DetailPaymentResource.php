@@ -22,6 +22,7 @@ class DetailPaymentResource extends JsonResource
                 'bank_account' => $this->bank->account_number??null,
                 'owner_name' => $this->bank->owner_name??null,
             ],
+            'buyer' => $this->buyer,
             'number' => $this->number,
             'price' => $this->price,
             'bank_account' => $this->bank_account,
