@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Invoice;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailPaymentResource extends JsonResource
@@ -21,10 +22,19 @@ class DetailPaymentResource extends JsonResource
         } else {
             $status = 'Unpaid';
         }
+
+        $invoice = Invoice::where('user_id', $this->user_id)->count();
+        if ($invoice > 1) {
+            $action = 'Renew';
+        } else {
+            $action = 'New Member';
+        }
+
         return [
             'id' => $this->id,
             'package_name' => $this->package->name??null,
             'bank' => [
+                'bank_id' => $this->bank->id??null,
                 'bank_name' => $this->bank->name??null,
                 'bank_account' => $this->bank->account_number??null,
                 'owner_name' => $this->bank->owner_name??null,
@@ -39,6 +49,7 @@ class DetailPaymentResource extends JsonResource
             'valid_until' => $this->valid_until,
             'created_at' => $this->created_at,
             'status' => $status,
+            'action' => $action,
         ];
     }
 }
