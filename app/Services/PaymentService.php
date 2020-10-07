@@ -90,6 +90,10 @@ class PaymentService
         $invoice->payment_confirm_at    = now();
         $invoice->valid_until           = now()->addYear();
         $invoice->save();
+
+        $mailService = new MailService;
+
+        $mailService->sendApprovedPayment($invoice);
     }
 
     public function rejectPayment(Invoice $invoice)
@@ -99,6 +103,10 @@ class PaymentService
         $invoice->payment_attachment    = null;
         $invoice->valid_until           = null;
         $invoice->save();
+
+        $mailService = new MailService;
+
+        $mailService->sendDeclinePayment($invoice);
     }
 
     public function uploadPayment($file, Invoice $invoice)
@@ -155,4 +163,3 @@ class PaymentService
         }
     }
 }
-
