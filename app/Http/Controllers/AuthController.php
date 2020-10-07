@@ -63,7 +63,7 @@ class AuthController extends Controller
          $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
 
          return response()->json($this->getResponse(), $this->responseCode);
-      } elseif (!$user->confirm_at) {
+      } elseif (!$user->confirm_at && $user->type == 1) {
          Auth::logout();
 
          $this->responseCode = 402;
