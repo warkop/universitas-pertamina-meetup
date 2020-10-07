@@ -59,8 +59,8 @@ class Opportunity extends Model
 
     public static function listData($options = [])
     {
-        $result = DB::table('opportunity')
-        ->select(
+        $result = Opportunity::
+        select(
             'opportunity.*',
             'opportunity_type.name as opportunity_type_name',
             'institution.name as institution_name',

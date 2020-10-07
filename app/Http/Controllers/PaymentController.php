@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RejectRequest;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Resources\DetailPaymentResource;
 use App\Models\Invoice;
@@ -140,8 +141,9 @@ class PaymentController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function rejectPayment(Invoice $invoice)
+    public function rejectPayment(RejectRequest $request, Invoice $invoice)
     {
+        $request->validated();
         $this->payment->rejectPayment($invoice);
 
         $this->responseCode = 200;
