@@ -396,9 +396,9 @@ class ProfileController extends Controller
       // }
       else {
          if ($type == 'institution') {
-            $data = DB::table('institution')->where('email', $emailReset->email)->first();
+            $data = Institution::where('email', $emailReset->email)->first();
          } else if ($type == 'member') {
-            $data = DB::table('member')->where('email', $emailReset->email)->first();
+            $data = Member::where('email', $emailReset->email)->first();
          }
 
          if (!empty($data)){
