@@ -25,7 +25,6 @@ class RejectRequest extends FormRequest
     {
         return [
             'reason_for_rejection' => 'required',
-            'solution' => 'required',
         ];
     }
 }
