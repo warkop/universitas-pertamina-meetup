@@ -209,6 +209,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/{invoice}', 'PaymentController@detailPayment');
         Route::get('/{invoice}/show-file', 'PaymentController@showFile');
         Route::post('/{invoice}', 'PaymentController@storePayment');
+        Route::post('/upload/{invoice}', 'PaymentController@storeUploadPayment');
         Route::patch('/{invoice}/approve', 'PaymentController@acceptPayment');
         Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment');
     });
