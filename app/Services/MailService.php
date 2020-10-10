@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Helpers\HelperPublic;
 use App\Mail\VerifyChangeMail;
 use App\Mail\ResetPassword;
 use App\Mail\Approved;
@@ -12,7 +13,9 @@ use App\Models\Institution;
 use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Package;
+use App\Models\PaymentToken;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -86,25 +89,25 @@ class MailService
 
    public function sendInvoice(Invoice $invoice): void
    {
-      $user = User::find($invoice->user_id);
+        $user = User::find($invoice->user_id);
 
-      if ($user->type == 0) {
-         $model = Institution::find($user->owner_id);
-      } else if ($user->type == 1) {
-         $model = Member::find($user->owner_id);
-      }
+        if ($user->type == 0) {
+            $model = Institution::find($user->owner_id);
+        } else if ($user->type == 1) {
+            $model = Member::find($user->owner_id);
+        }
 
-      $package = Package::find($invoice->package_id);
+        $package = Package::find($invoice->package_id);
+        $paymentToken = PaymentToken::where('invoice_id', $invoice->id)->first();
+        $dataMail = [
+            'name' => $model->name,
+            'email' => $model->email,
+            'orderDate' => $invoice->created_at->format('d F Y'),
+            'packageName' => $package->name,
+            'price' => HelperPublic::helpCurrency($invoice->price),
+            'url' => env('URL_FRONTEND').'/confirm-subscription?token='.$paymentToken->token,
+        ];
 
-      $dataMail = [
-         'name' => $model->name,
-         'email' => $model->email,
-         'orderDate' => date("F j, Y", strtotime($invoice->created_at)),
-         'packageName' => $package->name,
-         'price' => $invoice->price,
-         'url' => env('URL_FRONTEND').'/renew-package',
-      ];
-
-      Mail::to($user->email)->send(new MailInvoice($dataMail));
+        Mail::to($user->email)->send(new MailInvoice($dataMail));
    }
 }

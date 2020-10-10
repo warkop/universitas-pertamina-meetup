@@ -174,6 +174,8 @@ class PaymentController extends Controller
 
     public function createInvoice()
     {
+        $user = auth()->user();
+        return $this->payment->generateInvoice($user);
 
     }
 

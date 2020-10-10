@@ -101,10 +101,10 @@
           <div style="width: 318px;
           display: block;
           float: right;margin:1rem 0 2rem 0">
-          <p style="margin:0"><span style="font-weight: 600;"></span><br></p><br>
+          <div style="height: 50px;width: 318px;"></div><br>
           <p style="margin:0"><span style="font-weight: 600;">Package:</span><br>{{$packageName}}</p>
           </div>
-          <h4 style="color: #aaa;margin: 0 0 0 0;">HERE'S WHAT YOU ORDERED:</h4>
+          <h4 style="color: #aaa;margin: 0 0 0 0">HERE'S WHAT YOU ORDERED:</h4>
 
           <div  style="display: block;
           float: left;width: 302px;background-color: #eee;padding:0 1rem 0 1rem;margin: 1rem 0 0 0;">
@@ -137,8 +137,7 @@
       </tr>
       <tr>
           <td bgcolor="#fff" style="font-size: 1rem; padding: 0 1rem 1rem 1rem">
-        <a
-        href="{{$url}}"
+        <a href="{{$url}}"
         style="
           background-color: #0275d8;
           color: #fefefe;
@@ -152,8 +151,7 @@
           width: 150px;
           text-align: center;
           text-decoration: none;
-        "
-      >
+        ">
         Renew Package
       </a>
       <p>Regards, <br /><span style="font-weight: 600">Meet-Up Team</span></p>

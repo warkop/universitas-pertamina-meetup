@@ -214,6 +214,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment');
     });
 
+    Route::post('create-invoice', 'PaymentController@createInvoice');
 });
 
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
@@ -254,3 +255,5 @@ Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 Route::post('register/send-data-payment', 'RegisterController@sendDataPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
+
+

@@ -120,6 +120,21 @@ class PaymentService
     public function generateInvoice(User $user)
     {
         $invoice = (new Invoice)->getUnpaid($user);
+        if ($invoice == null) {
+            $invoiceNumber = $this->generateInvoiceNumber($user);
+            $lastInvoice = Invoice::where('user_id', $user->id)->latest()->first();
+
+            $invoice = Invoice::create([
+                'package_id'    => $lastInvoice->package_id,
+                'user_id'       => $user->id,
+                'price'         => $lastInvoice->price,
+                'number'        => $invoiceNumber,
+            ]);
+
+            $mailService = new MailService;
+
+            $mailService->sendInvoice($invoice);
+        }
         return $invoice;
     }
 
