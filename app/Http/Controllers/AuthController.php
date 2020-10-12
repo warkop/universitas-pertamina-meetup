@@ -84,13 +84,15 @@ class AuthController extends Controller
          $this->responseMessage = 'Your account not activate, please contact Admin for more information';
 
          return response()->json($this->getResponse(), $this->responseCode);
-      } elseif (!$modelLogin->status && $user->type == 0) {
-         Auth::logout();
+      } elseif ($user->type == 0) {
+         if (!$modelLogin->status && $user->type == 0){
+            Auth::logout();
 
-         $this->responseCode = 402;
-         $this->responseMessage = 'Your account not activate, please contact Admin for more information';
+            $this->responseCode = 402;
+            $this->responseMessage = 'Your account not activate, please contact Admin for more information';
 
-         return response()->json($this->getResponse(), $this->responseCode);
+            return response()->json($this->getResponse(), $this->responseCode);
+         }
       } else {
 
          $this->menu = new MenuService;
