@@ -10,6 +10,7 @@ use App\Http\Resources\MenuDataResource;
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
 use App\Mail\Invitation;
+use App\Services\MenuService;
 use App\Models\Institution;
 use App\Models\Member;
 use App\Models\MemberPublication;
@@ -251,16 +252,8 @@ class ResearchUserController extends Controller
    public function changeRole(RoleUserRequest $request,Member $member)
    {
       $request->validated();
-      $idRole = $request->input('role');
       $menu = $request->input('menu');
       $menuAll = $request->input('menu_all');
-
-      $userModel = User::where('type', 1)
-                       ->where('owner_id', $member->id)
-                       ->first();
-
-      $userModel->role_id = $request->input('role');
-      $userModel->save();
 
       //MENU//
       $menu_all = $menuAll;
@@ -323,31 +316,39 @@ class ResearchUserController extends Controller
 
    public function roleUser(Member $member)
    {
-      $userModel = User::select('user.id as id', 'role.id as role_id', 'role.name as name_role')
+      $userMember = User::select('user.*')
                        ->where('type', 1)
-                       ->leftJoin('role', 'role.id', 'user.role_id')
                        ->where('owner_id', $member->id)
                        ->first();
 
+      $institution = Department::select('institution.*')
+                               ->leftJoin('institution', 'institution.id', 'department.institution_id')
+                               ->where('department.id', $member->department_id)
+                               ->first();
+
+      $userInstitution = User::select('user.*')
+                             ->where('type', 0)
+                             ->where('owner_id', $institution->id)
+                             ->first();
+
+      $this->menu = new MenuService;
+
+      $data_by_role = $this->menu->checkMenu($userInstitution, $institution, null, true);
+
+      $data_by_user_default = $this->menu->getMenuRole($userMember, $member, null, true);
+
       $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
                            ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
-                           ->where('role_menu_addition.user_id', $userModel->id)
-                           ->orderBy('order', 'asc')
+                           ->where('role_menu_addition.user_id', $userMember->id)
                            ->get();
 
-      $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-                           ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-                           ->where('role_menu.role_id', $userModel->role_id)
-                           ->orderBy('order', 'asc')
-                           ->get();
+      $data_by_user = $this->menu->ResourceCheckMenuRole($data_by_user);
+
 
       $returnData = [
-         'Role' => [
-            'id'     => $userModel->role_id,
-            'name'   => $userModel->name_role,
-         ],
-         'menu_role' => MenuDataResource::collection($data_by_role),
-         'menu_user' => MenuDataResource::collection($data_by_user),
+         'menu_institusi' => $data_by_role,
+         'menu_role' => $data_by_user_default,
+         'menu_user' => $data_by_user,
       ];
 
       $this->responseCode = 200;

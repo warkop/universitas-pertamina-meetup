@@ -75,16 +75,18 @@ class Member extends Model
             'nationality.name as nationality_name',
             'user.status'
         )
-        ->join('department', 'department.id', '=', 'department_id')
-        ->join('institution', 'institution.id', '=', 'institution_id')
-        ->join('nationality', 'nationality.id', '=', 'nationality_id')
+        ->leftJoin('department', 'department.id', '=', 'department_id')
+        ->leftJoin('institution', 'institution.id', '=', 'institution_id')
+        ->leftJoin('nationality', 'nationality.id', '=', 'nationality_id')
         ->join('user', 'user.owner_id', '=', 'member.id')
         ;
 
-        if ($user->type == 0 || $user->type == 1) {
+        if ($user->type == 1) {
             $member = Member::find($user->owner_id);
             $department = Department::find($member->department_id);
             $result = $result->where('institution_id', $department->institution_id);
+        } elseif ($user->type == 0) {
+           $result = $result->where('institution_id', $user->owner_id);
         }
 
         return $result->get();

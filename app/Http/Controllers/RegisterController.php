@@ -225,6 +225,9 @@ class RegisterController extends Controller
 
          $this->responseCode = 200;
          $this->responseMessage = 'Email Verify';
+         $this->responseData = [
+            'email' : $emailReset->email;
+         ];
 
          return response()->json($this->getResponse(), $this->responseCode);
       }

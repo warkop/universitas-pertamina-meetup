@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SidebarMenuDataResource;
+use App\Services\MenuService;
 use App\Models\Menu;
 use App\Models\Member;
+use App\Models\Invoice;
 use App\Models\Institution;
+use App\Models\Department;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -56,6 +59,17 @@ class AuthController extends Controller
 
       $user = auth()->user();
 
+      if ($user->type == 0) {
+         $modelLogin = Institution::find($user->owner_id);
+         $name = $modelLogin->name;
+      } else if ($user->type == 1) {
+         $modelLogin = Member::find($user->owner_id);
+         $name = $modelLogin->name;
+      } else {
+         $modelLogin = null;
+         $name = $user->email;
+      }
+
       if (!$user->email_verified_at) {
          Auth::logout();
 
@@ -70,35 +84,27 @@ class AuthController extends Controller
          $this->responseMessage = 'Your account not activate, please contact Admin for more information';
 
          return response()->json($this->getResponse(), $this->responseCode);
+      } elseif (!$modelLogin->status && $user->type == 0) {
+         Auth::logout();
+
+         $this->responseCode = 402;
+         $this->responseMessage = 'Your account not activate, please contact Admin for more information';
+
+         return response()->json($this->getResponse(), $this->responseCode);
       } else {
-         $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-         ->whereRaw('sub_menu is null')
-         ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-         ->where('role_menu.role_id', $user->role_id);
 
-         $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
-         ->whereRaw('sub_menu is null')
-         ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
-         ->where('role_menu_addition.user_id', $user->id);
+         $this->menu = new MenuService;
 
-         $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
+         $menu = $this->menu->checkMenu($user, $modelLogin);
 
          $change_mail = ($user->new_email != null)? TRUE : FALSE;
 
-         if ($user->type == 0) {
-            $modelLogin = Institution::find($user->owner_id);
-         } else if ($user->type == 1) {
-            $modelLogin = Member::find($user->owner_id);
-         } else {
-            $modelLogin = null;
-         }
-
          $dataLogin = [
             'type' => $user->type,
-            'name' => $modelLogin->name??null,
+            'name' => $name,
          ];
 
-         return $this->respondWithToken($token, $change_mail, SidebarMenuDataResource::collection($data), $dataLogin);
+         return $this->respondWithToken($token, $change_mail, $menu, $dataLogin);
       }
 
    }

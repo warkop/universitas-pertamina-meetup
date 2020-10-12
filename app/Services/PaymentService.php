@@ -109,6 +109,17 @@ class PaymentService
         $mailService->sendDeclinePayment($invoice);
     }
 
+    public function changeRole(Invoice $invoice)
+    {
+        $invoice->payment_confirm_at    = now();
+        $invoice->valid_until           = now()->addYear();
+        $invoice->save();
+
+        $mailService = new MailService;
+
+        $mailService->sendApprovedPayment($invoice);
+    }
+
     public function uploadPayment($file, Invoice $invoice)
     {
         if (!empty($file) && $file->isValid()) {

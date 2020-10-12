@@ -8,7 +8,11 @@ use App\Http\Resources\MenuDataResource;
 use App\Http\Resources\SidebarMenuDataResource;
 
 use App\Models\Menu;
+use App\Models\Member;
+use App\Models\Institution;
 use Illuminate\Http\Request;
+
+use App\Services\MenuService;
 
 class MenuController extends Controller
 {
@@ -32,6 +36,7 @@ class MenuController extends Controller
          'I' => 'Invite',
          'A' => 'Approve',
          'SA'=> 'Select Admin',
+         'DE'=> 'Select Admin',
       ];
       // $this->responseData = $data;
 
@@ -43,35 +48,27 @@ class MenuController extends Controller
     public function sidebar(Request $request)
     {
       $user = auth()->user();
+
+      if ($user->type == 0) {
+         $modelLogin = Institution::find($user->owner_id);
+         $name = $modelLogin->name;
+      } else if ($user->type == 1) {
+         $modelLogin = Member::find($user->owner_id);
+         $name = $modelLogin->name;
+      } else {
+         $modelLogin = null;
+         $name = $user->email;
+      }
+
       $url = $request->get('url');
 
-      $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-                           // ->whereRaw('sub_menu is null')
-                           ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-                           ->where('role_menu.role_id', $user->role_id);
+      $this->menu = new MenuService;
 
-      if ($url != ''){
-         $data_by_role = $data_by_role->where('menu.url', $url);
-      } else {
-         $data_by_role = $data_by_role->whereRaw('sub_menu is null');
-      }
+      $menu = $this->menu->checkMenu($user, $modelLogin, $url);
 
-      $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
-                           // ->whereRaw('sub_menu is null')
-                           ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
-                           ->where('role_menu_addition.user_id', $user->id);
-
-      if ($url != ''){
-         $data_by_user = $data_by_user->where('menu.url', $url);
-      } else {
-         $data_by_user = $data_by_user->whereRaw('sub_menu is null');
-      }
-
-      $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
-
-      if (count($data) != 0){
+      if (count($menu) != 0){
          $this->responseCode = 200;
-         $this->responseData = SidebarMenuDataResource::collection($data);
+         $this->responseData = $menu;
          $this->responseNote = [
             'C' => 'Create',
             'R' => 'Read',
@@ -80,6 +77,7 @@ class MenuController extends Controller
             'I' => 'Invite',
             'A' => 'Approve',
             'SA'=> 'Select Admin',
+            'DE'=> 'Detail',
          ];
       } else {
          $this->responseCode = 403;
