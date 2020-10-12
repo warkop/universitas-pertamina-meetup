@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RejectRequest;
 use App\Http\Requests\StorePaymentRequest;
+use App\Http\Requests\StoreUploadPaymentRequest;
 use App\Http\Resources\DetailPaymentResource;
 use App\Models\Invoice;
 use App\Models\Package;
@@ -129,6 +131,19 @@ class PaymentController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
+    public function storeUploadPayment(StoreUploadPaymentRequest $request, Invoice $invoice)
+    {
+        $request->validated();
+        $user = User::find($invoice->user_id);
+        $this->payment->saveUploadPayment($user, $request);
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Pembayaran berhasil disimpan';
+        $this->responseData = $invoice->refresh();
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
     public function acceptPayment(Invoice $invoice)
     {
         $this->payment->acceptPayment($invoice);
@@ -140,8 +155,9 @@ class PaymentController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function rejectPayment(Invoice $invoice)
+    public function rejectPayment(RejectRequest $request, Invoice $invoice)
     {
+        $request->validated();
         $this->payment->rejectPayment($invoice);
 
         $this->responseCode = 200;

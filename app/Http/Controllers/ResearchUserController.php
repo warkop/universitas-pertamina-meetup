@@ -303,7 +303,7 @@ class ResearchUserController extends Controller
             ];
          };
 
-         RolRoleMenuAdditioneMenu::insert($arrayMenu);
+         RoleMenuAddition::create($arrayMenu);
       }
       ///////////////////////////////////////////////////////////////////////
 

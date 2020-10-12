@@ -102,6 +102,8 @@ class PaymentService
         $invoice->payment_date          = null;
         $invoice->payment_attachment    = null;
         $invoice->valid_until           = null;
+        $invoice->reason_for_rejection         = request()->reason_for_rejection;
+        $invoice->solution              = request()->solution;
         $invoice->save();
 
         $mailService = new MailService;
