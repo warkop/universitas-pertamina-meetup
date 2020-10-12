@@ -380,6 +380,9 @@ class ProfileController extends Controller
       $token = $request->input('change_email_token');
       $type = $request->input('type');
       $emailReset = EmailReset::where('token', $token)->where('type', 3)->first();
+      $this->responseData = [
+         'email' : $emailReset->email,
+      ];
 
       if (!$emailReset){
          $this->responseCode = 404;

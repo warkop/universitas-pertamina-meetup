@@ -22,7 +22,7 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-      $model = Role::get();
+      $model = Role::where('type', 2)->get();
 
       return DataTables::of(RoleListDataResource::collection($model))->toJson();
     }
@@ -34,7 +34,7 @@ class RoleController extends Controller
       $search = strip_tags(request()->get('search_value'));
       $active_only = strip_tags(request()->get('active_only'));
 
-      $model = Role::select('*');
+      $model = Role::select('*')->whereNull('package_id');
 
       if ($limit != null || $limit != ''){
          $model = $model->limit($limit);
