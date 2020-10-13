@@ -89,6 +89,10 @@ class PaymentService
         $invoice->payment_confirm_at    = now();
         $invoice->valid_until           = now()->addYear();
         $invoice->save();
+
+        $mailService = new MailService;
+
+        $mailService->sendApprovedPayment($invoice);
     }
 
     public function rejectPayment(Invoice $invoice)
@@ -100,6 +104,21 @@ class PaymentService
         $invoice->reason_for_rejection         = request()->reason_for_rejection;
         $invoice->solution              = request()->solution;
         $invoice->save();
+
+        $mailService = new MailService;
+
+        $mailService->sendDeclinePayment($invoice);
+    }
+
+    public function changeRole(Invoice $invoice)
+    {
+        $invoice->payment_confirm_at    = now();
+        $invoice->valid_until           = now()->addYear();
+        $invoice->save();
+
+        $mailService = new MailService;
+
+        $mailService->sendApprovedPayment($invoice);
     }
 
     public function uploadPayment($file, Invoice $invoice)
@@ -180,4 +199,3 @@ class PaymentService
         }
     }
 }
-

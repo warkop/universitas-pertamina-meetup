@@ -36,19 +36,19 @@
           bgcolor="#fff"
           style="font-size: 1rem; padding: 1rem 1rem 1rem 1rem"
         >
-          <p style="font-weight: 600; color: #777">Hello [email],</p>
+          <p style="font-weight: 600; color: #777">Hello {{$email}},</p>
           <p style="color: #777">
             Glad to meet you<br />
             Unfortunately, Meet UP team has chosen not to move forward with your
             payment.<br />
             <br />
-            <span style="font-weight: 600; color: #666">Reason</span><br />
-            your email is recorded as spam<br />
+            {{-- <span style="font-weight: 600; color: #666">Reason</span><br />
+            {{$reason}}<br />
             <br />
             <br />
             <span style="font-weight: 600; color: #666">Here the Solution</span
             ><br />
-            pay according to the nominal package you choose.<br />
+            pay according to the nominal package you choose.<br /> --}}
           </p>
         </td>
       </tr>

@@ -50,7 +50,7 @@
             "
           >
             <p>
-              <span style="font-weight: 600">Hallo [name],</span><br />
+              <span style="font-weight: 600">Hallo {{$name}},</span><br />
               Thanks for your payment!
             </p>
           </div>
@@ -75,7 +75,7 @@
           <div style="margin: 1rem 0 2rem 0">
             <p style="margin: 0">
               <span style="font-weight: 600">Invoice Number:</span
-              ><br />F2006050103379515
+              ><br />{{$number}}
             </p>
           </div>
 
@@ -114,7 +114,7 @@
               padding: 0 1rem 0 1rem;
             "
           >
-            <p>Silver Package</p>
+            <p>{{$packageName}}</p>
             <p
               style="
                 text-align: right;
@@ -134,7 +134,7 @@
               padding: 0 1rem 0 1rem;
             "
           >
-            <p style="text-align: right">IDR 1.500.000,00</p>
+            <p style="text-align: right">IDR {{$price}}</p>
             <p
               style="
                 text-align: right;
@@ -143,7 +143,7 @@
                 margin: 2rem 0 2rem 0;
               "
             >
-              IDR 1.500.000,00
+              IDR {{$price}}
             </p>
           </div>
         </td>

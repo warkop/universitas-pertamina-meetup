@@ -201,6 +201,10 @@ class RegisterController extends Controller
 
       $emailReset = EmailReset::where('token', $token)->where('type', 1)->first();
 
+      $this->responseData = [
+         'email' : $emailReset->email,
+      ];
+
       if (!$emailReset){
          $this->responseCode = 404;
          $this->responseMessage = 'This token is invalid.';
