@@ -52,7 +52,6 @@ class PaymentService
         $paymentToken->invoice_id   = $invoice->id;
         $paymentToken->expired      = now()->addHour(2);
         $paymentToken->save();
-
         return $token;
     }
 
@@ -120,10 +119,9 @@ class PaymentService
     public function generateInvoice(User $user)
     {
         $invoice = (new Invoice)->getUnpaid($user);
-        if ($invoice == null) {
+        $lastInvoice = Invoice::where('user_id', $user->id)->latest()->first();
+        if ($invoice == null && $lastInvoice != null) {
             $invoiceNumber = $this->generateInvoiceNumber($user);
-            $lastInvoice = Invoice::where('user_id', $user->id)->latest()->first();
-
             $invoice = Invoice::create([
                 'package_id'    => $lastInvoice->package_id,
                 'user_id'       => $user->id,
@@ -132,7 +130,7 @@ class PaymentService
             ]);
 
             $mailService = new MailService;
-
+            $this->generatePaymentToken($invoice);
             $mailService->sendInvoice($invoice);
         }
         return $invoice;
@@ -169,6 +167,16 @@ class PaymentService
             ];
         } else {
             return null;
+        }
+    }
+
+    public function sendNearExpirated(User $user)
+    {
+        $invoice = Invoice::where('user_id', $user->id)
+        ->latest()
+        ->firstOrFail();
+        if ($invoice->valid_until != null && date('Y-m-d', strtotime($invoice->valid_until.' -7 days')) == now()) {
+            $this->generateInvoice($user);
         }
     }
 }
