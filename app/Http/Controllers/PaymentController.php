@@ -175,12 +175,7 @@ class PaymentController extends Controller
 
     public function createInvoice()
     {
-        $user = auth()->user();
-        $invoices = Invoice::latest()->get();
-        foreach ($invoices as $invoice) {
-
-        }
-        // RenewInvoice::dispatch($user)->delay(now()->addMinutes(1));
+        RenewInvoice::dispatch()->delay(now()->addSecond(2));
 
         $this->responseMessage = 'Invoice telah dikirim';
 
