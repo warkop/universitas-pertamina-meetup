@@ -6,6 +6,7 @@ use App\Http\Requests\RejectRequest;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\StoreUploadPaymentRequest;
 use App\Http\Resources\DetailPaymentResource;
+use App\Jobs\RenewInvoice;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\User;
@@ -175,8 +176,15 @@ class PaymentController extends Controller
     public function createInvoice()
     {
         $user = auth()->user();
-        return $this->payment->generateInvoice($user);
+        $invoices = Invoice::latest()->get();
+        foreach ($invoices as $invoice) {
 
+        }
+        // RenewInvoice::dispatch($user)->delay(now()->addMinutes(1));
+
+        $this->responseMessage = 'Invoice telah dikirim';
+
+        return response()->json($this->getResponse(), $this->responseCode);
     }
 
     public function myPaymentStatus()
