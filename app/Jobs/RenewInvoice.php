@@ -15,7 +15,6 @@ class RenewInvoice implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $user;
     /**
      * Create a new job instance.
      *
@@ -33,9 +32,11 @@ class RenewInvoice implements ShouldQueue
      */
     public function handle()
     {
-
-
+        $invoices = Invoice::whereNotNull('valid_until')->get();
         $paymentService = new PaymentService;
-        $paymentService->sendNearExpirated($this->user);
+        foreach ($invoices as $invoice) {
+            $user = User::find($invoice->user_id);
+            $paymentService->sendNearExpirated($user);
+        }
     }
 }
