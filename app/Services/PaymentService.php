@@ -194,7 +194,7 @@ class PaymentService
         $invoice = Invoice::where('user_id', $user->id)
         ->latest()
         ->firstOrFail();
-        if ($invoice->valid_until != null && date('Y-m-d', strtotime($invoice->valid_until.' -7 days')) == now()) {
+        if ($invoice->valid_until != null && date('Y-m-d', strtotime($invoice->valid_until.' -7 days')) <= now()) {
             $this->generateInvoice($user);
         }
     }
