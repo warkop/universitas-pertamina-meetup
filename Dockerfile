@@ -45,5 +45,4 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY ./laravel.ini /usr/local/etc/php/conf.d/laravel.ini
 
-RUN php artisan migrate
-RUN php artisan db:seed
+
