@@ -214,9 +214,9 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment');
     });
 
-    Route::post('create-invoice', 'PaymentController@createInvoice');
-});
 
+});
+Route::post('create-invoice', 'PaymentController@createInvoice');
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
 Route::post('/sign-up-researcher', 'RegisterController@signUpResearcher');
 Route::get('/verify-email', 'RegisterController@verifyMail');
