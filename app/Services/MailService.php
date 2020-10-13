@@ -5,6 +5,7 @@ use App\Helpers\HelperPublic;
 use App\Mail\VerifyChangeMail;
 use App\Mail\ResetPassword;
 use App\Mail\Approved;
+use App\Mail\Invitation;
 use App\Mail\Disapproved;
 use App\Mail\ApprovedPayment;
 use App\Mail\DeclinePayment;
@@ -153,5 +154,28 @@ class MailService
       ];
 
       Mail::to($user->email)->send(new ApprovedPayment($dataMail));
+   }
+
+   public function sendInvitation($email): void
+   {
+      $user = auth()->user();
+
+      if ($user->type == 0) {
+         $modelLogin = Institution::find($user->owner_id);
+         $name = $modelLogin->name;
+      } else if ($user->type == 1) {
+         $modelLogin = Member::find($user->owner_id);
+         $name = $modelLogin->name;
+      } else {
+         $name = $user->email;
+      }
+
+      $dataMail = [
+         'name' => $name,
+         'email' => $email,
+         'url' => env('URL_FRONTEND').'/register',
+      ];
+
+      Mail::to($user->email)->send(new Invivtation($dataMail));
    }
 }
