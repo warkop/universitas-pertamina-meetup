@@ -13,14 +13,21 @@ class AlterPackageTable2 extends Migration
      */
     public function up()
     {
-        Schema::table('package', function (Blueprint $table) {
+        $tableName = 'package';
+        Schema::table($tableName, function (Blueprint $table) {
             $table->dropColumn('institution_showed_in_home');
+        });
+        Schema::table($tableName, function (Blueprint $table) {
             $table->dropColumn('max_member');
+        });
+        Schema::table($tableName, function (Blueprint $table) {
             $table->dropColumn('member_showed_in_home');
+        });
+        Schema::table($tableName, function (Blueprint $table) {
             $table->dropColumn('posting_opportunity');
         });
 
-        Schema::table('package', function (Blueprint $table) {
+        Schema::table($tableName, function (Blueprint $table) {
             $table->float('institution_showed_in_home')->nullable();
             $table->integer('max_member')->nullable();
             $table->float('member_showed_in_home')->nullable();
