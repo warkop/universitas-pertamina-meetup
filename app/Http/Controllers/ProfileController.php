@@ -381,7 +381,7 @@ class ProfileController extends Controller
       $type = $request->input('type');
       $emailReset = EmailReset::where('token', $token)->where('type', 3)->first();
       $this->responseData = [
-         'email' : $emailReset->email,
+         'email' => $emailReset->email,
       ];
 
       if (!$emailReset){
