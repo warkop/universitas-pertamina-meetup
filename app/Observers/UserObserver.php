@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\SendVerify;
 use App\Models\User;
 use App\Services\MailService;
 
@@ -15,8 +16,7 @@ class UserObserver
    */
    public function created(User $user)
    {
-      $mailService = new MailService;
-      $mailService->sendVerify($user);
+        SendVerify::dispatch($user);
    }
 
    /**
