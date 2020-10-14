@@ -66,7 +66,7 @@ class MenuController extends Controller
 
       $menu = $this->menu->checkMenu($user, $modelLogin, $url);
 
-      if (count($menu) != 0){
+      if (count($menu) != 0 || !$url){
          $this->responseCode = 200;
          $this->responseData = $menu;
          $this->responseNote = [
