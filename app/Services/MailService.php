@@ -176,6 +176,6 @@ class MailService
          'url' => env('URL_FRONTEND').'/register',
       ];
 
-      Mail::to($user->email)->send(new Invitation($dataMail));
+      Mail::to($email)->send(new Invitation($dataMail));
    }
 }
