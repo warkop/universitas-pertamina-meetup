@@ -66,7 +66,8 @@ class AuthController extends Controller
          $modelLogin = Member::find($user->owner_id);
          $name = $modelLogin->name;
       } else {
-         $modelLogin = null;
+         $modelLogin = new \stdClass;;
+         $modelLogin->status = true;
          $name = $user->email;
       }
 
@@ -84,15 +85,13 @@ class AuthController extends Controller
          $this->responseMessage = 'Your account not activate, please contact Admin for more information';
 
          return response()->json($this->getResponse(), $this->responseCode);
-      } elseif ($user->type == 0) {
-         if (!$modelLogin->status && $user->type == 0){
+      } elseif (!$modelLogin->status && $user->type == 0) {
             Auth::logout();
 
             $this->responseCode = 402;
             $this->responseMessage = 'Your account not activate, please contact Admin for more information';
 
             return response()->json($this->getResponse(), $this->responseCode);
-         }
       } else {
 
          $this->menu = new MenuService;

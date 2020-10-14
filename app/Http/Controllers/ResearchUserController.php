@@ -121,7 +121,8 @@ class ResearchUserController extends Controller
       $request->validated();
       $email = $request->input('email');
 
-      Mail::to($email)->send(new Invitation());
+      $mail = new MailService;
+      $mail->sendInvitation($email);
 
       $this->responseCode = 200;
       $this->responseMessage = 'Undangan berhasil dikirim';

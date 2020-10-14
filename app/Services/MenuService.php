@@ -30,7 +30,7 @@ class MenuService
          $get_role = Role::where('type', 0)->where('package_id', $idPackage)->where('status', 1)->first();
 
          $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-         ->whereRaw('sub_menu is null')
+         // ->whereRaw('sub_menu is null')
          ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
          ->where('role_menu.role_id', $get_role->id);
       } else if ($user->type == 1) {

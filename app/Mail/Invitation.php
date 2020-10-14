@@ -11,14 +11,16 @@ class Invitation extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $dataPayment;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($dataPayment)
     {
-        //
+        $this->dataPayment = $dataPayment;
     }
 
     /**
@@ -28,6 +30,6 @@ class Invitation extends Mailable
      */
     public function build()
     {
-        return $this->from('meetup@universitas-pertamina.co.id')->view('welcome');
+        return $this->from('meetup@universitas-pertamina.co.id')->view('emails.send-invitation', $this->dataPayment);
     }
 }
