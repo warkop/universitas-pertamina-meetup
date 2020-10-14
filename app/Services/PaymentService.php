@@ -22,10 +22,11 @@ class PaymentService
                 'number'        => $number,
             ]);
 
+            $paymentToken = $this->generatePaymentToken($invoice);
             $mailService = new MailService;
 
             $mailService->sendInvoice($invoice);
-            return $this->generatePaymentToken($invoice);
+            return $paymentToken;
         }
 
         return null;
