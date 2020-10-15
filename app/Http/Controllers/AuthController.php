@@ -39,7 +39,8 @@ class AuthController extends Controller
          'token_type' => 'bearer',
          'expires_in' => Auth::factory()->getTTL() * 60,
          'change_mail'=> $change_mail,
-         'menu'       => $menu,
+         'menu'       => $menu['menu'],
+         'packageEnd'       => $menu['packageEnd'],
          'data_user' =>$dataLogin
       ]);
    }

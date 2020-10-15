@@ -17,22 +17,23 @@ class MenuService
    {
       $dateNow = date("Y-m-d");
       if ($user->type == 0) {
-         $modelInvoice = Invoice::select('package_id')
+         $modelInvoice = Invoice::select('package_id', 'invoice.valid_until')
                                 ->where('invoice.user_id', $user->id)
                                 ->where('invoice.valid_until', '>', $dateNow)
                                 ->orderBy('invoice.id', 'DESC')->first();
 
          if (empty($modelInvoice)) {
-            $idPackage = 1;
+            $idPackage = null;
          } else {
             $idPackage = $modelInvoice->package_id;
-         }
-         $get_role = Role::where('type', 0)->where('package_id', $idPackage)->where('status', 1)->first();
 
-         $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-         // ->whereRaw('sub_menu is null')
-         ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-         ->where('role_menu.role_id', $get_role->id);
+            $get_role = Role::where('type', 0)->where('package_id', $idPackage)->where('status', 1)->first();
+
+            $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+            // ->whereRaw('sub_menu is null')
+            ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
+            ->where('role_menu.role_id', $get_role->id);
+         }
       } else if ($user->type == 1) {
          $idBuyPackage = $user->id;
          if ($modelLogin->is_independent != true) {
@@ -52,42 +53,53 @@ class MenuService
                                 ->orderBy('invoice.id', 'DESC')->first();
 
          if (empty($modelInvoice)) {
-            $idPackage = 1;
+            $idPackage = null;
          } else {
             $idPackage = $modelInvoice->package_id;
+            
+            $get_role = Role::where('type', 3)->where('package_id', $idPackage)->where('status', 1)->first();
+
+            $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+            // ->whereRaw('sub_menu is null')
+            ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
+            ->where('role_menu.role_id', $get_role->id);
          }
 
-         $get_role = Role::where('type', 3)->where('package_id', $idPackage)->where('status', 1)->first();
-
-         $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-         // ->whereRaw('sub_menu is null')
-         ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-         ->where('role_menu.role_id', $get_role->id);
       } else {
          $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
          // ->whereRaw('sub_menu is null')
          ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
          ->where('role_menu.role_id', $user->role_id);
+
+         $idPackage = true;
       }
 
+      $dataReturn = [];
+      if ($idPackage != null){
+         $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
+         // ->whereRaw('sub_menu is null')
+         ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
+         ->where('role_menu_addition.user_id', $user->id);
 
-      $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
-      // ->whereRaw('sub_menu is null')
-      ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
-      ->where('role_menu_addition.user_id', $user->id);
+         if ($url){
+            $data_by_role = $data_by_role->where('menu.url', $url);
+            $data_by_user = $data_by_user->where('menu.url', $url);
+         }
 
-      if ($url){
-         $data_by_role = $data_by_role->where('menu.url', $url);
-         $data_by_user = $data_by_user->where('menu.url', $url);
-      }
+         $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
 
-      $data  = $data_by_role->union($data_by_user)->groupBy('menu.id', 'role_menu.action')->orderBy('order', 'asc')->get();
-
-      if ($url || $no_resource){
-         return $this->ResourceCheckMenuRole($data);
+         if ($url || $no_resource){
+            $dataReturn['menu'] = $this->ResourceCheckMenuRole($data);
+            $dataReturn['packageEnd'] = false;
+         } else {
+            $dataReturn['menu'] = $this->ResourceMenuRole($data);
+            $dataReturn['packageEnd'] = false;
+         }
       } else {
-         return $this->ResourceMenuRole($data);
+         $dataReturn['menu'] = [];
+         $dataReturn['packageEnd'] = true;
       }
+      return $dataReturn;
    }
 
    public function ResourceMenuRole($data)
