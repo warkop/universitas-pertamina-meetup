@@ -347,7 +347,7 @@ class ResearchUserController extends Controller
 
 
       $returnData = [
-         'menu_institusi' => $data_by_role,
+         'menu_institusi' => $data_by_role['menu'],
          'menu_role' => $data_by_user_default,
          'menu_user' => $data_by_user,
       ];

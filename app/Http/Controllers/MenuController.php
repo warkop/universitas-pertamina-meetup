@@ -68,7 +68,7 @@ class MenuController extends Controller
 
       if (count($menu) != 0 || !$url){
          $this->responseCode = 200;
-         $this->responseData = $menu;
+         $this->responseData = $menu['menu'];
          $this->responseNote = [
             'C' => 'Create',
             'R' => 'Read',
