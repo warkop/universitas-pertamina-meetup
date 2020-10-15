@@ -201,4 +201,29 @@ class PaymentService
             $this->generateInvoice($user);
         }
     }
+
+    public function checkExpirated(User $user)
+    {
+        $secondInvoice = Invoice::where('user_id', $user->id)->skip(1)->take(1)->latest()->first();
+        $invoice = new Invoice;
+        $lastInvoice = $invoice->getLastInvoice($user);
+        if ($lastInvoice != null && $lastInvoice->valid_until == null && $secondInvoice != null && $secondInvoice->valid_until <= now()) {
+            $paymentToken = PaymentToken::where('invoice_id', $lastInvoice->id)->firstOrFail();
+            $data = [
+                'status' => [
+                    'code' => 402,
+                    'message' => 'User harus melakukan pembayaran terlebih dahulu!',
+                ],
+                '_link' => [
+                    'method_upload' => 'POST',
+                    'url_upload' => url('api/register/upload-payment?token='.$paymentToken->token),
+                    'method_data' => 'POST',
+                    'url_data' => url('api/register/send-data-payment?token='.$paymentToken->token),
+                ]
+            ];
+            return $data;
+        }
+
+        return false;
+    }
 }
