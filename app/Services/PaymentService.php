@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Jobs\SendMail;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\PaymentToken;
@@ -23,9 +24,10 @@ class PaymentService
             ]);
 
             $paymentToken = $this->generatePaymentToken($invoice);
-            $mailService = new MailService;
+            // $mailService = new MailService;
 
-            $mailService->sendInvoice($invoice);
+            // $mailService->sendInvoice($invoice);
+            SendMail::dispatch($invoice);
             return $paymentToken;
         }
 

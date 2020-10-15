@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\EmailReset;
 use App\Models\PaymentToken;
 use App\Services\PaymentService;
+use App\Services\RegisterService;
 use Illuminate\Http\Request;
 
 class RegisterController extends Controller
@@ -47,35 +48,20 @@ class RegisterController extends Controller
     {
         $request->validated();
 
-        $package_id = $request->input('package_id');
-
-        $institution = new Institution();
-
-        $institution->name      = $request->name;
-        $institution->address   = $request->address;
-        $institution->email     = $request->email;
-        $institution->save();
-
-        $spesific = [
-            'id'        => $institution->id,
-            'role_id'   => 3,
-            'type'      => 0,
-        ];
-        // create user
-        $user = $this->createUser($request, $spesific);
-
-        // register package
-        $paymentToken = $this->paymentService->registerPackage($package_id, $user);
+        // register service
+        $registerService = new RegisterService;
+        $resultRegistration = $registerService->registerInstitution($request);
+        $institution = $resultRegistration['model'];
 
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
         $this->responseData['registration'] = $institution->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
 
         $uploadLink = null;
-        if ($paymentToken) {
+        if ($resultRegistration['token']) {
             $uploadLink = [
                 'method' => 'POST',
-                'link' => url('api/upload-payment?token='.$paymentToken),
+                'link' => url('api/upload-payment?token='.$resultRegistration['token']),
             ];
         }
         $this->responseData['upload_link'] = $uploadLink;
@@ -121,6 +107,7 @@ class RegisterController extends Controller
         $this->responseMessage  = 'Pendaftaran berhasil';
         $this->responseData['registration'] = $member->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
         $uploadLink = null;
+        $dataLink = null;
         if ($paymentToken) {
             $uploadLink = [
                 'method' => 'POST',

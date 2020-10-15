@@ -14,7 +14,7 @@ class AlterTableCheckEmailAddId extends Migration
     public function up()
     {
         Schema::table('email_reset', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id')->primary()->default(1);
         });
     }
 
