@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
-use function PHPSTORM_META\map;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Wildside\Userstamps\Userstamps;
 
 class Invoice extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use Userstamps;
 
     protected $table = 'invoice';
 
@@ -50,6 +52,11 @@ class Invoice extends Model
     public function getLastInvoice(User $user)
     {
         return Invoice::where(['user_id' => $user->id])->latest()->first();
+    }
+
+    public function getLastPaidedInvoice(User $user)
+    {
+        return Invoice::where(['user_id' => $user->id])->whereNotNull('valid_until')->latest()->first();
     }
 
     public function getUnpaid(User $user)
