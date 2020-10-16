@@ -256,6 +256,10 @@ class ResearchUserController extends Controller
       $menu = $request->input('menu');
       $menuAll = $request->input('menu_all');
 
+      $userModel = USER::where('owner_id', $member->id)
+                       ->where('type', 1)
+                       ->first();
+
       //MENU//
       $menu_all = $menuAll;
       //SPECIFIED MENU
@@ -283,26 +287,56 @@ class ResearchUserController extends Controller
                $arrayAction = implode(",", $value['action']);
 
                $arrayMenu[] = [
-               'menu_id' => $value['id'],
-               'user_id' => $userModel->id,
-               'action'  => $arrayAction
+                  'menu_id' => $value['id'],
+                  'user_id' => $userModel->id,
+                  'action'  => $arrayAction
                ];
             }
 
             RoleMenuAddition::insert($arrayMenu);
          }
       } elseif ($menu_all == 1) {
-         RoleMenuAddition::where('user_id', $userModel->id->id)->delete();
+         $institution = Department::select('institution.*')
+                                  ->leftJoin('institution', 'institution.id', 'department.institution_id')
+                                  ->where('department.id', $member->department_id)
+                                  ->first();
 
-         $dataMenu = Menu::get();
+         $userInstitution = User::select('user.*')
+                                ->where('type', 0)
+                                ->where('owner_id', $institution->id)
+                                ->first();
 
-         foreach ($dataMenu as $key => $value) {
-            $arrayMenu[] = [
-            'menu_id' => $value['id'],
-            'user_id' => $userModel->id,
-            'action'  => $value['action']
-            ];
-         };
+         $this->menu = new MenuService;
+
+         $data_by_institusi = $this->menu->checkMenu($userInstitution, $institution, null, true);
+         $data_by_institusi = $data_by_institusi['menu'];
+
+         $data_by_user_default = $this->menu->getMenuRole($userModel, $member, null, true);
+
+         $arrayMenu = [];
+         foreach ($data_by_institusi as $key => $value) {
+            $index = array_search($value['id'], array_column($data_by_user_default, 'id'));
+
+            $actionNotIn = 0;
+            $actionTambahan = [];
+            foreach ($value['action_role'] as $key => $values) {
+               if (!in_array($values, $data_by_user_default[$index]['action_role'])) {
+                  $actionNotIn = 1;
+
+                  $actionTambahan[] = $values;
+               }
+            }
+
+            if ($actionNotIn != 0) {
+               $arrayMenu[] = [
+                  'menu_id' => $value['id'],
+                  'user_id' => $userModel->id,
+                  'action'  => implode(',',$actionTambahan)
+               ];
+            }
+         }
+         // return $data;
+         RoleMenuAddition::where('user_id', $userModel->id)->delete();
 
          RoleMenuAddition::create($arrayMenu);
       }
@@ -341,6 +375,7 @@ class ResearchUserController extends Controller
       $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
                            ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
                            ->where('role_menu_addition.user_id', $userMember->id)
+                           ->orderBy('menu.id')
                            ->get();
 
       $data_by_user = $this->menu->ResourceCheckMenuRole($data_by_user);
@@ -355,6 +390,17 @@ class ResearchUserController extends Controller
       $this->responseCode = 200;
       $this->responseMessage = 'Data berhasil disimpan';
       $this->responseData = $returnData;
+      $this->responseNote = [
+         'C' => 'Create',
+         'R' => 'Read',
+         'U' => 'Update',
+         'D' => 'Delete',
+         'I' => 'Invite',
+         'A' => 'Approve',
+         'SA'=> 'Select Admin',
+         'DE'=> 'Detail',
+         'AS'=> 'Advanced Seaarch',
+      ];
 
       return response()->json($this->getResponse(), $this->responseCode);
    }
