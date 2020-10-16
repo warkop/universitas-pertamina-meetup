@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use App\Jobs\SendAcceptPayment;
+use App\Jobs\SendDeclinePayment;
 use App\Jobs\SendMail;
 use App\Models\Invoice;
 use App\Models\Package;
@@ -24,11 +26,21 @@ class PaymentService
             ]);
 
             $paymentToken = $this->generatePaymentToken($invoice);
-            // $mailService = new MailService;
-
-            // $mailService->sendInvoice($invoice);
             SendMail::dispatch($invoice);
             return $paymentToken;
+        } else {
+            $number = $this->generateInvoiceNumber($user);
+            $invoice = Invoice::create([
+                'package_id'    => $package_id,
+                'user_id'       => $user->id,
+                'price'         => $package->price,
+                'number'        => $number,
+                'payment_date'          => now(),
+                'payment_confirm_at'    => now(),
+                'valid_until'           => now()->addMonths(4)
+            ]);
+
+            $user = User::where('user.id', $user->id)->update(['confirm_at' => now()]);
         }
 
         return null;
@@ -89,13 +101,12 @@ class PaymentService
 
     public function acceptPayment(Invoice $invoice)
     {
+        $package = Package::find($invoice->package_id);
         $invoice->payment_confirm_at    = now();
-        $invoice->valid_until           = now()->addYear();
+        $invoice->valid_until           = now()->addMonths($package->subscription_periode);
         $invoice->save();
 
-        $mailService = new MailService;
-
-        $mailService->sendApprovedPayment($invoice);
+        SendAcceptPayment::dispatch($invoice);
     }
 
     public function rejectPayment(Invoice $invoice)
@@ -108,9 +119,7 @@ class PaymentService
         $invoice->solution              = request()->solution;
         $invoice->save();
 
-        $mailService = new MailService;
-
-        $mailService->sendDeclinePayment($invoice);
+        SendDeclinePayment::dispatch($invoice);
     }
 
     public function changeRole(Invoice $invoice)
