@@ -1,6 +1,9 @@
 <?php
 namespace App\Services;
 
+use App\Helpers\HelperPublic;
+use App\Jobs\SendAcceptPayment;
+use App\Jobs\SendDeclinePayment;
 use App\Jobs\SendMail;
 use App\Models\Invoice;
 use App\Models\Package;
@@ -24,11 +27,21 @@ class PaymentService
             ]);
 
             $paymentToken = $this->generatePaymentToken($invoice);
-            // $mailService = new MailService;
-
-            // $mailService->sendInvoice($invoice);
             SendMail::dispatch($invoice);
             return $paymentToken;
+        } else {
+            $number = $this->generateInvoiceNumber($user);
+            $invoice = Invoice::create([
+                'package_id'    => $package_id,
+                'user_id'       => $user->id,
+                'price'         => $package->price,
+                'number'        => $number,
+                'payment_date'          => now(),
+                'payment_confirm_at'    => now(),
+                'valid_until'           => now()->addMonths(4)
+            ]);
+
+            $user = User::where('user.id', $user->id)->update(['confirm_at' => now()]);
         }
 
         return null;
@@ -89,13 +102,36 @@ class PaymentService
 
     public function acceptPayment(Invoice $invoice)
     {
-        $invoice->payment_confirm_at    = now();
-        $invoice->valid_until           = now()->addYear();
-        $invoice->save();
+        if ($invoice->valid_until) {
+            $responseCode = 403;
+            $responseMessage = 'Pembayaran sudah disetujui';
+            $responseData = null;
+        } else if ($invoice->payment_date && $invoice->payment_attachment) {
+            $package = Package::find($invoice->package_id);
+            $invoice->payment_confirm_at    = now();
+            $invoice->valid_until           = now()->addMonths($package->subscription_periode);
+            $invoice->save();
 
-        $mailService = new MailService;
+            SendAcceptPayment::dispatch($invoice);
 
-        $mailService->sendApprovedPayment($invoice);
+            $responseCode = 200;
+            $responseMessage = 'Pembayaran berhasil disetujui';
+            $responseData = $invoice;
+        } else if ($invoice->payment_attachment == null) {
+            $responseCode = 403;
+            $responseMessage = 'Pengguna belum upload pembayaran';
+            $responseData = null;
+        } else if ($invoice->payment_date == null) {
+            $responseCode = 403;
+            $responseMessage = 'Pengguna belum melakukan pembayaran';
+            $responseData = null;
+        } else {
+            $responseCode = 403;
+            $responseMessage = 'Data tidak valid';
+            $responseData = null;
+        }
+
+        return response()->json(HelperPublic::helpResponse($responseCode, $responseData, $responseMessage), $responseCode);
     }
 
     public function rejectPayment(Invoice $invoice)
@@ -108,9 +144,7 @@ class PaymentService
         $invoice->solution              = request()->solution;
         $invoice->save();
 
-        $mailService = new MailService;
-
-        $mailService->sendDeclinePayment($invoice);
+        SendDeclinePayment::dispatch($invoice);
     }
 
     public function changeRole(Invoice $invoice)
@@ -200,5 +234,30 @@ class PaymentService
         if ($invoice->valid_until != null && date('Y-m-d', strtotime($invoice->valid_until.' -7 days')) <= now()) {
             $this->generateInvoice($user);
         }
+    }
+
+    public function checkExpirated(User $user)
+    {
+        $secondInvoice = Invoice::where('user_id', $user->id)->skip(1)->take(1)->latest()->first();
+        $invoice = new Invoice;
+        $lastInvoice = $invoice->getLastInvoice($user);
+        if ($lastInvoice != null && $lastInvoice->valid_until == null && $secondInvoice != null && $secondInvoice->valid_until <= now()) {
+            $paymentToken = PaymentToken::where('invoice_id', $lastInvoice->id)->firstOrFail();
+            $data = [
+                'status' => [
+                    'code' => 402,
+                    'message' => 'User harus melakukan pembayaran terlebih dahulu!',
+                ],
+                '_link' => [
+                    'method_upload' => 'POST',
+                    'url_upload' => url('api/register/upload-payment?token='.$paymentToken->token),
+                    'method_data' => 'POST',
+                    'url_data' => url('api/register/send-data-payment?token='.$paymentToken->token),
+                ]
+            ];
+            return $data;
+        }
+
+        return false;
     }
 }
