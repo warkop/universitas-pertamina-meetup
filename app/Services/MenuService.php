@@ -56,7 +56,7 @@ class MenuService
             $idPackage = null;
          } else {
             $idPackage = $modelInvoice->package_id;
-            
+
             $get_role = Role::where('type', 3)->where('package_id', $idPackage)->where('status', 1)->first();
 
             $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
@@ -218,7 +218,8 @@ class MenuService
       $data = Menu::Select('menu.*', 'role_menu.action as action_role')
       // ->whereRaw('sub_menu is null')
       ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-      ->where('role_menu.role_id', $get_role->id)->get();
+      ->where('role_menu.role_id', $get_role->id)
+      ->orderBy('order', 'asc')->get();
 
       if ($url || $no_resource){
          return $this->ResourceCheckMenuRole($data);

@@ -36,7 +36,8 @@ class MenuController extends Controller
          'I' => 'Invite',
          'A' => 'Approve',
          'SA'=> 'Select Admin',
-         'DE'=> 'Select Admin',
+         'DE'=> 'Detail',
+         'AS'=> 'Advanced Seaarch',
       ];
       // $this->responseData = $data;
 
@@ -78,6 +79,7 @@ class MenuController extends Controller
             'A' => 'Approve',
             'SA'=> 'Select Admin',
             'DE'=> 'Detail',
+            'AS'=> 'Advanced Seaarch',
          ];
       } else {
          $this->responseCode = 403;
