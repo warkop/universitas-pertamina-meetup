@@ -27,7 +27,12 @@ class PaymentController extends Controller
 
         if ($user->type == 0 || $user->type == 1) {
             $model = Invoice::query();
-            $datatable = DataTables::eloquent($model->where('user_id', $user->id))
+            $datatable = DataTables::eloquent($model
+                ->select('invoice.*')
+                ->join('package', 'package.id', '=', 'package_id')
+                ->where('user_id', $user->id)
+                ->where('package.renewal', true)
+            )
             ->setTransformer(new InvoiceTransformer)
             ->filterColumn('created_at', function($query, $keyword) {
                 $sql = "TO_CHAR(created_at, 'dd-mm-yyyy') like ?";
@@ -40,14 +45,17 @@ class PaymentController extends Controller
             $model = Invoice::query();
             if ($type == 0) {
                 $datatable = DataTables::eloquent($model
-                ->select(
-                    'institution.*',
-                    'invoice.*',
-                    'invoice.id as invoice_id'
+                    ->select(
+                        'institution.*',
+                        'invoice.*',
+                        'invoice.id as invoice_id'
+                    )
+                    ->join('user', 'user.id', '=', 'user_id')
+                    ->join('institution', 'institution.id', '=', 'owner_id')
+                    ->join('package', 'package.id', '=', 'package_id')
+                    ->where('user.type', $type)
+                    ->where('package.renewal', true)
                 )
-                ->join('user', 'user.id', '=', 'user_id')
-                ->join('institution', 'institution.id', '=', 'owner_id')
-                ->where('user.type', $type))
                 ->setTransformer(function($item){
                     if ($item->valid_until != null && $item->payment_date != null) {
                         $status = 'Accepted';
@@ -70,18 +78,21 @@ class PaymentController extends Controller
                 ->toJson();
             } else if ($type == 1) {
                 $datatable = DataTables::eloquent($model
-                ->select(
-                    'member.*',
-                    'invoice.*',
-                    'institution.name as institution_name',
-                    'department.name as department_name',
-                    'invoice.id as invoice_id'
+                    ->select(
+                        'member.*',
+                        'invoice.*',
+                        'institution.name as institution_name',
+                        'department.name as department_name',
+                        'invoice.id as invoice_id'
+                    )
+                    ->join('user', 'user.id', '=', 'user_id')
+                    ->leftJoin('member', 'member.id', '=', 'owner_id')
+                    ->leftJoin('department', 'department.id', '=', 'department_id')
+                    ->leftJoin('institution', 'institution.id', '=', 'institution_id')
+                    ->join('package', 'package.id', '=', 'package_id')
+                    ->where('user.type', $type)
+                    ->where('package.renewal', true)
                 )
-                ->leftJoin('user', 'user.id', '=', 'user_id')
-                ->leftJoin('member', 'member.id', '=', 'owner_id')
-                ->leftJoin('department', 'department.id', '=', 'department_id')
-                ->leftJoin('institution', 'institution.id', '=', 'institution_id')
-                ->where('user.type', $type))
                 ->setTransformer(function($item){
                     if ($item->valid_until != null && $item->payment_date != null) {
                         $status = 'Accepted';
@@ -147,13 +158,7 @@ class PaymentController extends Controller
 
     public function acceptPayment(Invoice $invoice)
     {
-        $this->payment->acceptPayment($invoice);
-
-        $this->responseCode = 200;
-        $this->responseMessage = 'Pembayaran berhasil disetujui';
-        $this->responseData = $invoice;
-
-        return response()->json($this->getResponse(), $this->responseCode);
+        return $this->payment->acceptPayment($invoice);
     }
 
     public function rejectPayment(RejectRequest $request, Invoice $invoice)

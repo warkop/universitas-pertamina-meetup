@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Helpers\HelperPublic;
 use App\Jobs\SendAcceptPayment;
 use App\Jobs\SendDeclinePayment;
 use App\Jobs\SendMail;
@@ -101,12 +102,36 @@ class PaymentService
 
     public function acceptPayment(Invoice $invoice)
     {
-        $package = Package::find($invoice->package_id);
-        $invoice->payment_confirm_at    = now();
-        $invoice->valid_until           = now()->addMonths($package->subscription_periode);
-        $invoice->save();
+        if ($invoice->valid_until) {
+            $responseCode = 403;
+            $responseMessage = 'Pembayaran sudah disetujui';
+            $responseData = null;
+        } else if ($invoice->payment_date && $invoice->payment_attachment) {
+            $package = Package::find($invoice->package_id);
+            $invoice->payment_confirm_at    = now();
+            $invoice->valid_until           = now()->addMonths($package->subscription_periode);
+            $invoice->save();
 
-        SendAcceptPayment::dispatch($invoice);
+            SendAcceptPayment::dispatch($invoice);
+
+            $responseCode = 200;
+            $responseMessage = 'Pembayaran berhasil disetujui';
+            $responseData = $invoice;
+        } else if ($invoice->payment_attachment == null) {
+            $responseCode = 403;
+            $responseMessage = 'Pengguna belum upload pembayaran';
+            $responseData = null;
+        } else if ($invoice->payment_date == null) {
+            $responseCode = 403;
+            $responseMessage = 'Pengguna belum melakukan pembayaran';
+            $responseData = null;
+        } else {
+            $responseCode = 403;
+            $responseMessage = 'Data tidak valid';
+            $responseData = null;
+        }
+
+        return response()->json(HelperPublic::helpResponse($responseCode, $responseData, $responseMessage), $responseCode);
     }
 
     public function rejectPayment(Invoice $invoice)
