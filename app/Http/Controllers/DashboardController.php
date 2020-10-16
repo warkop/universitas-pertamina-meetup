@@ -11,6 +11,7 @@ use App\Models\Institution;
 use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Opportunity;
+use App\Models\Package;
 use App\Models\Regulation;
 use Carbon\Carbon;
 
@@ -79,7 +80,10 @@ class DashboardController extends Controller
     public function getInstitutional()
     {
         $limit = request()->get('limit');
-        $institution = Institution::take($limit)->get()->shuffle();
+        $user = auth()->user();
+        $invoice = (new Invoice)->getLastPaidedInvoice($user);
+        $package = Package::find($invoice->package_id);
+        $institution = Institution::take($package->institution_showed_in_home)->get()->take($limit)->shuffle();
 
         $this->responseCode = 200;
         $this->responseData = $institution;
@@ -91,8 +95,10 @@ class DashboardController extends Controller
     {
         $limit = request()->get('limit');
         $user = auth()->user();
-
-        $member = Member::take($limit);
+        $user = auth()->user();
+        $invoice = (new Invoice)->getLastPaidedInvoice($user);
+        $package = Package::find($invoice->package_id);
+        $member = Member::take($package->member_showed_in_home);
 
         // 0=institution, 1=researcher
         if ($user->type == 0) {
@@ -116,7 +122,7 @@ class DashboardController extends Controller
              $query->where('member_publication.created_at', '>=', $date);
           }]);
 
-        $member = $member->get()->shuffle();
+        $member = $member->get()->take($limit)->shuffle();
 
         $this->responseCode = 200;
         $this->responseData = MemberDashboardResource::collection($member);;

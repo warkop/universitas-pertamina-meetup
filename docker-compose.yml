@@ -13,7 +13,7 @@ services:
       DB_CONNECTION: pgsql
       DB_DRIVER: pgsql
       DB_HOST: up_db
-      DB_PORT: 5432
+      DB_PORT: 5433
     networks:
       - app_network
 
