@@ -47,8 +47,10 @@ class ProfileController extends Controller
         } else if ($user->type == 1) {
             $data = Member::with('title')->with('memberSkill')->with('memberResearchInterest')->with('memberEducation')->with('department')->with('nationality')->with('publication')->find($user->owner_id);
             $this->responseData = new ProfileMemberDataResource($data);
-        } else {
+        } else if ($user->type == 2){
             $this->responseData = $user;
+            $this->responseData = new ProfileAdminDataResource($data);
+
         }
 
         $this->responseCode = 200;
