@@ -218,7 +218,8 @@ class MenuService
       $data = Menu::Select('menu.*', 'role_menu.action as action_role')
       // ->whereRaw('sub_menu is null')
       ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
-      ->where('role_menu.role_id', $get_role->id)->get();
+      ->where('role_menu.role_id', $get_role->id)
+      ->orderBy('order', 'asc')->get();
 
       if ($url || $no_resource){
          return $this->ResourceCheckMenuRole($data);

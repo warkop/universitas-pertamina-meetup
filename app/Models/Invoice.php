@@ -51,7 +51,8 @@ class Invoice extends Model
 
     public function getLastInvoice(User $user)
     {
-        return Invoice::where(['user_id' => $user->id])->latest()->first();
+        $dateNow = date("Y-m-d");
+        return Invoice::where(['user_id' => $user->id])->where('invoice.valid_until', '>', $dateNow)->latest()->first();
     }
 
     public function getLastPaidedInvoice(User $user)
