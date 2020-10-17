@@ -9,8 +9,7 @@ use App\Http\Requests\ProfileChangeMailStoreRequest;
 
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
-
-use App\Services\MailService;
+use App\Jobs\SendChangeEmail;
 
 use App\Models\EmailReset;
 use App\Models\User;
@@ -22,13 +21,7 @@ use App\Models\MemberSkill;
 use App\Models\MemberEducation;
 use App\Models\MemberPublication;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-
-use App\Mail\VerifyChangeMail;
 
 class ProfileController extends Controller
 {
@@ -89,19 +82,6 @@ class ProfileController extends Controller
             }
          }
          //////////////////////////////////////////////////
-
-         // $file = $request->file('photo');
-         // if (!empty($file) && $file->isValid()) {
-         //    $changedName = time().random_int(100,999).$file->getClientOriginalName();
-         //    $file->storeAs('profile/institution/' . $institution->id, $changedName);
-         //
-         //    if ($institution->path_photo != ''){
-         //        unlink(storage_path('app/profile/institution/').$institution->id.'/'.$institution->path_photo);
-         //    }
-         //
-         //    $institution->path_photo = $changedName;
-         // }
-
          $institution->save();
 
          $this->responseCode = 200;
@@ -166,7 +146,7 @@ class ProfileController extends Controller
 
          //Education//
          $education = $request->input('education');
-         $memberEducation = MemberEducation::where('member_id', $member->id)->delete();
+         MemberEducation::where('member_id', $member->id)->delete();
 
          foreach ($education as $key => $value) {
             MemberEducation::withTrashed()->updateOrCreate(
@@ -237,7 +217,7 @@ class ProfileController extends Controller
 
          //Publication//
          $publication = $request->input('publication');
-         $memberEducation = MemberPublication::where('member_id', $member->id)->delete();
+         MemberPublication::where('member_id', $member->id)->delete();
 
          foreach ($publication as $key => $value) {
             MemberPublication::withTrashed()->updateOrCreate(
@@ -251,20 +231,6 @@ class ProfileController extends Controller
             );
          }
          //////////////////////////////////////////////////
-
-         // //PHOTO//
-         // $file = $request->file('photo');
-         // if (!empty($file) && $file->isValid()) {
-         //    $changedName = time().random_int(100,999).$file->getClientOriginalName();
-         //    $file->storeAs('profile/member/' . $member->id, $changedName);
-         //
-         //    if ($member->path_photo != ''){
-         //        unlink(storage_path('app/profile/member/').$member->id.'/'.$member->path_photo);
-         //    }
-         //
-         //    $member->path_photo = $changedName;
-         // }
-
          $member->save();
 
          $this->responseCode = 200;
@@ -273,17 +239,6 @@ class ProfileController extends Controller
 
          return response()->json($this->getResponse(), $this->responseCode);
      }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show()
-    {
-
-    }
 
     public function showFile()
     {
@@ -334,44 +289,40 @@ class ProfileController extends Controller
 
    public function changeMail(ProfileChangeMailStoreRequest $request, $id)
    {
-     $request->validated();
+        $request->validated();
 
-     $email = strtolower($request->input('email'));
+        $email = strtolower($request->input('email'));
 
-     $user = auth()->user();
+        $user = auth()->user();
 
-     if ($user->type == 0) {
-        $model = Institution::find($id);
-        $type = 'institution';
-     } else if ($user->type == 1) {
-        $model = Member::find($id);
-        $type = 'member';
-     }
+        if ($user->type == 0) {
+            $model = Institution::findOrFail($id);
+            $type = 'institution';
+        } else if ($user->type == 1) {
+            $model = Member::findOrFail($id);
+            $type = 'member';
+        }
 
-     $emailReset = EmailReset::withTrashed()->updateOrCreate(
-         ['email' => $email, 'type' => 3, 'user_id' => $user->id],
-         [
-           'token' => Str::random(60),
-           'deleted_at' => null,
-           'deleted_by' => null,
+        $emailReset = EmailReset::withTrashed()->updateOrCreate(
+            ['email' => $email, 'type' => 3, 'user_id' => $user->id],
+            [
+            'token' => Str::random(60),
+            'deleted_at' => null,
+            'deleted_by' => null,
         ]);
+        $model->email = $email;
+        $model->save();
+        SendChangeEmail::dispatch($model, $emailReset, $type);
 
-     $mail = new MailService;
-     $mail->sendChangeEmail($model, $emailReset, $type);
+        $arrayUser = [
+            'new_email'=> $email,
+        ];
 
-     $model->email = $email;
-     $model->save();
+        User::where('id', $user->id)
+            ->update($arrayUser);
 
-     $arrayUser = [
-        'new_email'=> $email,
-     ];
-
-     User::where('id', $user->id)
-         ->update($arrayUser);
-
-     $this->responseCode = 200;
-     $this->responseMessage = 'Success Change Email';
-     // $this->responseData = $model;
+        $this->responseCode = 200;
+        $this->responseMessage = 'Success Change Email';
 
      return response()->json($this->getResponse(), $this->responseCode);
    }
@@ -389,15 +340,7 @@ class ProfileController extends Controller
          $this->responseMessage = 'This token is invalid.';
 
          return response()->json($this->getResponse(), $this->responseCode);
-      }
-      // elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
-      //    $emailReset->delete();
-      //    $this->responseCode = 400;
-      //    $this->responseMessage = 'This token is expired.';
-      //
-      //    return response()->json($this->getResponse(), $this->responseCode);
-      // }
-      else {
+      } else {
          if ($type == 'institution') {
             $data = Institution::where('email', $emailReset->email)->first();
          } else if ($type == 'member') {
