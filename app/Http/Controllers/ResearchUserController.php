@@ -5,13 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ChangeInstitutionRequest;
 use App\Http\Requests\RoleUserRequest;
-use App\Http\Resources\MemberResource;
-use App\Http\Resources\MenuDataResource;
-use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
-use App\Mail\Invitation;
+use App\Jobs\SendAcceptMember;
+use App\Jobs\SendDeclineMember;
+use App\Jobs\SendInvitation;
 use App\Services\MenuService;
-use App\Models\Institution;
 use App\Models\Member;
 use App\Models\MemberPublication;
 use App\Models\MemberSkill;
@@ -22,10 +20,7 @@ use App\Models\ChangeDept;
 use App\Models\Department;
 use App\Models\RoleMenuAddition;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
-
-use App\Services\MailService;
 use App\Services\InstitutionService;
 
 class ResearchUserController extends Controller
@@ -119,10 +114,10 @@ class ResearchUserController extends Controller
    public function sendingInvitation(InvitationRequest $request)
    {
       $request->validated();
+      $user = auth()->user();
       $email = $request->input('email');
 
-      $mail = new MailService;
-      $mail->sendInvitation($email);
+      SendInvitation::dispatch($email, $user);
 
       $this->responseCode = 200;
       $this->responseMessage = 'Undangan berhasil dikirim';
@@ -132,24 +127,23 @@ class ResearchUserController extends Controller
 
    public function acceptMember(Member $member)
    {
-      $user = User::where(['owner_id' => $member->id])->firstOrFail();
-      if ($user->confirm_at == null) {
-         $user->confirm_by = auth()->user()->id;
-         $user->confirm_at = now();
-         $user->status = 1;
-         $user->save();
+        $user = User::where(['owner_id' => $member->id])->firstOrFail();
+        if ($user->confirm_at == null) {
+            $user->confirm_by = auth()->user()->id;
+            $user->confirm_at = now();
+            $user->status = 1;
+            $user->save();
 
-         $mail = new MailService;
-         $mail->sendApproved($member, $user->email);
+            SendAcceptMember::dispatch($member, $user->email);
 
-         $this->responseCode = 200;
-         $this->responseMessage = 'Member berhasil dikonfirmasi';
-      } else {
-         $this->responseCode = 403;
-         $this->responseMessage = 'Member sudah dikonfirmasi';
-      }
+            $this->responseCode = 200;
+            $this->responseMessage = 'Member berhasil dikonfirmasi';
+        } else {
+            $this->responseCode = 403;
+            $this->responseMessage = '  Member sudah dikonfirmasi';
+        }
 
-      return response()->json($this->getResponse(), $this->responseCode);
+        return response()->json($this->getResponse(), $this->responseCode);
    }
 
    public function declineMember(Request $request, Member $member)
@@ -163,8 +157,7 @@ class ResearchUserController extends Controller
          $user->reason = $reason;
          $user->save();
 
-         $mail = new MailService;
-         $mail->sendDecline($member, $user->email, $reason);
+         SendDeclineMember::dispatch($member, $user->email, $reason);
 
          $this->responseCode = 200;
          $this->responseMessage = 'Member berhasil ditolak';

@@ -4,7 +4,7 @@ namespace App\Services;
 use App\Helpers\HelperPublic;
 use App\Jobs\SendAcceptPayment;
 use App\Jobs\SendDeclinePayment;
-use App\Jobs\SendMail;
+use App\Jobs\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\PaymentToken;
@@ -27,7 +27,7 @@ class PaymentService
             ]);
 
             $paymentToken = $this->generatePaymentToken($invoice);
-            SendMail::dispatch($invoice);
+            SendInvoice::dispatch($invoice);
             return $paymentToken;
         } else {
             $number = $this->generateInvoiceNumber($user);

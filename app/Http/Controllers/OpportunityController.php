@@ -44,9 +44,15 @@ class OpportunityController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
         $options = [
             'profile' => request()->profile
         ];
+        if ($user->type == 2) {
+            $options = [
+                'profile' => null
+            ];
+        }
         $model = Opportunity::listData($options);
 
         return DataTables::of($model)
@@ -102,29 +108,17 @@ class OpportunityController extends Controller
 
         $target = $request->input('target');
         $institutions = $request->input('institutions');
-        $result = $opportunity->create([
-            'name' => $request->name,
-            'opportunity_type_id' => $request->opportunity_type_id,
-            'desc' => $request->desc,
-            'total_funding' => $request->total_funding,
-            'contact_person' => $request->contact_person,
-            'target' => $target,
-            'keyword' => $request->keyword,
-            'institution_id' => $institutionId,
-            'start_date' => date('Y-m-d', strtotime($request->start_date)),
-            'end_date' => date('Y-m-d', strtotime($request->end_date)),
-        ]);
-        // $opportunity->name                  = $request->input('name');
-        // $opportunity->opportunity_type_id   = $request->input('opportunity_type_id');
-        // $opportunity->desc                  = $request->input('desc');
-        // $opportunity->total_funding         = $request->input('total_funding');
-        // $opportunity->contact_person        = $request->input('contact_person');
-        // $opportunity->start_date            = date('Y-m-d', strtotime($request->input('start_date')));
-        // $opportunity->end_date              = date('Y-m-d', strtotime($request->input('end_date')));
-        // $opportunity->target                = $target;
-        // $opportunity->keyword               = $request->input('keyword');
-        // $opportunity->institution_id        = $institutionId;
-        // $opportunity->save();
+        $opportunity->name                  = $request->input('name');
+        $opportunity->opportunity_type_id   = $request->input('opportunity_type_id');
+        $opportunity->desc                  = $request->input('desc');
+        $opportunity->total_funding         = $request->input('total_funding');
+        $opportunity->contact_person        = $request->input('contact_person');
+        $opportunity->start_date            = date('Y-m-d', strtotime($request->input('start_date')));
+        $opportunity->end_date              = date('Y-m-d', strtotime($request->input('end_date')));
+        $opportunity->target                = $target;
+        $opportunity->keyword               = $request->input('keyword');
+        $opportunity->institution_id        = $institutionId;
+        $opportunity->save();
 
         // 0 = all institution,1 = my institution, 2 = selected institution
         if ($target == 0) {
@@ -134,7 +128,7 @@ class OpportunityController extends Controller
             $opportunity->institutionTarget()->sync([$institutionId]);
         } else {
             if ($institutions != null) {
-                $opportunity = Opportunity::find($result->id);
+                $opportunity = Opportunity::find($opportunity->id);
                 $opportunity->institutionTarget()->sync($institutions);
             }
         }
@@ -267,6 +261,7 @@ class OpportunityController extends Controller
      */
     public function destroy(Opportunity $opportunity)
     {
+        $this->authorize('delete');
         $opportunity->delete();
 
         $this->responseCode = 200;

@@ -21,7 +21,11 @@ class OpportunityPolicy
      */
     public function viewAny(User $user)
     {
-        // $thi
+        // if ($user->type != 2) {
+        //     return true;
+        // } else {
+        //     return $this->deny('Anda diizinkan mengakses halaman ini');
+        // }
     }
 
     /**
@@ -44,14 +48,24 @@ class OpportunityPolicy
      */
     public function create(User $user)
     {
-        $invoice = (new Invoice)->getLastPaidedInvoice($user);
-        $package = Package::find($invoice->package_id);
+        if ($user->type != 2) {
+            $invoice = (new Invoice)->getLastPaidedInvoice($user);
+            if (!$invoice) {
+                return $this->deny('Paket yang belum aktif atau gratis tidak diizinkan menambah opportunity!');
+            }
+            $package = Package::find($invoice->package_id);
+            if (!$package) {
+                return $this->deny('Paket gratis tidak diizinkan menambah opportunity!');
+            }
 
-        $totalOpportunity = Opportunity::where('institution_id', $user->owner_id)->count();
-        if ($totalOpportunity < $package->posting_opportunity) {
-            return true;
+            $totalOpportunity = Opportunity::where('institution_id', $user->owner_id)->count();
+            if ($totalOpportunity < $package->posting_opportunity) {
+                return true;
+            } else {
+                return $this->deny('Anda sudah melebihi batas untuk membuat opportunity!');
+            }
         } else {
-            return $this->deny('Anda sudah melebihi batas untuk membuat opportunity!');
+            return $this->deny('Anda tidak diizinkan mengakses halaman ini');
         }
     }
 
@@ -76,7 +90,7 @@ class OpportunityPolicy
      */
     public function delete(User $user, Opportunity $opportunity)
     {
-        //
+        return $user->id == $opportunity->created_by;
     }
 
     /**

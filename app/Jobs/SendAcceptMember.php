@@ -2,27 +2,29 @@
 
 namespace App\Jobs;
 
+use App\Models\Member;
 use App\Services\MailService;
-use App\Services\PaymentService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendMail implements ShouldQueue
+class SendAcceptMember implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $invoice;
+    private $email;
+    private $member;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($invoice)
+    public function __construct(Member $member, string $email)
     {
-        $this->invoice = $invoice;
+        $this->member = $member;
+        $this->email = $email;
     }
 
     /**
@@ -32,7 +34,6 @@ class SendMail implements ShouldQueue
      */
     public function handle()
     {
-        $mailService = new MailService;
-        $mailService->sendInvoice($this->invoice);
+        (new MailService)->sendApproved($this->member, $this->email);
     }
 }
