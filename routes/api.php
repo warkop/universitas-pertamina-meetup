@@ -29,9 +29,9 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'TitleController@index');
         Route::get('/select-list', 'TitleController@selectList');
         Route::get('/{title}', 'TitleController@show');
-        Route::post('/', 'TitleController@store')->middleware('can:data-master');
-        Route::put('/{title}', 'TitleController@store')->middleware('can:data-master');
-        Route::delete('/{title}', 'TitleController@destroy')->middleware('can:data-master');
+        Route::post('/', 'TitleController@store')->middleware('can:admin-only');
+        Route::put('/{title}', 'TitleController@store')->middleware('can:admin-only');
+        Route::delete('/{title}', 'TitleController@destroy')->middleware('can:admin-only');
     });
 
     Route::get('/v2/title/', 'TitleController@getForDatatables');
@@ -40,18 +40,18 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'NationalityController@index');
         Route::get('/select-list', 'NationalityController@selectList');
         Route::get('/{nationality}', 'NationalityController@show');
-        Route::post('/', 'NationalityController@store')->middleware('can:data-master');
-        Route::put('/{nationality}', 'NationalityController@store')->middleware('can:data-master');
-        Route::delete('/{nationality}', 'NationalityController@destroy')->middleware('can:data-master');
+        Route::post('/', 'NationalityController@store')->middleware('can:admin-only');
+        Route::put('/{nationality}', 'NationalityController@store')->middleware('can:admin-only');
+        Route::delete('/{nationality}', 'NationalityController@destroy')->middleware('can:admin-only');
     });
 
     Route::group(['prefix' => 'skill'], function () {
         Route::get('/', 'SkillController@index');
         Route::get('/select-list', 'SkillController@selectList');
         Route::get('/{skill}', 'SkillController@show');
-        Route::post('/', 'SkillController@store')->middleware('can:data-master');
-        Route::put('/{skill}', 'SkillController@store')->middleware('can:data-master');
-        Route::delete('/{skill}', 'SkillController@destroy')->middleware('can:data-master');
+        Route::post('/', 'SkillController@store')->middleware('can:admin-only');
+        Route::put('/{skill}', 'SkillController@store')->middleware('can:admin-only');
+        Route::delete('/{skill}', 'SkillController@destroy')->middleware('can:admin-only');
     });
 
     Route::group(['prefix' => 'department'], function () {
@@ -59,18 +59,18 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/select-list', 'DepartmentController@selectList');
         Route::get('/get-list-institution', 'DepartmentController@getListInstitution');
         Route::get('/{department}', 'DepartmentController@show');
-        Route::post('/', 'DepartmentController@store')->middleware('can:data-master');
-        Route::put('/{department}', 'DepartmentController@store')->middleware('can:data-master');
-        Route::delete('/{department}', 'DepartmentController@destroy')->middleware('can:data-master');
+        Route::post('/', 'DepartmentController@store')->middleware('can:admin-only');
+        Route::put('/{department}', 'DepartmentController@store')->middleware('can:admin-only');
+        Route::delete('/{department}', 'DepartmentController@destroy')->middleware('can:admin-only');
     });
 
     Route::group(['prefix' => 'institution'], function () {
         Route::get('/', 'InstitutionController@index');
         Route::get('/select-list', 'InstitutionController@selectList');
         Route::get('/{institution}', 'InstitutionController@show');
-        Route::post('/', 'InstitutionController@store');
-        Route::put('/{institution}', 'InstitutionController@store');
-        Route::delete('/{institution}', 'InstitutionController@destroy');
+        Route::post('/', 'InstitutionController@store')->middleware('can:admin-only');
+        Route::put('/{institution}', 'InstitutionController@store')->middleware('can:admin-only');
+        Route::delete('/{institution}', 'InstitutionController@destroy')->middleware('can:admin-only');
     });
 
     Route::group(['prefix' => 'regulation'], function () {
@@ -131,9 +131,9 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'RoleController@index');
         Route::get('/select-list', 'RoleController@selectList');
         Route::get('/{role}', 'RoleController@show');
-        Route::post('/', 'RoleController@store');
-        Route::put('/{role}', 'RoleController@store');
-        Route::delete('/{role}', 'RoleController@destroy');
+        Route::post('/', 'RoleController@store')->middleware('can:admin-only');
+        Route::put('/{role}', 'RoleController@store')->middleware('can:admin-only');
+        Route::delete('/{role}', 'RoleController@destroy')->middleware('can:admin-only');
     });
 
 
@@ -187,18 +187,18 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'AcademicDegreeController@index');
         Route::get('/select-list', 'AcademicDegreeController@selectList');
         Route::get('/{academicDegree}', 'AcademicDegreeController@show');
-        Route::post('/', 'AcademicDegreeController@store')->middleware('can:data-master');
-        Route::put('/{academicDegree}', 'AcademicDegreeController@store')->middleware('can:data-master');
-        Route::delete('/{academicDegree}', 'AcademicDegreeController@destroy')->middleware('can:data-master');
+        Route::post('/', 'AcademicDegreeController@store')->middleware('can:admin-only');
+        Route::put('/{academicDegree}', 'AcademicDegreeController@store')->middleware('can:admin-only');
+        Route::delete('/{academicDegree}', 'AcademicDegreeController@destroy')->middleware('can:admin-only');
     });
 
     Route::group(['prefix' => 'publication-type'], function () {
         Route::get('/', 'PublicationTypeController@index');
         Route::get('/select-list', 'PublicationTypeController@selectList');
         Route::get('/{publicationType}', 'PublicationTypeController@show');
-        Route::post('/', 'PublicationTypeController@store')->middleware('can:data-master');
-        Route::put('/{publicationType}', 'PublicationTypeController@store')->middleware('can:data-master');
-        Route::delete('/{publicationType}', 'PublicationTypeController@destroy')->middleware('can:data-master');
+        Route::post('/', 'PublicationTypeController@store')->middleware('can:admin-only');
+        Route::put('/{publicationType}', 'PublicationTypeController@store')->middleware('can:admin-only');
+        Route::delete('/{publicationType}', 'PublicationTypeController@destroy')->middleware('can:admin-only');
     });
 
     Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');

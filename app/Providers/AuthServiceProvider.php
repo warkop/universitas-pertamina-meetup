@@ -33,7 +33,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('data-master', function ($user) {
+        Gate::define('admin-only', function ($user) {
             return $user->type === 2;
         });
     }
