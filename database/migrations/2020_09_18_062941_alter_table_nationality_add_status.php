@@ -26,7 +26,7 @@ class AlterTableNationalityAddStatus extends Migration
     public function down()
     {
         Schema::table('nationality', function (Blueprint $table) {
-            //
+            $table->dropColumn('status');
         });
     }
 }

@@ -26,7 +26,7 @@ class AlterTableSkillAddStatus extends Migration
     public function down()
     {
         Schema::table('skill', function (Blueprint $table) {
-            //
+            $table->dropColumn('status');
         });
     }
 }

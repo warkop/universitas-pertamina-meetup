@@ -26,7 +26,7 @@ class AlterTableCheckEmailAddUserId extends Migration
     public function down()
     {
         Schema::table('check_email', function (Blueprint $table) {
-            //
+            $table->dropColumn('user_id');
         });
     }
 }

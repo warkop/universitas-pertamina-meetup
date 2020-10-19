@@ -31,7 +31,7 @@ class RegisterService
             $query->where('institution_id', $department->institution_id);
         })->count();
 
-        $package = Package::find($package_id);
+        $package = Package::findOrFail($package_id);
 
         if ($countMember < $package->max_member) {
             return true;
@@ -43,9 +43,21 @@ class RegisterService
     private function getInstitutionPackage(Department $department)
     {
         $institution = Institution::findOrFail($department->institution_id);
-        $user = User::where('owner_id', $institution->id)->firstOrFail();
-        $invoice = (new Invoice)->getLastPaidedInvoice($user);
-        return $invoice->package_id;
+        $user = User::where('owner_id', $institution->id)->first();
+        if ($user) {
+            $invoice = (new Invoice)->getLastPaidedInvoice($user);
+            if (!$invoice) {
+                $invoice = (new Invoice)->getLastInvoice($user);
+                $package = Package::findOrFail($invoice->package_id);
+                if ($package->price > 0) {
+                    return false;
+                }
+                return $invoice->package_id;
+            }
+            return $invoice->package_id;
+        } else {
+            return false;
+        }
     }
 
     public function registerInstitution($request)
@@ -83,6 +95,9 @@ class RegisterService
             if ($request->department_id) {
                 $department = Department::findOrFail($request->department_id);
                 $package_id = $this->getInstitutionPackage($department);
+                if (!$package_id) {
+                    throw new Exception('Institusi tidak memiliki paket atau paket milik institusi belum aktif! Silahkan hubungi administrator untuk info lebih lanjut!', 400);
+                }
                 $isQuotaAvailable = $this->isQuotaAvailable($department, $package_id);
                 if (!$isQuotaAvailable) {
                     throw new Exception('Kuota institusi sudah penuh, silahkan Anda mendaftar sebagai independent atau extension', 403);

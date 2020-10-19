@@ -27,7 +27,8 @@ class AlterTableUserAddNewEmailNewEmailVerifiedAt extends Migration
     public function down()
     {
         Schema::table('user', function (Blueprint $table) {
-            //
+            $table->dropColumn('new_email_verified_at');
+            $table->dropColumn('change_mail');
         });
     }
 }

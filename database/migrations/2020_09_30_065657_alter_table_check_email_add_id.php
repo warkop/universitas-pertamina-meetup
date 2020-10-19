@@ -14,7 +14,7 @@ class AlterTableCheckEmailAddId extends Migration
     public function up()
     {
         Schema::table('email_reset', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->primary()->default(1);
+            $table->unsignedBigInteger('id')->autoIncrement();
         });
     }
 
@@ -26,7 +26,7 @@ class AlterTableCheckEmailAddId extends Migration
     public function down()
     {
         Schema::table('email_reset', function (Blueprint $table) {
-            //
+            $table->dropColumn('id');
         });
     }
 }

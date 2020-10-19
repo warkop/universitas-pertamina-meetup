@@ -27,8 +27,10 @@ class AlterTableMenuAction extends Migration
      */
     public function down()
     {
-        Schema::table('menu', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('menu', 'action')) {
+            Schema::table('menu', function (Blueprint $table) {
+                $table->dropColumn('action');
+            });
+        }
     }
 }

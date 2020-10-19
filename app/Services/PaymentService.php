@@ -14,7 +14,7 @@ class PaymentService
 {
     public function registerPackage($package_id, $user)
     {
-        $package = Package::find($package_id);
+        $package = Package::findOrFail($package_id);
 
         if ($package->price > 0) {
             $number = $this->generateInvoiceNumber($user);
@@ -43,7 +43,6 @@ class PaymentService
 
             $user = User::where('user.id', $user->id)->update(['confirm_at' => now()]);
         }
-
         return null;
     }
 
