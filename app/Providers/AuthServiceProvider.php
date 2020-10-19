@@ -19,7 +19,6 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Models' => 'App\Policies\ModelPolicy',
         Opportunity::class => OpportunityPolicy::class,
         Member::class => ResearchUserPolicy::class,
         Invoice::class => PaymentPolicy::class,
@@ -34,6 +33,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('data-master', function ($user) {
+            return $user->type === 2;
+        });
     }
 }

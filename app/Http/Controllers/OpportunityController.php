@@ -102,7 +102,6 @@ class OpportunityController extends Controller
      */
     public function store(OpportunityStoreRequest $request, Opportunity $opportunity)
     {
-        $this->authorize('create', $opportunity);
         $request->validated();
         $institutionId = $this->getInstitutionId();
 
@@ -261,7 +260,6 @@ class OpportunityController extends Controller
      */
     public function destroy(Opportunity $opportunity)
     {
-        $this->authorize('delete');
         $opportunity->delete();
 
         $this->responseCode = 200;
