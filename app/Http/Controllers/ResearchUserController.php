@@ -113,21 +113,22 @@ class ResearchUserController extends Controller
 
    public function sendingInvitation(InvitationRequest $request)
    {
-      $request->validated();
-      $user = auth()->user();
-      $email = $request->input('email');
+        $request->validated();
+        $user = auth()->user();
+        $email = $request->input('email');
 
-      SendInvitation::dispatch($email, $user);
+        SendInvitation::dispatch($email, $user);
 
-      $this->responseCode = 200;
-      $this->responseMessage = 'Undangan berhasil dikirim';
+        $this->responseCode = 200;
+        $this->responseMessage = 'Undangan berhasil dikirim';
 
-      return response()->json($this->getResponse(), $this->responseCode);
+        return response()->json($this->getResponse(), $this->responseCode);
    }
 
    public function acceptMember(Member $member)
    {
-        $user = User::where(['owner_id' => $member->id])->firstOrFail();
+        $this->authorize('basic',$member);
+        $user = User::where(['owner_id' => $member->id, 'type' => 1])->firstOrFail();
         if ($user->confirm_at == null) {
             $user->confirm_by = auth()->user()->id;
             $user->confirm_at = now();
@@ -148,25 +149,26 @@ class ResearchUserController extends Controller
 
    public function declineMember(Request $request, Member $member)
    {
-      $user = User::where(['owner_id' => $member->id])->firstOrFail();
-      $reason = $request->input('reason');
-      if ($user->status != 2) {
-         $user->confirm_by = null;
-         $user->confirm_at = null;
-         $user->status = 2;
-         $user->reason = $reason;
-         $user->save();
+        $this->authorize('basic',$member);
+        $user = User::where(['owner_id' => $member->id])->firstOrFail();
+        $reason = $request->input('reason');
+        if ($user->status != 2) {
+            $user->confirm_by = null;
+            $user->confirm_at = null;
+            $user->status = 2;
+            $user->reason = $reason;
+            $user->save();
 
-         SendDeclineMember::dispatch($member, $user->email, $reason);
+            SendDeclineMember::dispatch($member, $user->email, $reason);
 
-         $this->responseCode = 200;
-         $this->responseMessage = 'Member berhasil ditolak';
-      } else {
-         $this->responseCode = 403;
-         $this->responseMessage = 'Member sudah ditolak';
-      }
+            $this->responseCode = 200;
+            $this->responseMessage = 'Member berhasil ditolak';
+        } else {
+            $this->responseCode = 403;
+            $this->responseMessage = 'Member sudah ditolak';
+        }
 
-      return response()->json($this->getResponse(), $this->responseCode);
+        return response()->json($this->getResponse(), $this->responseCode);
    }
 
    /**
