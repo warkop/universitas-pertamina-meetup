@@ -29,9 +29,9 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'TitleController@index');
         Route::get('/select-list', 'TitleController@selectList');
         Route::get('/{title}', 'TitleController@show');
-        Route::post('/', 'TitleController@store');
-        Route::put('/{title}', 'TitleController@store');
-        Route::delete('/{title}', 'TitleController@destroy');
+        Route::post('/', 'TitleController@store')->middleware('can:data-master');
+        Route::put('/{title}', 'TitleController@store')->middleware('can:data-master');
+        Route::delete('/{title}', 'TitleController@destroy')->middleware('can:data-master');
     });
 
     Route::get('/v2/title/', 'TitleController@getForDatatables');
@@ -40,18 +40,18 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'NationalityController@index');
         Route::get('/select-list', 'NationalityController@selectList');
         Route::get('/{nationality}', 'NationalityController@show');
-        Route::post('/', 'NationalityController@store');
-        Route::put('/{nationality}', 'NationalityController@store');
-        Route::delete('/{nationality}', 'NationalityController@destroy');
+        Route::post('/', 'NationalityController@store')->middleware('can:data-master');
+        Route::put('/{nationality}', 'NationalityController@store')->middleware('can:data-master');
+        Route::delete('/{nationality}', 'NationalityController@destroy')->middleware('can:data-master');
     });
 
     Route::group(['prefix' => 'skill'], function () {
         Route::get('/', 'SkillController@index');
         Route::get('/select-list', 'SkillController@selectList');
         Route::get('/{skill}', 'SkillController@show');
-        Route::post('/', 'SkillController@store');
-        Route::put('/{skill}', 'SkillController@store');
-        Route::delete('/{skill}', 'SkillController@destroy');
+        Route::post('/', 'SkillController@store')->middleware('can:data-master');
+        Route::put('/{skill}', 'SkillController@store')->middleware('can:data-master');
+        Route::delete('/{skill}', 'SkillController@destroy')->middleware('can:data-master');
     });
 
     Route::group(['prefix' => 'department'], function () {
@@ -59,9 +59,9 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/select-list', 'DepartmentController@selectList');
         Route::get('/get-list-institution', 'DepartmentController@getListInstitution');
         Route::get('/{department}', 'DepartmentController@show');
-        Route::post('/', 'DepartmentController@store');
-        Route::put('/{department}', 'DepartmentController@store');
-        Route::delete('/{department}', 'DepartmentController@destroy');
+        Route::post('/', 'DepartmentController@store')->middleware('can:data-master');
+        Route::put('/{department}', 'DepartmentController@store')->middleware('can:data-master');
+        Route::delete('/{department}', 'DepartmentController@destroy')->middleware('can:data-master');
     });
 
     Route::group(['prefix' => 'institution'], function () {
@@ -89,11 +89,11 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/get-institution', 'OpportunityController@getInstitution');
         Route::get('/get-type-opportunity', 'OpportunityController@getTypeOpportunity');
         Route::get('/{opportunity}', 'OpportunityController@show');
-        Route::post('/', 'OpportunityController@store');
+        Route::post('/', 'OpportunityController@store')->middleware('can:create,App\Models\Opportunity');
         Route::post('/{opportunity}', 'OpportunityController@storeFiles');
         Route::post('/{opportunity}/interest', 'OpportunityController@interest');
-        Route::put('/{opportunity}', 'OpportunityController@store');
-        Route::delete('/{opportunity}', 'OpportunityController@destroy');
+        Route::put('/{opportunity}', 'OpportunityController@store')->middleware('can:create,opportunity');
+        Route::delete('/{opportunity}', 'OpportunityController@destroy')->middleware('can:delete,opportunity');
         Route::get('/files/{opportunityFile}', 'OpportunityController@showFile');
     });
 
@@ -187,18 +187,18 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'AcademicDegreeController@index');
         Route::get('/select-list', 'AcademicDegreeController@selectList');
         Route::get('/{academicDegree}', 'AcademicDegreeController@show');
-        Route::post('/', 'AcademicDegreeController@store');
-        Route::put('/{academicDegree}', 'AcademicDegreeController@store');
-        Route::delete('/{academicDegree}', 'AcademicDegreeController@destroy');
+        Route::post('/', 'AcademicDegreeController@store')->middleware('can:data-master');
+        Route::put('/{academicDegree}', 'AcademicDegreeController@store')->middleware('can:data-master');
+        Route::delete('/{academicDegree}', 'AcademicDegreeController@destroy')->middleware('can:data-master');
     });
 
     Route::group(['prefix' => 'publication-type'], function () {
         Route::get('/', 'PublicationTypeController@index');
         Route::get('/select-list', 'PublicationTypeController@selectList');
         Route::get('/{publicationType}', 'PublicationTypeController@show');
-        Route::post('/', 'PublicationTypeController@store');
-        Route::put('/{publicationType}', 'PublicationTypeController@store');
-        Route::delete('/{publicationType}', 'PublicationTypeController@destroy');
+        Route::post('/', 'PublicationTypeController@store')->middleware('can:data-master');
+        Route::put('/{publicationType}', 'PublicationTypeController@store')->middleware('can:data-master');
+        Route::delete('/{publicationType}', 'PublicationTypeController@destroy')->middleware('can:data-master');
     });
 
     Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
