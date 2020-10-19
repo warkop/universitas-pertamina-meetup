@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Invoice;
+use App\Models\Member;
 use App\Models\Opportunity;
 use App\Policies\OpportunityPolicy;
+use App\Policies\PaymentPolicy;
+use App\Policies\ResearchUserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -17,6 +21,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // 'App\Models' => 'App\Policies\ModelPolicy',
         Opportunity::class => OpportunityPolicy::class,
+        Member::class => ResearchUserPolicy::class,
+        Invoice::class => PaymentPolicy::class,
     ];
 
     /**

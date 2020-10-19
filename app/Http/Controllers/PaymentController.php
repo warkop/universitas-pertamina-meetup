@@ -181,11 +181,13 @@ class PaymentController extends Controller
 
     public function acceptPayment(Invoice $invoice)
     {
+        $this->authorize('basic', $invoice);
         return $this->payment->acceptPayment($invoice);
     }
 
     public function rejectPayment(RejectRequest $request, Invoice $invoice)
     {
+        $this->authorize('basic', $invoice);
         $request->validated();
         $this->payment->rejectPayment($invoice);
 
