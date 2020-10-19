@@ -68,7 +68,7 @@ class Member extends Model
     {
         $user = auth()->user();
 
-        $result = Member::select(
+        $result = Member::distinct()->select(
             'member.*',
             'institution.name as institution_name',
             'department.name as department_name',
