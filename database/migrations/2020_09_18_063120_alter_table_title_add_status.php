@@ -25,8 +25,8 @@ class AlterTableTitleAddStatus extends Migration
      */
     public function down()
     {
-        Schema::table('titl', function (Blueprint $table) {
-            //
+        Schema::table('title', function (Blueprint $table) {
+            $table->dropColumn('status');
         });
     }
 }

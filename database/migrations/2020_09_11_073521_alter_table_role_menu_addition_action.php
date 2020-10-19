@@ -27,8 +27,10 @@ class AlterTableRoleMenuAdditionAction extends Migration
      */
     public function down()
     {
-        Schema::table('role_menu_addition', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('role_menu_addition', 'action')) {
+            Schema::table('role_menu_addition', function (Blueprint $table) {
+                $table->dropColumn('action');
+            });
+        }
     }
 }

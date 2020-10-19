@@ -26,7 +26,7 @@ class AlterTableAcademicDegreeStatus extends Migration
     public function down()
     {
         Schema::table('academic_degree', function (Blueprint $table) {
-            //
+            $table->dropColumn('status');
         });
     }
 }

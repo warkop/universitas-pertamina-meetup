@@ -28,7 +28,9 @@ class AlterTableInstitutionAddCountryAddCityAddPostalCode extends Migration
     public function down()
     {
         Schema::table('institution', function (Blueprint $table) {
-            //
+            $table->dropColumn('country');
+            $table->dropColumn('city');
+            $table->dropColumn('postal_code');
         });
     }
 }
