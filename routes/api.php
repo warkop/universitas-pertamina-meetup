@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Institution;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -236,6 +237,7 @@ Route::group(['prefix' => 'public'], function () {
     Route::get('/department', 'DepartmentController@selectList');
     Route::get('/bank', 'RegisterController@listBank');
     Route::get('/announcement/{announcement}/show-file/', 'AnnouncementController@showFile');
+    Route::get('/check_availability/{institution}', 'RegisterController@checkAvaibility');
 });
 
 Route::group(['prefix' => 'profile'], function () {

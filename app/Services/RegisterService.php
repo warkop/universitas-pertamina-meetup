@@ -40,10 +40,31 @@ class RegisterService
         return false;
     }
 
+    public function CheckAvaibility(Institution $institution)
+    {
+        $user = User::where('owner_id', $institution->id)->where('type', 0)->firstOrFail();
+        $invoice = (new Invoice)->getLastPaidedInvoice($user);
+        $package = Package::findOrFail($invoice->package_id);
+
+        $totalMember = Institution::withCount('memberInstitution')->findOrFail($institution->id);
+
+        if ($totalMember->member_institution_count < $package->max_member) {
+            $availability = true;
+        } else {
+            $availability =  false;
+        }
+
+        return [
+            'is_available' => $availability,
+            'count_of_members' => $totalMember->member_institution_count,
+            'max_member' => $package->max_member,
+        ];
+    }
+
     private function getInstitutionPackage(Department $department)
     {
         $institution = Institution::findOrFail($department->institution_id);
-        $user = User::where('owner_id', $institution->id)->first();
+        $user = User::where('owner_id', $institution->id)->where('type', 0)->first();
         if ($user) {
             $invoice = (new Invoice)->getLastPaidedInvoice($user);
             if (!$invoice) {
