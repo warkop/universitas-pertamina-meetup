@@ -128,9 +128,9 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
     });
 
     Route::group(['prefix' => 'role'], function () {
-        Route::get('/', 'RoleController@index');
+        Route::get('/', 'RoleController@index')->middleware('can:admin-only');
         Route::get('/select-list', 'RoleController@selectList');
-        Route::get('/{role}', 'RoleController@show');
+        Route::get('/{role}', 'RoleController@show')->middleware('can:admin-only');
         Route::post('/', 'RoleController@store')->middleware('can:admin-only');
         Route::put('/{role}', 'RoleController@store')->middleware('can:admin-only');
         Route::delete('/{role}', 'RoleController@destroy')->middleware('can:admin-only');
@@ -147,8 +147,8 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
         Route::post('/change-institution/{member}', 'ResearchUserController@changeInstitution');
         Route::post('/{member}', 'ResearchUserController@store');
-        Route::patch('/{member}', 'ResearchUserController@acceptMember');
-        Route::post('/decline/{member}', 'ResearchUserController@declineMember');
+        Route::patch('/{member}', 'ResearchUserController@acceptMember')->middleware('can:basic,member');
+        Route::post('/decline/{member}', 'ResearchUserController@declineMember')->middleware('can:basic,member');
         Route::post('/role/{member}', 'ResearchUserController@changeRole');
         Route::get('/role/detail/{member}', 'ResearchUserController@RoleUser');
     });
@@ -210,8 +210,8 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/{invoice}/show-file', 'PaymentController@showFile');
         Route::post('/{invoice}', 'PaymentController@storePayment');
         Route::post('/upload/{invoice}', 'PaymentController@storeUploadPayment');
-        Route::patch('/{invoice}/approve', 'PaymentController@acceptPayment');
-        Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment');
+        Route::patch('/{invoice}/approve', 'PaymentController@acceptPayment')->middleware('can:basic,invoice');
+        Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment')->middleware('can:basic,invoice');
     });
 
 
