@@ -46,4 +46,9 @@ class Institution extends Model
     {
         return $this->hasMany(Opportunity::class)->latest();
     }
+
+    public function memberInstitution()
+    {
+        return $this->hasManyThrough(Member::class, Department::class);
+    }
 }

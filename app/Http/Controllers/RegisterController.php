@@ -10,6 +10,7 @@ use App\Models\Bank;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Models\EmailReset;
+use App\Models\Institution;
 use App\Models\PaymentToken;
 use App\Services\PaymentService;
 use App\Services\RegisterService;
@@ -195,5 +196,14 @@ class RegisterController extends Controller
 
             return response()->json($this->getResponse(), $this->responseCode);
         }
-   }
+    }
+
+    public function checkAvaibility(Institution $institution)
+    {
+        $result = (new RegisterService)->checkAvaibility($institution);
+        $this->responseCode = 200;
+        $this->responseData = $result;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
 }
