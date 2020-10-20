@@ -127,7 +127,6 @@ class ResearchUserController extends Controller
 
    public function acceptMember(Member $member)
    {
-        $this->authorize('basic',$member);
         $user = User::where(['owner_id' => $member->id, 'type' => 1])->firstOrFail();
         if ($user->confirm_at == null) {
             $user->confirm_by = auth()->user()->id;
@@ -149,7 +148,6 @@ class ResearchUserController extends Controller
 
    public function declineMember(Request $request, Member $member)
    {
-        $this->authorize('basic',$member);
         $user = User::where(['owner_id' => $member->id])->firstOrFail();
         $reason = $request->input('reason');
         if ($user->status != 2) {

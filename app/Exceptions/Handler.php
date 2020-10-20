@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
@@ -61,14 +62,14 @@ class Handler extends ExceptionHandler
             ], 404);
         }
 
-        if ($exception instanceof AuthorizationException && $request->expectsJson()) {
+        if ($exception instanceof AuthorizationException)
+        {
             return response()->json([
                 'status' => [
-                    'code' => $exception->getStatusCode(),
-                    'message' => $exception->getMessage()
-                ],
-                'data' => null
-            ], $exception->getStatusCode());
+                    'message' => 'Anda tidak diizinkan mengakses url ini!',
+                    'code' => 403,
+                ]
+            ], 403);
         }
 
         return parent::render($request, $exception);
