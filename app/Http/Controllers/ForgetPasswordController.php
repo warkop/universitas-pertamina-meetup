@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ResetPasswordRequest;
+use App\Jobs\SendForgetPassword;
 use App\Models\Institution;
 use App\Models\Member;
 use App\Models\EmailReset;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use App\Mail\ResetPassword;
 use App\Models\User;
 use Illuminate\Http\Request;
-
-use App\Services\MailService;
 
 use Carbon\Carbon;
 
@@ -27,35 +23,33 @@ class ForgetPasswordController extends Controller
    **/
    public function resetPassword(request $request)
    {
-      $email = strtolower($request->input('email'));
+        $email = strtolower($request->input('email'));
 
-      $chekUser = User::where('email', $email)->first();
+        $chekUser = User::where('email', $email)->first();
 
-      if(!empty($chekUser)){
-         $emailReset = EmailReset::withTrashed()->updateOrCreate(
+        if(!empty($chekUser)){
+            $emailReset = EmailReset::withTrashed()->updateOrCreate(
             ['email' => $email, 'type' => 2, 'user_id' => $chekUser->id],
             [
-               'token' => Str::random(60),
-               'deleted_at' => null,
-               'deleted_by' => null,
-         ]);
+                'token' => Str::random(60),
+                'deleted_at' => null,
+                'deleted_by' => null,
+            ]);
 
-         if ($chekUser->type == 0){
+            if ($chekUser->type == 0){
             $model = Institution::find($chekUser->owner_id);
-         } elseif ($chekUser->type == 1) {
+            } elseif ($chekUser->type == 1) {
             $model = Member::find($chekUser->owner_id);
-         }
+            }
 
-         $mail = new MailService;
-         $mail->sendForgetPassword($model, $emailReset);
+            SendForgetPassword::dispatch($model, $emailReset);
 
-         $this->responseCode = 200;
-         $this->responseMessage = 'Please Check Email for Reset Password';
+            $this->responseCode = 200;
+            $this->responseMessage = 'Please Check Email for Reset Password';
       } else {
-         $this->responseCode = 400;
-         $this->responseMessage = 'Email Not Found';
+            $this->responseCode = 400;
+            $this->responseMessage = 'Email Not Found';
       }
-      // $this->responseData = $model;
 
       return response()->json($this->getResponse(), $this->responseCode);
    }
@@ -89,8 +83,6 @@ class ForgetPasswordController extends Controller
 
       $password = ['password' => bcrypt($request->password)];
 
-      // $token = $request->input('token');
-
       $emailReset = EmailReset::where('token', $token)->where('type', 2)->first();
 
       if (!$emailReset){
@@ -104,7 +96,6 @@ class ForgetPasswordController extends Controller
          $this->responseCode = 200;
          $this->responseMessage = 'Success Change Password';
       }
-
 
       return response()->json($this->getResponse(), $this->responseCode);
    }

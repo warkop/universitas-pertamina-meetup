@@ -26,7 +26,7 @@ class AlterTableSkillAddInput extends Migration
     public function down()
     {
         Schema::table('skill', function (Blueprint $table) {
-            //
+            $table->dropColumn('input');
         });
     }
 }

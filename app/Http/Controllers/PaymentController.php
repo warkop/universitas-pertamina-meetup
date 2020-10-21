@@ -21,10 +21,108 @@ class PaymentController extends Controller
         $this->payment = new PaymentService;
     }
 
+    private function datatableAdmin($type)
+    {
+        $model = Invoice::query();
+        if ($type == 0) {
+            $datatable = DataTables::eloquent($model
+                ->select([
+                    'institution.*',
+                    'invoice.valid_until',
+                    'invoice.payment_date',
+                    'invoice.id as invoice_id'
+                ])
+                ->join('user', 'user.id', '=', 'user_id')
+                ->join('institution', 'institution.id', '=', 'owner_id')
+                ->join('package', 'package.id', '=', 'package_id')
+                ->where('user.type', $type)
+                ->where('package.renewal', true)
+            )
+            ->setTransformer(function($item){
+                if ($item->valid_until != null && $item->payment_date != null) {
+                    $status = 'Accepted';
+                } else if ($item->payment_date != null && $item->valid_until == null) {
+                    $status = 'Pending';
+                } else {
+                    $status = 'Unpaid';
+                }
+
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'phone' => $item->phone,
+                    'email' => $item->email,
+                    'address' => $item->address,
+                    'status' => $status,
+                    'invoice_id' => $item->invoice_id,
+                ];
+            })
+            ->filter(function ($query) {
+                if (request()->has('search') && ! is_null(request()->get('search')['value']) ) {
+                    $regex = request()->get('search')['value'];
+                    $query->where('institution.name', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('institution.phone', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('institution.email', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('institution.address', 'ilike', '%' . $regex . '%');
+                }
+            })
+            ->toJson();
+        } else if ($type == 1) {
+            $datatable = DataTables::eloquent($model
+                ->select(
+                    'member.*',
+                    'invoice.*',
+                    'institution.name as institution_name',
+                    'department.name as department_name',
+                    'invoice.id as invoice_id'
+                )
+                ->join('user', 'user.id', '=', 'user_id')
+                ->join('member', 'member.id', '=', 'owner_id')
+                ->leftJoin('department', 'department.id', '=', 'department_id')
+                ->leftJoin('institution', 'institution.id', '=', 'institution_id')
+                ->join('package', 'package.id', '=', 'package_id')
+                ->where('user.type', $type)
+                ->where('package.renewal', true)
+            )
+            ->setTransformer(function($item){
+                if ($item->valid_until != null && $item->payment_date != null) {
+                    $status = 'Accepted';
+                } else if ($item->payment_date != null && $item->valid_until == null) {
+                    $status = 'Pending';
+                } else {
+                    $status = 'Unpaid';
+                }
+
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'email' => $item->email,
+                    'institution_name' => $item->institution_name,
+                    'department_name' => $item->department_name,
+                    'status' => $status,
+                    'invoice_id' => $item->invoice_id,
+                ];
+            })
+            ->filter(function ($query) {
+                if (request()->has('search') && ! is_null(request()->get('search')['value']) ) {
+                    $regex = request()->get('search')['value'];
+                    $query->where('member.name', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('member.email', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('institution_name', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('department_name', 'ilike', '%' . $regex . '%');
+                }
+            })
+            ->toJson();
+        } else {
+            $datatable = null;
+        }
+
+        return $datatable;
+    }
+
     public function index()
     {
         $user = auth()->user();
-
         if ($user->type == 0 || $user->type == 1) {
             $model = Invoice::query();
             $datatable = DataTables::eloquent($model
@@ -41,82 +139,7 @@ class PaymentController extends Controller
             ->toJson();
         } else {
             $type = request()->type;
-
-            $model = Invoice::query();
-            if ($type == 0) {
-                $datatable = DataTables::eloquent($model
-                    ->select(
-                        'institution.*',
-                        'invoice.*',
-                        'invoice.id as invoice_id'
-                    )
-                    ->join('user', 'user.id', '=', 'user_id')
-                    ->join('institution', 'institution.id', '=', 'owner_id')
-                    ->join('package', 'package.id', '=', 'package_id')
-                    ->where('user.type', $type)
-                    ->where('package.renewal', true)
-                )
-                ->setTransformer(function($item){
-                    if ($item->valid_until != null && $item->payment_date != null) {
-                        $status = 'Accepted';
-                    } else if ($item->payment_date != null && $item->valid_until == null) {
-                        $status = 'Pending';
-                    } else {
-                        $status = 'Unpaid';
-                    }
-
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                        'phone' => $item->phone,
-                        'email' => $item->email,
-                        'address' => $item->address,
-                        'status' => $status,
-                        'invoice_id' => $item->invoice_id,
-                    ];
-                })
-                ->toJson();
-            } else if ($type == 1) {
-                $datatable = DataTables::eloquent($model
-                    ->select(
-                        'member.*',
-                        'invoice.*',
-                        'institution.name as institution_name',
-                        'department.name as department_name',
-                        'invoice.id as invoice_id'
-                    )
-                    ->join('user', 'user.id', '=', 'user_id')
-                    ->leftJoin('member', 'member.id', '=', 'owner_id')
-                    ->leftJoin('department', 'department.id', '=', 'department_id')
-                    ->leftJoin('institution', 'institution.id', '=', 'institution_id')
-                    ->join('package', 'package.id', '=', 'package_id')
-                    ->where('user.type', $type)
-                    ->where('package.renewal', true)
-                )
-                ->setTransformer(function($item){
-                    if ($item->valid_until != null && $item->payment_date != null) {
-                        $status = 'Accepted';
-                    } else if ($item->payment_date != null && $item->valid_until == null) {
-                        $status = 'Pending';
-                    } else {
-                        $status = 'Unpaid';
-                    }
-
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                        'email' => $item->email,
-                        'institution_name' => $item->institution_name,
-                        'department_name' => $item->department_name,
-                        'status' => $status,
-                        'invoice_id' => $item->invoice_id,
-                    ];
-                })
-                ->toJson();
-            } else {
-                $datatable = null;
-            }
-
+            $datatable = $this->datatableAdmin($type);
         }
 
         return $datatable;

@@ -7,12 +7,10 @@ use App\Http\Requests\SignUpInstitutionRequest;
 use App\Http\Requests\SignUpResearcherRequest;
 use App\Http\Requests\uploadPaymentRequest;
 use App\Models\Bank;
-use App\Models\Institution;
 use App\Models\Invoice;
-use App\Models\Member;
-use App\Models\Package;
 use App\Models\User;
 use App\Models\EmailReset;
+use App\Models\Institution;
 use App\Models\PaymentToken;
 use App\Services\PaymentService;
 use App\Services\RegisterService;
@@ -20,37 +18,18 @@ use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
-    public function __construct(PaymentService $paymentService)
+    private function isJson(...$args)
     {
-        $this->paymentService = $paymentService;
-    }
-    /**
-     * Creating User
-     *
-     * @param \Illuminate\Http\Request $request Description
-     * @param array $spesific Description
-     * @return string
-     **/
-    private function createUser($request, $spesific)
-    {
-        $user = User::create([
-            'email'     => $request->email,
-            'password'  => bcrypt($request->password),
-            'type'      => $spesific['type'],
-            'role_id'   => $spesific['role_id'],
-            'owner_id'  => $spesific['id'],
-        ]);
-
-        return $user;
+        @json_decode(...$args);
+        return (json_last_error()===JSON_ERROR_NONE);
     }
 
     public function signUpInstitution(SignUpInstitutionRequest $request)
     {
         $request->validated();
 
-        // register service
-        $registerService = new RegisterService;
-        $resultRegistration = $registerService->registerInstitution($request);
+        // register institution
+        $resultRegistration = (new RegisterService)->registerInstitution($request);
         $institution = $resultRegistration['model'];
 
         $this->responseCode     = 200;
@@ -58,13 +37,30 @@ class RegisterController extends Controller
         $this->responseData['registration'] = $institution->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
 
         $uploadLink = null;
+        $dataLink = null;
         if ($resultRegistration['token']) {
             $uploadLink = [
                 'method' => 'POST',
-                'link' => url('api/upload-payment?token='.$resultRegistration['token']),
+                'link' => url('api/register/upload-payment?token='.$resultRegistration['token']),
+                'body' => [
+                    'payment_attachment'
+                ],
+            ];
+
+            $dataLink = [
+                'method_data' => 'POST',
+                'url_data' => url('api/register/send-data-payment?token='.$resultRegistration['token']),
+                'body' => [
+                    'payment_date',
+                    'bank_id',
+                    'buyer',
+                    'bank_account',
+                    'transfer_amount',
+                ]
             ];
         }
         $this->responseData['upload_link'] = $uploadLink;
+        $this->responseData['send_data_link'] = $dataLink;
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -73,50 +69,38 @@ class RegisterController extends Controller
     {
         $request->validated();
 
-        $package_id = $request->input('package_id');
-
-        $member = new Member();
-
-        if ($request->department_id != null) {
-            $member->department_id      = $request->department_id;
-        } else {
-            $member->is_independent = true;
+        // register researcher
+        $resultRegistration = (new RegisterService)->registerResearcher($request);
+        if (!$this->isJson($resultRegistration)) {
+            return $resultRegistration;
         }
-
-        $member->name               = $request->name;
-        $member->title_id           = $request->title_id;
-        $member->nationality_id     = $request->nationality_id;
-        $member->employee_number    = $request->employee_number;
-        $member->office_address     = $request->office_address;
-        $member->office_phone_number= $request->office_phone_number;
-        $member->email              = $request->email;
-        $member->save();
-
-        $spesific = [
-            'id'        => $member->id,
-            'role_id'   => 2,
-            'type'      => 1,
-        ];
-        // create user
-        $user = $this->createUser($request, $spesific);
-
-        // register package
-        $paymentToken = $this->paymentService->registerPackage($package_id, $user);
+        $member = $resultRegistration['model'];
 
         $this->responseCode     = 200;
         $this->responseMessage  = 'Pendaftaran berhasil';
         $this->responseData['registration'] = $member->makeHidden(['created_by', 'updated_by', 'updated_at', 'id']);
+
         $uploadLink = null;
         $dataLink = null;
-        if ($paymentToken) {
+        if ($resultRegistration['token']) {
             $uploadLink = [
                 'method' => 'POST',
-                'link' => url('api/upload-payment?token='.$paymentToken),
+                'link' => url('api/register/upload-payment?token='.$resultRegistration['token']),
+                'body' => [
+                    'payment_attachment'
+                ],
             ];
 
             $dataLink = [
                 'method_data' => 'POST',
-                'url_data' => url('api/register/send-data-payment?token='.$paymentToken),
+                'url_data' => url('api/register/send-data-payment?token='.$resultRegistration['token']),
+                'body' => [
+                    'payment_date',
+                    'bank_id',
+                    'buyer',
+                    'bank_account',
+                    'transfer_amount',
+                ]
             ];
         }
         $this->responseData['upload_link'] = $uploadLink;
@@ -142,7 +126,7 @@ class RegisterController extends Controller
             $invoice = Invoice::find($paymentToken->invoice_id);
             $user = User::find($invoice->user_id);
 
-            $result = $this->paymentService->saveUploadPayment($user, $request);
+            $result = (new PaymentService)->saveUploadPayment($user, $request);
             if ($result) {
                 $this->responseCode     = 200;
                 $this->responseMessage  = 'Bukti pembayaran berhasil diunggah';
@@ -167,7 +151,7 @@ class RegisterController extends Controller
             $invoice = Invoice::find($paymentToken->invoice_id);
             $user = User::find($invoice->user_id);
 
-            $result = $this->paymentService->savePayment($user, $request);
+            $result = (new PaymentService)->savePayment($user, $request);
             if ($result) {
                 $this->responseCode     = 200;
                 $this->responseMessage  = 'Bukti data pembayaran berhasil disimpan';
@@ -183,41 +167,43 @@ class RegisterController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function verifyMail(request $request){
-      $token = $request->input('email_verify_token');
+    public function verifyMail(Request $request)
+    {
+        $token = $request->input('email_verify_token');
 
-      $emailReset = EmailReset::where('token', $token)->where('type', 1)->first();
+        $emailReset = EmailReset::where('token', $token)->where('type', 1)->first();
 
-      $this->responseData = [
-         'email' => $emailReset->email,
-      ];
+        $this->responseData = [
+            'email' => $emailReset->email,
+        ];
 
-      if (!$emailReset){
-         $this->responseCode = 404;
-         $this->responseMessage = 'This token is invalid.';
+        if (!$emailReset){
+            $this->responseCode = 404;
+            $this->responseMessage = 'This token is invalid.';
 
-         return response()->json($this->getResponse(), $this->responseCode);
-      }
-      // elseif (Carbon::parse($emailReset->updated_at)->addMinutes(120)->isPast()) {
-      //    $emailReset->delete();
-      //    $this->responseCode = 400;
-      //    $this->responseMessage = 'This token is expired.';
-      //
-      //    return response()->json($this->getResponse(), $this->responseCode);
-      // }
-      else {
-         $arrayUser = [
-            'email_verified_at' => date("Y-m-d H:i:s"),
-         ];
+            return response()->json($this->getResponse(), $this->responseCode);
+        } else {
+            $arrayUser = [
+                'email_verified_at' => now(),
+            ];
 
-         User::where('id', $emailReset->user_id)->update($arrayUser);
+            User::where('id', $emailReset->user_id)->update($arrayUser);
 
-         $emailReset->delete();
+            $emailReset->delete();
 
-         $this->responseCode = 200;
-         $this->responseMessage = 'Email Verify';
+            $this->responseCode = 200;
+            $this->responseMessage = 'Email Verify successful';
 
-         return response()->json($this->getResponse(), $this->responseCode);
-      }
-   }
+            return response()->json($this->getResponse(), $this->responseCode);
+        }
+    }
+
+    public function checkAvaibility(Institution $institution)
+    {
+        $result = (new RegisterService)->checkAvaibility($institution);
+        $this->responseCode = 200;
+        $this->responseData = $result;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
 }

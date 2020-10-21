@@ -26,7 +26,7 @@ class AlterTableDepartmentAddStatus extends Migration
     public function down()
     {
         Schema::table('department', function (Blueprint $table) {
-            //
+            $table->dropColumn('status');
         });
     }
 }

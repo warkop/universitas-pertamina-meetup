@@ -26,7 +26,7 @@ class AlterTablePublicationTypeAddStatus extends Migration
     public function down()
     {
         Schema::table('publication_type', function (Blueprint $table) {
-            //
+            $table->dropColumn('status');
         });
     }
 }

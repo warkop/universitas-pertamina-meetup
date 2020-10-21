@@ -25,6 +25,7 @@ class MailService
 {
    public function sendChangeEmail($dataUser, $emailReset, $type)
    {
+       dd($dataUser);
       $dataUser = $dataUser->toArray();
       $url = env('URL_FRONTEND').'/check-change-email/approve?type='.$type.'&change_email_token='.$emailReset->token;
 
@@ -156,9 +157,9 @@ class MailService
       Mail::to($user->email)->send(new ApprovedPayment($dataMail));
    }
 
-   public function sendInvitation($email): void
+   public function sendInvitation($email, $user): void
    {
-      $user = auth()->user();
+
 
       if ($user->type == 0) {
          $modelLogin = Institution::find($user->owner_id);

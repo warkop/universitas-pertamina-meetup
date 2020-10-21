@@ -44,9 +44,15 @@ class OpportunityController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
         $options = [
             'profile' => request()->profile
         ];
+        if ($user->type == 2) {
+            $options = [
+                'profile' => null
+            ];
+        }
         $model = Opportunity::listData($options);
 
         return DataTables::of($model)
@@ -97,12 +103,10 @@ class OpportunityController extends Controller
     public function store(OpportunityStoreRequest $request, Opportunity $opportunity)
     {
         $request->validated();
-
         $institutionId = $this->getInstitutionId();
 
         $target = $request->input('target');
         $institutions = $request->input('institutions');
-
         $opportunity->name                  = $request->input('name');
         $opportunity->opportunity_type_id   = $request->input('opportunity_type_id');
         $opportunity->desc                  = $request->input('desc');
@@ -123,6 +127,7 @@ class OpportunityController extends Controller
             $opportunity->institutionTarget()->sync([$institutionId]);
         } else {
             if ($institutions != null) {
+                $opportunity = Opportunity::find($opportunity->id);
                 $opportunity->institutionTarget()->sync($institutions);
             }
         }

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Title;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -18,10 +19,11 @@ class TitleTest extends TestCase
      */
     public function testListData()
     {
-        $user = factory(User::class)->create();
+        $this->withoutMiddleware();
+        $user = User::factory()->create();
         $this->actingAs($user, 'api');
 
-        factory(Title::class, 5)->make();
+        Title::factory(5)->make();
         $response = $this->get('/api/title');
 
         $response->assertStatus(200);
@@ -29,10 +31,10 @@ class TitleTest extends TestCase
 
     public function testDetail()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->actingAs($user, 'api');
 
-        $title = factory(Title::class)->create();
+        $title = Title::factory()->create();
 
         $response = $this->get('/api/title/'.$title->id);
 
@@ -41,7 +43,7 @@ class TitleTest extends TestCase
 
     public function testSelectList()
     {
-        // $user = factory(User::class)->create();
+        // $user = User::factory()->create();
         // $this->actingAs($user, 'api');
 
         $this->withoutMiddleware();
@@ -64,8 +66,7 @@ class TitleTest extends TestCase
 
     public function testGetAll()
     {
-        factory(Title::class, 10)->create();
-        $this->withoutExceptionHandling();
+        Title::factory(10)->create();
         $response = $this->get('/api/public/title/');
 
         $this->assertCount(10, Title::All());
@@ -74,7 +75,7 @@ class TitleTest extends TestCase
 
     public function testStore()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->actingAs($user, 'api');
         $response = $this->postJson('api/title', [
             'name' => 'Phd'
@@ -86,7 +87,7 @@ class TitleTest extends TestCase
 
     public function testUpdate()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->actingAs($user, 'api');
 
         $this->postJson('api/title', [
@@ -105,9 +106,9 @@ class TitleTest extends TestCase
 
     public function testDelete()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->actingAs($user, 'api');
-        factory(Title::class, 1)->create();
+        Title::factory(1)->create();
         $title = Title::first();
         $this->assertCount(1, Title::all());
 

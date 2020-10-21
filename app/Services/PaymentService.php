@@ -4,7 +4,7 @@ namespace App\Services;
 use App\Helpers\HelperPublic;
 use App\Jobs\SendAcceptPayment;
 use App\Jobs\SendDeclinePayment;
-use App\Jobs\SendMail;
+use App\Jobs\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\PaymentToken;
@@ -14,7 +14,7 @@ class PaymentService
 {
     public function registerPackage($package_id, $user)
     {
-        $package = Package::find($package_id);
+        $package = Package::findOrFail($package_id);
 
         if ($package->price > 0) {
             $number = $this->generateInvoiceNumber($user);
@@ -27,7 +27,7 @@ class PaymentService
             ]);
 
             $paymentToken = $this->generatePaymentToken($invoice);
-            SendMail::dispatch($invoice);
+            SendInvoice::dispatch($invoice);
             return $paymentToken;
         } else {
             $number = $this->generateInvoiceNumber($user);
@@ -43,7 +43,6 @@ class PaymentService
 
             $user = User::where('user.id', $user->id)->update(['confirm_at' => now()]);
         }
-
         return null;
     }
 
