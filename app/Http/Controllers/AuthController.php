@@ -67,7 +67,7 @@ class AuthController extends Controller
          $modelLogin = Member::find($user->owner_id);
          $name = $modelLogin->name;
       } else {
-         $modelLogin = new \stdClass;;
+         $modelLogin = new \stdClass;
          $modelLogin->status = true;
          $name = $user->email;
       }

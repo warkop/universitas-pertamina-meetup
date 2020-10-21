@@ -123,6 +123,15 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/files/member/{member}', 'ProfileController@showFileMember');
     });
 
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', 'UserController@index');
+        Route::post('/', 'UserController@store');
+        Route::get('/{user}', 'UserController@show');
+        Route::put('/{user}', 'UserController@store');
+        Route::post('/role/{user}', 'UserController@changeRole');
+        Route::get('/role/detail/{user}', 'UserController@detailRoleUser');
+    });
+
     Route::group(['prefix' => 'menu'], function () {
         Route::get('/', 'MenuController@index');
         Route::get('/sidebar', 'MenuController@sidebar');
@@ -151,7 +160,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::patch('/{member}', 'ResearchUserController@acceptMember')->middleware('can:basic,member');
         Route::post('/decline/{member}', 'ResearchUserController@declineMember')->middleware('can:basic,member');
         Route::post('/role/{member}', 'ResearchUserController@changeRole');
-        Route::get('/role/detail/{member}', 'ResearchUserController@RoleUser');
+        Route::get('/role/detail/{member}', 'ResearchUserController@roleUser');
     });
 
     Route::group(['prefix' => 'research-group'], function () {
@@ -263,5 +272,3 @@ Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 Route::post('register/send-data-payment', 'RegisterController@sendDataPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
-
-
