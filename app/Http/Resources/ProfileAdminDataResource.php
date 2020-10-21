@@ -16,6 +16,7 @@ class ProfileAdminDataResource extends JsonResource
     {
         $data = [
             'id'                 => $this->id,
+            'name'               => strstr($this->email, '@', true),
             'email'              => $this->email,
             'type'              => $this->type,
         ];

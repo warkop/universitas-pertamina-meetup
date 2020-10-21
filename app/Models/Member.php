@@ -24,6 +24,8 @@ class Member extends Model
         'deleted_by',
     ];
 
+    protected $with = ['nationality'];
+
     public function memberSkill()
     {
         return $this->belongsToMany(Skill::class, 'member_skill')->where('skill.type', 1);
@@ -88,6 +90,8 @@ class Member extends Model
         } elseif ($user->type == 0) {
            $result = $result->where('institution_id', $user->owner_id);
         }
+
+        $result = $result->where('is_sysadmin', '=', 'false');
 
         return $result->get();
     }
