@@ -151,7 +151,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => 8,
                 'order'  => 14,
                 'icon'  => null,
-                'url'  => 'master-interest',
+                'url'  => 'master-title',
                 'id_element'  => null,
                 'action' => 'C,R,U,D'
             ],
@@ -171,7 +171,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => 8,
                 'order'  => 16,
                 'icon'  => null,
-                'url'  => 'publication-type',
+                'url'  => 'master-publication',
                 'id_element'  => null,
                 'action' => 'C,R,U,D'
             ],
@@ -204,6 +204,16 @@ class MenuSeeder extends Seeder
                 'url'  => 'payment-sysadmin',
                 'id_element'  => 'payment-sysadmin-nav',
                 'action' => 'R,A,DE'
+            ],
+            [
+                'id'    => 20,
+                'name'  => 'User',
+                'sub_menu'  => 8,
+                'order'  => 20,
+                'icon'  => null,
+                'url'  => 'master-user',
+                'id_element'  => null,
+                'action' => 'C,R,U,D,DE'
             ],
         ];
 

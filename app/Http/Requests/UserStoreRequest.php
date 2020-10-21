@@ -27,18 +27,26 @@ class UserStoreRequest extends FormRequest
 
       $url = explode('/',url()->full());
 
+
       if (!($request->filled(['status']))) {
-         return [
+         $rule = [
             'name'        => 'required',
             'employee_id' => 'required',
             'nationality' => 'required|exists:nationality,id',
             'position'    => 'required',
             'email'       => 'required|email|unique:user,email,'.end($url),
          ];
+         if (is_numeric(end($url))) {
+            $rule['email'] = 'required|email|unique:user,email,'.end($url);
+         } else {
+            $rule['email'] = 'required|email|unique:user,email';
+         }
       } else {
-         return [
+         $rule = [
             'status'              => 'required|numeric|between:0,1',
          ];
       }
+
+      return $rule;
    }
 }
