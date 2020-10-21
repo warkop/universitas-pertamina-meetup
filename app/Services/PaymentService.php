@@ -111,6 +111,10 @@ class PaymentService
             $invoice->valid_until           = now()->addMonths($package->subscription_periode);
             $invoice->save();
 
+            Invoice::where('user_id', $invoice->user_id)
+            ->whereNull('valid_until')
+            ->forceDelete();
+
             SendAcceptPayment::dispatch($invoice);
 
             $responseCode = 200;

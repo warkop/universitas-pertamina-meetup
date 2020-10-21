@@ -224,7 +224,13 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::patch('/{invoice}/reject', 'PaymentController@rejectPayment')->middleware('can:basic,invoice');
     });
 
-
+    Route::group(['prefix' => 'package'], function () {
+        Route::get('/list-package-available', 'PackageController@listForUser');
+        Route::get('/my-package', 'PackageController@myPackage');
+        Route::post('/upgrade-package', 'PackageController@upgrade');
+        Route::post('/upload-payment', 'RegisterController@uploadPayment');
+        Route::post('/send-data-payment', 'RegisterController@sendDataPayment');
+    });
 });
 Route::post('create-invoice', 'PaymentController@createInvoice');
 Route::post('/sign-up-institution', 'RegisterController@signUpInstitution');
