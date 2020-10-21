@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RoleStoreRequest;
+use App\Http\Requests\RoleUserRequest;
 use App\Http\Resources\RoleListDataResource;
 use App\Http\Resources\RoleDetailDataResource;
 use App\Http\Resources\UserListDataResource;
@@ -10,10 +10,14 @@ use App\Http\Resources\MasterSelectListDataResource;
 use App\Http\Requests\MasterListRequest;
 use App\Http\Requests\UserStoreRequest;
 
+use App\Services\MenuService;
+
 use App\Models\User;
 use App\Models\Institution;
 use App\Models\Member;
 use App\Models\EmailReset;
+use App\Models\Menu;
+use App\Models\RoleMenuAddition;
 
 use App\Services\MailService;
 
@@ -92,9 +96,21 @@ class UserController extends Controller
     {
       $user = User::with('member')->where('type', 2)->where('id', $user_id)->first();
 
+      $modelLogin = new \stdClass;
+      $modelLogin->status = true;
+      $this->menu = new MenuService;
+
+      $menu = $this->menu->checkMenu($user, $modelLogin, null, true);
+
+      $data = [
+         'user' => new UserListDataResource($user),
+         'menu' => $menu
+      ];
+
+
       if (!empty($user)){
          $this->responseCode = 200;
-         $this->responseData = new UserListDataResource($user);
+         $this->responseData = $data;
       } else {
          $this->responseCode = 404;
          // $this->responseData = new UserListDataResource($user);
@@ -102,6 +118,167 @@ class UserController extends Controller
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
+
+    public function changeRole(RoleUserRequest $request,User $user)
+   {
+      $request->validated();
+      $menu = $request->input('menu');
+      $menuAll = $request->input('menu_all');
+
+      $user->role_id = $request->input('role');
+
+      $user->save();
+
+      //MENU//
+      $menu_all = $menuAll;
+      //SPECIFIED MENU
+      if ($menu_all == 0){
+         RoleMenuAddition::where('user_id', $user->id)->delete();
+
+         if ($menu != null){
+            $arrayMenu = [];
+            $arrayParentMenu = [];
+            foreach ($menu as $key => $value) {
+               $dataMenu = Menu::find($value['id']);
+
+               if ($dataMenu->sub_menu != null){
+                  if (!in_array($dataMenu->sub_menu, $arrayParentMenu)){
+                     $arrayMenu[] = [
+                     'menu_id' => $dataMenu->sub_menu,
+                     'user_id' => $user->id,
+                     'action'  => null
+                     ];
+
+                     $arrayParentMenu[] = $dataMenu->sub_menu;
+                  }
+               }
+
+               $arrayAction = implode(",", $value['action']);
+
+               $arrayMenu[] = [
+                  'menu_id' => $value['id'],
+                  'user_id' => $user->id,
+                  'action'  => $arrayAction
+               ];
+            }
+
+            RoleMenuAddition::insert($arrayMenu);
+         }
+      } elseif ($menu_all == 1) {
+
+         $this->menu = new MenuService;
+
+         $all_menu = Menu::groupBy('menu.id')->orderBy('order', 'asc')->get();
+
+         $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+         // ->whereRaw('sub_menu is null')
+         ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
+         ->where('role_menu.role_id', $user->role_id)
+         ->orderBy('order', 'asc')->get();
+
+         $data_by_role = $this->menu->ResourceCheckMenuRole($data_by_role);
+
+
+         $arrayMenu = [];
+         foreach ($all_menu as $key => $value) {
+            $index = array_search($value['id'], array_column($data_by_role, 'id'));
+
+            if ($index !== null){
+               $actionNotIn = 0;
+               $actionTambahan = [];
+
+               $arrayAction = explode(',', $value['action']);
+               foreach ($arrayAction as $key => $values) {
+                  if (!in_array($values, $data_by_role[$index]['action_role'])) {
+                     $actionNotIn = 1;
+
+                     $actionTambahan[] = $values;
+                  }
+               }
+
+               if ($actionNotIn != 0) {
+                  $arrayMenu[] = [
+                     'menu_id' => $value['id'],
+                     'user_id' => $user->id,
+                     'action'  => implode(',',$actionTambahan)
+                  ];
+               }
+            } else {
+               $arrayMenu[] = [
+                  'menu_id' => $value['id'],
+                  'user_id' => $user->id,
+                  'action'  => $value['action']
+               ];
+            }
+         }
+         // return $data;
+         RoleMenuAddition::where('user_id', $user->id)->delete();
+
+         RoleMenuAddition::create($arrayMenu);
+      }
+      ///////////////////////////////////////////////////////////////////////
+
+
+      $this->responseCode = 200;
+      $this->responseMessage = 'Data berhasil disimpan';
+
+      return response()->json($this->getResponse(), $this->responseCode);
+   }
+
+   public function detailRoleUser(User $user)
+   {
+      $this->menu = new MenuService;
+
+
+      $all_menu = Menu::groupBy('menu.id')->orderBy('order', 'asc')->get();
+
+      $all_menu = $this->menu->ResourceCheckMenuRole($all_menu);
+
+      $menu_role = Menu::Select('menu.*', 'role_menu.action as action_role')
+                        // ->whereRaw('sub_menu is null')
+                        ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
+                        ->where('role_menu.role_id', $user->role_id)
+                        ->orderBy('order', 'asc')->get();
+
+
+      $menu_role = $this->menu->ResourceCheckMenuRole($menu_role);
+
+      $menu_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
+                           ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
+                           ->where('role_menu_addition.user_id', $user->id)
+                           ->orderBy('menu.id')
+                           ->get();
+
+      $menu_user = $this->menu->ResourceCheckMenuRole($menu_user);
+
+
+      $returnData = [
+         'role'   => [
+            'id' => $user->role->id,
+            'name' => $user->role->name,
+         ],
+         'all_menu' => $all_menu,
+         'menu_role' => $menu_role,
+         'menu_user' => $menu_user,
+      ];
+
+      $this->responseCode = 200;
+      $this->responseMessage = 'Data berhasil disimpan';
+      $this->responseData = $returnData;
+      $this->responseNote = [
+         'C' => 'Create',
+         'R' => 'Read',
+         'U' => 'Update',
+         'D' => 'Delete',
+         'I' => 'Invite',
+         'A' => 'Approve',
+         'SA'=> 'Select Admin',
+         'DE'=> 'Detail',
+         'AS'=> 'Advanced Seaarch',
+      ];
+
+      return response()->json($this->getResponse(), $this->responseCode);
+   }
 
     /**
      * Remove the specified resource from storage.

@@ -249,7 +249,7 @@ class ResearchUserController extends Controller
       $menu = $request->input('menu');
       $menuAll = $request->input('menu_all');
 
-      $userModel = USER::where('owner_id', $member->id)
+      $userModel = User::where('owner_id', $member->id)
                        ->where('type', 1)
                        ->first();
 
@@ -310,21 +310,29 @@ class ResearchUserController extends Controller
          foreach ($data_by_institusi as $key => $value) {
             $index = array_search($value['id'], array_column($data_by_user_default, 'id'));
 
-            $actionNotIn = 0;
-            $actionTambahan = [];
-            foreach ($value['action_role'] as $key => $values) {
-               if (!in_array($values, $data_by_user_default[$index]['action_role'])) {
-                  $actionNotIn = 1;
+            if ($index !== null){
+               $actionNotIn = 0;
+               $actionTambahan = [];
+               foreach ($value['action_role'] as $key => $values) {
+                  if (!in_array($values, $data_by_user_default[$index]['action_role'])) {
+                     $actionNotIn = 1;
 
-                  $actionTambahan[] = $values;
+                     $actionTambahan[] = $values;
+                  }
                }
-            }
 
-            if ($actionNotIn != 0) {
+               if ($actionNotIn != 0) {
+                  $arrayMenu[] = [
+                     'menu_id' => $value['id'],
+                     'user_id' => $userModel->id,
+                     'action'  => implode(',',$actionTambahan)
+                  ];
+               }
+            } else {
                $arrayMenu[] = [
                   'menu_id' => $value['id'],
-                  'user_id' => $userModel->id,
-                  'action'  => implode(',',$actionTambahan)
+                  'user_id' => $user->id,
+                  'action'  => implode(',',$value['action_role'])
                ];
             }
          }
