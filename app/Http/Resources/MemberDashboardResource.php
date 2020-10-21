@@ -18,11 +18,11 @@ class MemberDashboardResource extends JsonResource
             'id'    => $this->id,
             'name'  => $this->name,
             'department'         => [
-               'id'    => $this->department['id'],
-               'name'  => $this->department['name'],
+               'id'    => $this->department['id']??null,
+               'name'  => $this->department['name']??null,
                'institution' =>[
-                  'id'    => $this->department['institution']['id'],
-                  'name'  => $this->department['institution']['name'],
+                  'id'    => $this->department['institution']['id']??null,
+                  'name'  => $this->department['institution']['name']??null,
                ]
             ],
             'publication_count' => $this->publication_count,
