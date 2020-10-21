@@ -126,12 +126,10 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', 'UserController@index');
         Route::post('/', 'UserController@store');
-        Route::get('/{member}', 'UserController@show');
+        Route::get('/{user}', 'UserController@show');
         Route::put('/{user}', 'UserController@store');
-        Route::patch('/{user}', 'ResearchUserController@acceptMember');
-        Route::post('/decline/{member}', 'ResearchUserController@declineMember');
-        Route::post('/role/{member}', 'ResearchUserController@changeRole');
-        Route::get('/role/detail/{member}', 'ResearchUserController@RoleUser');
+        Route::post('/role/{user}', 'UserController@changeRole');
+        Route::get('/role/detail/{user}', 'UserController@detailRoleUser');
     });
 
     Route::group(['prefix' => 'menu'], function () {
@@ -162,7 +160,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::patch('/{member}', 'ResearchUserController@acceptMember')->middleware('can:basic,member');
         Route::post('/decline/{member}', 'ResearchUserController@declineMember')->middleware('can:basic,member');
         Route::post('/role/{member}', 'ResearchUserController@changeRole');
-        Route::get('/role/detail/{member}', 'ResearchUserController@RoleUser');
+        Route::get('/role/detail/{member}', 'ResearchUserController@roleUser');
     });
 
     Route::group(['prefix' => 'research-group'], function () {
