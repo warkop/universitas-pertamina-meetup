@@ -123,6 +123,17 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/files/member/{member}', 'ProfileController@showFileMember');
     });
 
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', 'UserController@index');
+        Route::post('/', 'UserController@store');
+        Route::get('/{member}', 'UserController@show');
+        Route::put('/{user}', 'UserController@store');
+        Route::patch('/{user}', 'ResearchUserController@acceptMember');
+        Route::post('/decline/{member}', 'ResearchUserController@declineMember');
+        Route::post('/role/{member}', 'ResearchUserController@changeRole');
+        Route::get('/role/detail/{member}', 'ResearchUserController@RoleUser');
+    });
+
     Route::group(['prefix' => 'menu'], function () {
         Route::get('/', 'MenuController@index');
         Route::get('/sidebar', 'MenuController@sidebar');
@@ -257,5 +268,3 @@ Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 Route::post('register/send-data-payment', 'RegisterController@sendDataPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
-
-

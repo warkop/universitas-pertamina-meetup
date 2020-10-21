@@ -77,7 +77,7 @@ class MailService
 
         if ($user->type == 0){
             $model = Institution::find($user->owner_id);
-         } elseif ($user->type == 1) {
+         } elseif ($user->type == 1 || $user->type == 2) {
             $model = Member::find($user->owner_id);
          }
 

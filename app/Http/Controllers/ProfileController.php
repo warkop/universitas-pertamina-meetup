@@ -9,6 +9,10 @@ use App\Http\Requests\ProfileChangeMailStoreRequest;
 
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
+use App\Http\Resources\ProfileAdminDataResource;
+use App\Http\Resources\UserListDataResource;
+
+use App\Services\MailService;
 use App\Jobs\SendChangeEmail;
 
 use App\Models\EmailReset;
@@ -40,8 +44,8 @@ class ProfileController extends Controller
         } else if ($user->type == 1) {
             $data = Member::with('title')->with('memberSkill')->with('memberResearchInterest')->with('memberEducation')->with('department')->with('nationality')->with('publication')->find($user->owner_id);
             $this->responseData = new ProfileMemberDataResource($data);
-        } else {
-            $this->responseData = $user;
+        } else if ($user->type == 2){
+            $this->responseData = new UserListDataResource($user);
         }
 
         $this->responseCode = 200;
@@ -97,7 +101,7 @@ class ProfileController extends Controller
 
         if ($user->type == 0) {
            $data = Institution::find($user->owner_id);
-        } else if ($user->type == 1) {
+        } else if ($user->type == 1 || $user->type == 2) {
            $data = Member::find($user->owner_id);
         }
 
@@ -108,6 +112,8 @@ class ProfileController extends Controller
              $file->storeAs('profile/institution/' . $data->id, $changedName);
            } else if ($user->type == 1) {
              $file->storeAs('profile/member/' . $data->id, $changedName);
+           } else if ($user->type == 2) {
+             $file->storeAs('profile/sysadmin/' . $data->id, $changedName);
            }
 
            if ($data->path_photo != ''){
@@ -115,6 +121,8 @@ class ProfileController extends Controller
                 unlink(storage_path('app/profile/institution/').$data->id.'/'.$data->path_photo);
              } else if ($user->type == 1) {
                 unlink(storage_path('app/profile/member/').$data->id.'/'.$data->path_photo);
+             } else if ($user->type == 2) {
+                unlink(storage_path('app/profile/sysadmin/').$data->id.'/'.$data->path_photo);
              }
           }
 
@@ -250,6 +258,9 @@ class ProfileController extends Controller
       } else if ($user->type == 1) {
          $data = Member::find($user->owner_id);
          $path = storage_path('app/profile/member/'.$data->id.'/'.$data->path_photo);
+      } else if ($user->type == 2) {
+         $data = Member::find($user->owner_id);
+         $path = storage_path('app/profile/sysadmin/'.$data->id.'/'.$data->path_photo);
       }
 
       if ($data->path_photo == ''){
@@ -296,11 +307,14 @@ class ProfileController extends Controller
         $user = auth()->user();
 
         if ($user->type == 0) {
-            $model = Institution::findOrFail($id);
-            $type = 'institution';
+           $model = Institution::findOrFail($id);
+           $type = 'institution';
         } else if ($user->type == 1) {
-            $model = Member::findOrFail($id);
-            $type = 'member';
+           $model = Member::findOrFail($id);
+           $type = 'member';
+        } else if ($user->type == 2) {
+           $model = Member::findOrFail($id);
+           $type = 'sysadmin';
         }
 
         $emailReset = EmailReset::withTrashed()->updateOrCreate(
@@ -345,6 +359,8 @@ class ProfileController extends Controller
             $data = Institution::where('email', $emailReset->email)->first();
          } else if ($type == 'member') {
             $data = Member::where('email', $emailReset->email)->first();
+         } else if ($type == 'sysadmin') {
+            $data = Member::where('email', $emailReset->email)->first();
          }
 
          if (!empty($data)){
@@ -358,6 +374,8 @@ class ProfileController extends Controller
                User::where('owner_id', $data->id)->where('type', 0)->update($arrayUser);
             } else if ($type == 'member') {
                User::where('owner_id', $data->id)->where('type', 1)->update($arrayUser);
+            } else if ($type == 'sysadmin') {
+               User::where('owner_id', $data->id)->where('type', 2)->update($arrayUser);
             }
 
             $emailReset->delete();
