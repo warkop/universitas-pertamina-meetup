@@ -81,9 +81,13 @@ class DashboardController extends Controller
     {
         $limit = request()->get('limit');
         $user = auth()->user();
-        $invoice = (new Invoice)->getLastPaidedInvoice($user);
-        $package = Package::find($invoice->package_id);
-        $institution = Institution::take($package->institution_showed_in_home)->get()->take($limit)->shuffle();
+        if ($user->type == 2) {
+            $institution = new Institution();
+        } else {
+            $invoice = (new Invoice)->getLastPaidedInvoice($user);
+            $package = Package::find($invoice->package_id);
+            $institution = Institution::take($package->institution_showed_in_home)->get()->take($limit)->shuffle();
+        }
 
         $this->responseCode = 200;
         $this->responseData = $institution;
@@ -95,10 +99,13 @@ class DashboardController extends Controller
     {
         $limit = request()->get('limit');
         $user = auth()->user();
-        $user = auth()->user();
-        $invoice = (new Invoice)->getLastPaidedInvoice($user);
-        $package = Package::find($invoice->package_id);
-        $member = Member::take($package->member_showed_in_home);
+        if ($user->type == 2) {
+            $member = new Member();
+        } else {
+            $invoice = (new Invoice)->getLastPaidedInvoice($user);
+            $package = Package::find($invoice->package_id);
+            $member = Member::take($package->member_showed_in_home);
+        }
 
         // 0=institution, 1=researcher
         if ($user->type == 0) {
