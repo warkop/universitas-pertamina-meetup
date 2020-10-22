@@ -53,7 +53,6 @@ class MenuService
                                 ->where('invoice.valid_until', '>', $dateNow)
                                 ->orderBy('invoice.id', 'DESC')->first();
 
-                                var_dump($modelInvoice->package_id);
          if (empty($modelInvoice)) {
             $idPackage = null;
          } else {
