@@ -130,6 +130,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::put('/{user}', 'UserController@store');
         Route::post('/role/{user}', 'UserController@changeRole');
         Route::get('/role/detail/{user}', 'UserController@detailRoleUser');
+        Route::delete('/{user}', 'UserController@destroy');
     });
 
     Route::group(['prefix' => 'menu'], function () {
