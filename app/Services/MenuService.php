@@ -36,6 +36,7 @@ class MenuService
          }
       } else if ($user->type == 1) {
          $idBuyPackage = $user->id;
+
          if ($modelLogin->is_independent != true) {
             $dataInstitution = Department::select('user.id')
                                          ->leftJoin('institution', 'institution.id', 'department.institution_id')
@@ -52,6 +53,7 @@ class MenuService
                                 ->where('invoice.valid_until', '>', $dateNow)
                                 ->orderBy('invoice.id', 'DESC')->first();
 
+                                var_dump($modelInvoice->package_id);
          if (empty($modelInvoice)) {
             $idPackage = null;
          } else {
