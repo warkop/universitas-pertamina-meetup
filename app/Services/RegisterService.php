@@ -14,15 +14,13 @@ class RegisterService
 {
     private function createUser($request, array $spesific)
     {
-        $user = User::create([
+        return User::create([
             'email'     => $request->email,
             'password'  => bcrypt($request->password),
             'type'      => $spesific['type'],
             'role_id'   => $spesific['role_id'],
             'owner_id'  => $spesific['id'],
         ]);
-
-        return $user;
     }
 
     private function isQuotaAvailable(Department $department, $package_id)

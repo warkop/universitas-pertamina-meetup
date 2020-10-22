@@ -246,7 +246,7 @@ class PaymentService
         $lastInvoice = $invoice->getLastInvoice($user);
         if ($lastInvoice != null && $lastInvoice->valid_until == null && $secondInvoice != null && $secondInvoice->valid_until <= now()) {
             $paymentToken = PaymentToken::where('invoice_id', $lastInvoice->id)->firstOrFail();
-            $data = [
+            return [
                 'status' => [
                     'code' => 402,
                     'message' => 'User harus melakukan pembayaran terlebih dahulu!',
@@ -258,7 +258,6 @@ class PaymentService
                     'url_data' => url('api/register/send-data-payment?token='.$paymentToken->token),
                 ]
             ];
-            return $data;
         }
 
         return false;

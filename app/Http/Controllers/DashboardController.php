@@ -132,7 +132,7 @@ class DashboardController extends Controller
         $member = $member->get()->take($limit)->shuffle();
 
         $this->responseCode = 200;
-        $this->responseData = MemberDashboardResource::collection($member);;
+        $this->responseData = MemberDashboardResource::collection($member);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

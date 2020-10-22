@@ -43,7 +43,7 @@ class AcademicDegreeController extends Controller
       }
 
       if ($active_only == 1) {
-         $model = $model->where('status', 1);
+         $model = $model->active();
       }
 
       $model = $model->orderBy('name', 'ASC')->get();
@@ -65,9 +65,8 @@ class AcademicDegreeController extends Controller
     {
         $request->validated();
 
-        $status = $request->input('status');
-        if ($status != null) {
-           $academicDegree->status = $request->input('status');
+        if ($request->status) {
+           $academicDegree->status = $request->status;
         } else {
            $academicDegree->name = $request->input('name');
         }

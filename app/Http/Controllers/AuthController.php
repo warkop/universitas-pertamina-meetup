@@ -52,63 +52,56 @@ class AuthController extends Controller
    */
    public function login()
    {
-      $credentials = request()->only(['email', 'password']);
+        $credentials = request()->only(['email', 'password']);
 
-      if (! $token = Auth::attempt($credentials)) {
-         return response()->json(['error' => 'Unauthorized'], 401);
-      }
+        if (! $token = Auth::attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-      $user = auth()->user();
+        $user = auth()->user();
 
-      if ($user->type == 0) {
-         $modelLogin = Institution::find($user->owner_id);
-         $name = $modelLogin->name;
-      } else if ($user->type == 1) {
-         $modelLogin = Member::find($user->owner_id);
-         $name = $modelLogin->name;
-      } else {
-         $modelLogin = new \stdClass;
-         $modelLogin->status = true;
-         $name = $user->email;
-      }
+        if ($user->type == 0) {
+            $modelLogin = Institution::find($user->owner_id);
+            $name = $modelLogin->name;
+        } else if ($user->type == 1) {
+            $modelLogin = Member::find($user->owner_id);
+            $name = $modelLogin->name;
+        } else {
+            $modelLogin = new \stdClass;
+            $modelLogin->status = true;
+            $name = $user->email;
+        }
 
-      if (!$user->email_verified_at) {
-         Auth::logout();
+        if (!$user->email_verified_at) {
+            Auth::logout();
 
-         $this->responseCode = 401;
-         $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
+            $this->responseCode = 401;
+            $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
 
-         return response()->json($this->getResponse(), $this->responseCode);
-      } elseif (!$user->confirm_at && $user->type == 1) {
-         Auth::logout();
-
-         $this->responseCode = 402;
-         $this->responseMessage = 'Your account not activate, please contact Admin for more information';
-
-         return response()->json($this->getResponse(), $this->responseCode);
-      } elseif (!$modelLogin->status && $user->type == 0) {
+            $response = response()->json($this->getResponse(), $this->responseCode);
+        } elseif ((!$user->confirm_at && $user->type == 1) || (!$modelLogin->status && $user->type == 0)) {
             Auth::logout();
 
             $this->responseCode = 402;
             $this->responseMessage = 'Your account not activate, please contact Admin for more information';
 
-            return response()->json($this->getResponse(), $this->responseCode);
-      } else {
+            $response = response()->json($this->getResponse(), $this->responseCode);
+        } else {
+            $this->menu = new MenuService;
 
-         $this->menu = new MenuService;
+            $menu = $this->menu->checkMenu($user, $modelLogin);
 
-         $menu = $this->menu->checkMenu($user, $modelLogin);
+            $change_mail = ($user->new_email != null)? TRUE : FALSE;
 
-         $change_mail = ($user->new_email != null)? TRUE : FALSE;
+            $dataLogin = [
+                'type' => $user->type,
+                'name' => $name,
+            ];
 
-         $dataLogin = [
-            'type' => $user->type,
-            'name' => $name,
-         ];
+            $response = $this->respondWithToken($token, $change_mail, $menu, $dataLogin);
+        }
 
-         return $this->respondWithToken($token, $change_mail, $menu, $dataLogin);
-      }
-
+        return $response;
    }
 
    /**

@@ -14,13 +14,11 @@ class ProfileAdminDataResource extends JsonResource
      */
     public function toArray($request)
     {
-        $data = [
+        return [
             'id'                 => $this->id,
             'name'               => strstr($this->email, '@', true),
             'email'              => $this->email,
             'type'              => $this->type,
         ];
-
-        return $data;
     }
 }

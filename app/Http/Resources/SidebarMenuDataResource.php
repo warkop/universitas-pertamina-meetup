@@ -14,7 +14,7 @@ class SidebarMenuDataResource extends JsonResource
    */
    public function toArray($request)
    {
-      $data = [
+      return [
          'id'                 => $this->id,
          'name'               => $this->name,
          'order'              => $this->order,
@@ -25,8 +25,6 @@ class SidebarMenuDataResource extends JsonResource
          'action'             => ($this->action != null)? $this->actionList($this->action) : null,
          'action_role'        => ($this->action_role != null)? $this->actionList($this->action_role) : null
       ];
-
-      return $data;
    }
 
    public function loop($data_sub_menu)
@@ -54,13 +52,11 @@ class SidebarMenuDataResource extends JsonResource
       // $array_raw = ['C','R','U','D','I','A','SA'];
       // $array_detail = ['create', 'read', 'update', 'delete', 'invite', 'approve', 'select_admin'];
       // $data = [];
-      $data = explode(",", $data_action);
+      return explode(",", $data_action);
       // foreach ($arrayAction as $key => $value) {
       //    $key = array_search($value, $array_raw);
       //
       //    $data[$array_detail[$key]] = True;
       // }
-
-      return $data;
    }
 }

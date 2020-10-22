@@ -24,4 +24,9 @@ class AcademicDegree extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function scopeActive($q)
+    {
+        return $q->where('status', 1);
+    }
 }

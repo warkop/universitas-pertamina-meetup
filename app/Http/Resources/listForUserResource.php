@@ -3,10 +3,9 @@
 namespace App\Http\Resources;
 
 use App\Models\Invoice;
-use App\Models\Package;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class listForUserResource extends JsonResource
+class ListForUserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

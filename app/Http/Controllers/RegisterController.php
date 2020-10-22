@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SendDataPaymentRequest;
 use App\Http\Requests\SignUpInstitutionRequest;
 use App\Http\Requests\SignUpResearcherRequest;
-use App\Http\Requests\uploadPaymentRequest;
+use App\Http\Requests\UploadPaymentRequest;
 use App\Models\Bank;
 use App\Models\Invoice;
 use App\Models\User;
@@ -117,7 +117,7 @@ class RegisterController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function uploadPayment(uploadPaymentRequest $request)
+    public function uploadPayment(UploadPaymentRequest $request)
     {
         $request->validated();
         $token = $request->get('token');

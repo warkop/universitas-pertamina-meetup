@@ -70,7 +70,7 @@ class UserController extends Controller
           $member->save();
 
           $user->email = $request->input('email');
-          $user->email_verified_at = date("Y-m-d H:i:s");
+          $user->email_verified_at = date('Y-m-d H:i:s');
           $user->password = bcrypt('meetup123');
           $user->type = 2;
           $user->role_id = ($request->input('role') != null)? $request->input('role') : 1;
@@ -113,7 +113,6 @@ class UserController extends Controller
          $this->responseData = $data;
       } else {
          $this->responseCode = 404;
-         // $this->responseData = new UserListDataResource($user);
       }
 
         return response()->json($this->getResponse(), $this->responseCode);
@@ -139,27 +138,25 @@ class UserController extends Controller
             $arrayMenu = [];
             $arrayParentMenu = [];
             foreach ($menu as $key => $value) {
-               $dataMenu = Menu::find($value['id']);
+                $dataMenu = Menu::find($value['id']);
 
-               if ($dataMenu->sub_menu != null){
-                  if (!in_array($dataMenu->sub_menu, $arrayParentMenu)){
-                     $arrayMenu[] = [
-                     'menu_id' => $dataMenu->sub_menu,
-                     'user_id' => $user->id,
-                     'action'  => null
-                     ];
+                if ($dataMenu->sub_menu != null && !in_array($dataMenu->sub_menu, $arrayParentMenu)){
+                    $arrayMenu[] = [
+                        'menu_id' => $dataMenu->sub_menu,
+                        'user_id' => $user->id,
+                        'action'  => null
+                    ];
 
-                     $arrayParentMenu[] = $dataMenu->sub_menu;
-                  }
-               }
+                    $arrayParentMenu[] = $dataMenu->sub_menu;
+                }
 
-               $arrayAction = implode(",", $value['action']);
+                $arrayAction = implode(',', $value['action']);
 
-               $arrayMenu[] = [
-                  'menu_id' => $value['id'],
-                  'user_id' => $user->id,
-                  'action'  => $arrayAction
-               ];
+                $arrayMenu[] = [
+                    'menu_id' => $value['id'],
+                    'user_id' => $user->id,
+                    'action'  => $arrayAction
+                ];
             }
 
             RoleMenuAddition::insert($arrayMenu);
@@ -171,7 +168,6 @@ class UserController extends Controller
          $all_menu = Menu::groupBy('menu.id')->orderBy('order', 'asc')->get();
 
          $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-         // ->whereRaw('sub_menu is null')
          ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
          ->where('role_menu.role_id', $user->role_id)
          ->orderBy('order', 'asc')->get();
@@ -211,7 +207,6 @@ class UserController extends Controller
                ];
             }
          }
-         // return $data;
          RoleMenuAddition::where('user_id', $user->id)->delete();
 
          RoleMenuAddition::create($arrayMenu);
@@ -235,7 +230,6 @@ class UserController extends Controller
       $all_menu = $this->menu->ResourceCheckMenuRole($all_menu);
 
       $menu_role = Menu::Select('menu.*', 'role_menu.action as action_role')
-                        // ->whereRaw('sub_menu is null')
                         ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
                         ->where('role_menu.role_id', $user->role_id)
                         ->orderBy('order', 'asc')->get();

@@ -14,7 +14,7 @@ class UserDetailResource extends JsonResource
    */
    public function toArray($request)
    {
-      $data = [
+      return [
          'name'            => $this->name,
          'path_photo'      => $this->path_photo,
          'nationality'     => $this->nationality,
@@ -23,7 +23,5 @@ class UserDetailResource extends JsonResource
          'desc'            => $this->desc,
          'updated_at'      => date('d-m-Y', strtotime($this->updated_at)),
       ];
-      
-      return $data;
    }
 }

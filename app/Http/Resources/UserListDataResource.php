@@ -26,7 +26,7 @@ class UserListDataResource extends JsonResource
 
     public function detail($data_detail)
     {
-      $data = [
+      return [
          'name'            => $data_detail->name,
          'path_photo'      => $data_detail->path_photo,
          'nationality'         => [
@@ -38,7 +38,5 @@ class UserListDataResource extends JsonResource
          'desc'            => $data_detail->desc,
          'updated_at'      => date('d-m-Y', strtotime($data_detail->updated_at)),
       ];
-
-      return $data;
    }
 }
