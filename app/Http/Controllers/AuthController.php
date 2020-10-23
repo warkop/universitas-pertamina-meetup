@@ -32,7 +32,7 @@ class AuthController extends Controller
    *
    * @return \Illuminate\Http\JsonResponse
    */
-   protected function respondWithToken($token, $change_mail, $menu, $dataLogin)
+   protected function respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent = false)
    {
       return response()->json([
          'access_token' => $token,
@@ -40,8 +40,9 @@ class AuthController extends Controller
          'expires_in' => Auth::factory()->getTTL() * 60,
          'change_mail'=> $change_mail,
          'menu'       => $menu['menu'],
-         'packageEnd'       => $menu['packageEnd'],
-         'data_user' =>$dataLogin
+         'packageEnd' => $menu['packageEnd'],
+         'is_independent' => $isIndependent,
+         'data_user'  =>$dataLogin
       ]);
    }
 
@@ -52,28 +53,36 @@ class AuthController extends Controller
    */
    public function login()
    {
-        $credentials = request()->only(['email', 'password']);
+      $credentials = request()->only(['email', 'password']);
 
-        if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+      if (! $token = Auth::attempt($credentials)) {
+         return response()->json(['error' => 'Unauthorized'], 401);
+      }
 
-        $user = auth()->user();
+      $user = auth()->user();
+      $isIndependent = false;
+      if ($user->type == 0) {
+         $modelLogin = Institution::find($user->owner_id);
+         $name = $modelLogin->name;
+      } else if ($user->type == 1) {
+         $modelLogin = Member::find($user->owner_id);
+         $name = $modelLogin->name;
+         $isIndependent = $modelLogin->is_independent;
+      } else {
+         $modelLogin = new \stdClass;
+         $modelLogin->status = true;
+         $name = $user->email;
+      }
 
-        if ($user->type == 0) {
-            $modelLogin = Institution::find($user->owner_id);
-            $name = $modelLogin->name;
-        } else if ($user->type == 1) {
-            $modelLogin = Member::find($user->owner_id);
-            $name = $modelLogin->name;
-        } else {
-            $modelLogin = new \stdClass;
-            $modelLogin->status = true;
-            $name = $user->email;
-        }
+      if (!$user->email_verified_at) {
+         Auth::logout();
 
-        if (!$user->email_verified_at) {
-            Auth::logout();
+         $this->responseCode = 401;
+         $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
+
+         return response()->json($this->getResponse(), $this->responseCode);
+      } elseif (!$user->confirm_at && $user->type == 1) {
+         Auth::logout();
 
             $this->responseCode = 401;
             $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
@@ -98,8 +107,8 @@ class AuthController extends Controller
                 'name' => $name,
             ];
 
-            $response = $this->respondWithToken($token, $change_mail, $menu, $dataLogin);
-        }
+            $response = $this->respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent);
+      }
 
         return $response;
    }

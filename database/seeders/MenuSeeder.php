@@ -43,7 +43,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-calendar-5',
                 'url'  => 'opportunity',
                 'id_element'  => 'opportunity-nav',
-                'action' => 'C,R,U,D,DE'
+                'action' => 'C,R,U,D,DE,AS'
             ],
             [
                 'id'    => 4,
@@ -53,7 +53,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-protected',
                 'url'  => 'regulation',
                 'id_element'  => 'regulation-nav',
-                'action' => 'C,R,U,D'
+                'action' => 'C,R,U,D,DE'
             ],
             [
                 'id'    => 5,
@@ -63,7 +63,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-protection',
                 'url'  => 'master-institution',
                 'id_element'  => 'institution-nav',
-                'action' => 'C,R,U,D,A'
+                'action' => 'C,R,U,D,A,DE'
             ],
             [
                 'id'    => 6,
@@ -73,7 +73,7 @@ class MenuSeeder extends Seeder
                 'icon'  => 'flaticon2-user-outline-symbol',
                 'url'  => 'research-user',
                 'id_element'  => 'research-user-nav',
-                'action' => 'C,R,U,D,I,A'
+                'action' => 'C,R,U,D,I,A,DE,AS'
             ],
             [
                 'id'    => 7,
@@ -151,7 +151,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => 8,
                 'order'  => 14,
                 'icon'  => null,
-                'url'  => 'master-interest',
+                'url'  => 'master-title',
                 'id_element'  => null,
                 'action' => 'C,R,U,D'
             ],
@@ -171,7 +171,7 @@ class MenuSeeder extends Seeder
                 'sub_menu'  => 8,
                 'order'  => 16,
                 'icon'  => null,
-                'url'  => 'publication-type',
+                'url'  => 'master-publication',
                 'id_element'  => null,
                 'action' => 'C,R,U,D'
             ],
@@ -204,6 +204,16 @@ class MenuSeeder extends Seeder
                 'url'  => 'payment-sysadmin',
                 'id_element'  => 'payment-sysadmin-nav',
                 'action' => 'R,A,DE'
+            ],
+            [
+                'id'    => 20,
+                'name'  => 'User',
+                'sub_menu'  => 8,
+                'order'  => 20,
+                'icon'  => null,
+                'url'  => 'master-user',
+                'id_element'  => null,
+                'action' => 'C,R,U,D,DE'
             ],
         ];
 
