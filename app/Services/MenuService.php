@@ -27,7 +27,6 @@ class MenuService
          } else {
             $idPackage = $modelInvoice->package_id;
 
-            var_dump($idPackage);
             $get_role = Role::where('type', 0)->where('package_id', $idPackage)->where('status', 1)->first();
 
             $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
