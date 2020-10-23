@@ -6,7 +6,7 @@ use App\Models\ResearchGroup;
 use App\Models\ResearchGroupDiscussion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ResearchGoupDiscussionFactory extends Factory
+class ResearchGroupDiscussionFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
