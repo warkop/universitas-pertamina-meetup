@@ -23,6 +23,11 @@ class SignUpResearcherRequest extends FormRequest
      */
     public function rules()
     {
+        $packageIdValidation = 'nullable';
+        if (!request()->department_id) {
+            $packageIdValidation = 'required|exists:package,id';
+        }
+
         return [
             'name'                  => 'required|regex:/^[a-zA-Z0-9\-\s]+$/|unique:member,name',
             'title_id'              => 'required|exists:title,id',
@@ -31,6 +36,7 @@ class SignUpResearcherRequest extends FormRequest
             'email'                 => 'required|email|unique:user',
             'password'              => 'required|confirmed',
             'password_confirmation' => 'required|present',
+            'package_id'            => $packageIdValidation
         ];
     }
 }

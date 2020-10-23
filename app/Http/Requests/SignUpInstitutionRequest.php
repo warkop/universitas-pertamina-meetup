@@ -28,6 +28,7 @@ class SignUpInstitutionRequest extends FormRequest
             'email'                 => 'required|email|unique:user',
             'password'              => 'required|confirmed',
             'password_confirmation' => 'required|present',
+            'package_id'            => 'required|exists:package,id',
         ];
     }
 }

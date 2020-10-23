@@ -84,33 +84,33 @@ class AuthController extends Controller
       } elseif (!$user->confirm_at && $user->type == 1) {
          Auth::logout();
 
-         $this->responseCode = 402;
-         $this->responseMessage = 'Your account not activate, please contact Admin for more information';
+            $this->responseCode = 401;
+            $this->responseMessage = 'You need to confirm your account. We have sent you an activation code, please check your email.';
 
-         return response()->json($this->getResponse(), $this->responseCode);
-      } elseif (!$modelLogin->status && $user->type == 0) {
+            $response = response()->json($this->getResponse(), $this->responseCode);
+        } elseif ((!$user->confirm_at && $user->type == 1) || (!$modelLogin->status && $user->type == 0)) {
             Auth::logout();
 
             $this->responseCode = 402;
             $this->responseMessage = 'Your account not activate, please contact Admin for more information';
 
-            return response()->json($this->getResponse(), $this->responseCode);
-      } else {
+            $response = response()->json($this->getResponse(), $this->responseCode);
+        } else {
+            $this->menu = new MenuService;
 
-         $this->menu = new MenuService;
+            $menu = $this->menu->checkMenu($user, $modelLogin);
 
-         $menu = $this->menu->checkMenu($user, $modelLogin);
+            $change_mail = ($user->new_email != null)? TRUE : FALSE;
 
-         $change_mail = ($user->new_email != null)? TRUE : FALSE;
+            $dataLogin = [
+                'type' => $user->type,
+                'name' => $name,
+            ];
 
-         $dataLogin = [
-            'type' => $user->type,
-            'name' => $name,
-         ];
-
-         return $this->respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent);
+            $response = $this->respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent);
       }
 
+        return $response;
    }
 
    /**

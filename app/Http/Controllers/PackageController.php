@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\listForUserResource;
-use App\Jobs\SendInvoice;
-use App\Models\Categories;
-use App\Models\Category;
+use App\Http\Resources\ListForUserResource;
 use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Package;
@@ -95,7 +92,7 @@ class PackageController extends Controller
         $package = Package::where('package_type', $type)->get();
 
         $this->responseCode = 200;
-        $this->responseData = listForUserResource::collection($package);
+        $this->responseData = ListForUserResource::collection($package);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

@@ -108,8 +108,8 @@ class PaymentController extends Controller
                     $regex = request()->get('search')['value'];
                     $query->where('member.name', 'ilike', '%' . $regex . '%');
                     $query->orWhere('member.email', 'ilike', '%' . $regex . '%');
-                    $query->orWhere('institution_name', 'ilike', '%' . $regex . '%');
-                    $query->orWhere('department_name', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('institution.name', 'ilike', '%' . $regex . '%');
+                    $query->orWhere('department.name', 'ilike', '%' . $regex . '%');
                 }
             })
             ->toJson();

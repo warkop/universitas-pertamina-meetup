@@ -331,12 +331,12 @@ class ResearchUserController extends Controller
             } else {
                $arrayMenu[] = [
                   'menu_id' => $value['id'],
-                  'user_id' => $user->id,
+                  'user_id' => $userModel->id,
                   'action'  => implode(',',$value['action_role'])
                ];
             }
          }
-         // return $data;
+
          RoleMenuAddition::where('user_id', $userModel->id)->delete();
 
          RoleMenuAddition::create($arrayMenu);

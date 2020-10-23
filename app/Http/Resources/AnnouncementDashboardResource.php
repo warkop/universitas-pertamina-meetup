@@ -14,7 +14,6 @@ class AnnouncementDashboardResource extends JsonResource
      */
     public function toArray($request)
     {
-        $comment_limit = \request()->get('comment_limit');
         return [
             'id'                => $this->id,
             'name'              => $this->announcement,

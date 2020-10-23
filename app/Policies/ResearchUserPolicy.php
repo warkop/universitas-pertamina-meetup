@@ -25,7 +25,6 @@ class ResearchUserPolicy
 
     public function basic(User $currentUser, Member $member)
     {
-        $currentUser = auth()->user();
         if ($currentUser->type == 1) {
             return false;
         }
