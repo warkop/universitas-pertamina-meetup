@@ -59,10 +59,10 @@ class MenuService
          } else {
             $idPackage = $modelInvoice->package_id;
             $type = 3;
-            if ($modelLogin->is_independent != true) {
-               $type = 0;
+            if ($modelLogin->is_independent == true) {
+               $type = 1;
             }
-            
+
             $get_role = Role::where('type', $type)->where('package_id', $idPackage)->where('status', 1)->first();
 
             $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
