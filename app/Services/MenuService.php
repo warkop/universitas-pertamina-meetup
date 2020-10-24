@@ -36,8 +36,7 @@ class MenuService
          }
       } else if ($user->type == 1) {
          $idBuyPackage = $user->id;
-
-         if ($modelLogin->is_independent != true) {
+         if (!$modelLogin->is_independent) {
             $dataInstitution = Department::select('user.id')
                                          ->leftJoin('institution', 'institution.id', 'department.institution_id')
                                          ->leftJoin('user', 'institution.id', 'user.owner_id')
@@ -196,7 +195,7 @@ class MenuService
    {
       $idBuyPackage = $user->id;
       $dateNow = date("Y-m-d");
-      if ($modelLogin->is_independent != true) {
+      if (!$modelLogin->is_independent) {
          $dataInstitution = Department::select('user.id')
          ->leftJoin('institution', 'institution.id', 'department.institution_id')
          ->leftJoin('user', 'institution.id', 'user.owner_id')

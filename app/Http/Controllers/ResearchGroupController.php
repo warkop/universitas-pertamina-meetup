@@ -10,7 +10,6 @@ use App\Http\Resources\CommentResource;
 use App\Http\Resources\DetailGroupResource;
 use App\Http\Resources\DiscussionResource;
 use App\Http\Resources\ListMemberGroupResource;
-use App\Http\Resources\ResearchGroupListDataResource;
 use App\Models\ResearchGroup;
 use App\Models\ResearchGroupComment;
 use App\Models\ResearchGroupDiscussion;

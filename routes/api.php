@@ -255,6 +255,7 @@ Route::group(['prefix' => 'public'], function () {
     Route::get('/bank', 'RegisterController@listBank');
     Route::get('/announcement/{announcement}/show-file/', 'AnnouncementController@showFile');
     Route::get('/check_availability/{institution}', 'RegisterController@checkAvaibility');
+    Route::get('/check-status-payment', 'RegisterController@checkStatusPayment');
 });
 
 Route::group(['prefix' => 'profile'], function () {

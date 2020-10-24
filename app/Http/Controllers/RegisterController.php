@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SendDataPaymentRequest;
 use App\Http\Requests\SignUpInstitutionRequest;
 use App\Http\Requests\SignUpResearcherRequest;
-use App\Http\Requests\uploadPaymentRequest;
+use App\Http\Requests\UploadPaymentRequest;
 use App\Models\Bank;
 use App\Models\Invoice;
 use App\Models\User;
@@ -117,7 +117,28 @@ class RegisterController extends Controller
         return response()->json($this->getResponse(), $this->responseCode);
     }
 
-    public function uploadPayment(uploadPaymentRequest $request)
+    public function checkStatusPayment()
+    {
+        $paymentToken = PaymentToken::where('token', request()->token)->firstOrFail();
+        if ($paymentToken) {
+            $invoice = Invoice::findOrFail($paymentToken->invoice_id);
+
+            if ($invoice->valid_until) {
+                $this->responseCode     = 200;
+                $this->responseMessage  = 'Bukti pembayaran berhasil diunggah';
+            } else if (!$invoice->valid_until && ($invoice->payment_date || $invoice->payment_attachment)) {
+                $this->responseCode     = 200;
+                $this->responseMessage  = 'Menunggu pembayaran dikonfirmasi';
+            }
+        } else {
+            $this->responseCode     = 403;
+            $this->responseMessage  = 'Token tidak valid!';
+        }
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function uploadPayment(UploadPaymentRequest $request)
     {
         $request->validated();
         $token = $request->get('token');

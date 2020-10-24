@@ -69,9 +69,12 @@ class DashboardController extends Controller
             'start_date', '<=', now()
         )->whereDate(
             'end_date', '>=', now()
-        )
-        ->where('opportunity_type_id', $type)
-        ->count();
+        );
+
+        if ($type) {
+            $countOfOpportunity = $countOfOpportunity->where('opportunity_type_id', $type);
+        }
+        $countOfOpportunity = $countOfOpportunity->count();
 
         $this->responseData = $countOfOpportunity;
         return response()->json($this->getResponse(), $this->responseCode);
@@ -132,7 +135,7 @@ class DashboardController extends Controller
         $member = $member->get()->take($limit)->shuffle();
 
         $this->responseCode = 200;
-        $this->responseData = MemberDashboardResource::collection($member);;
+        $this->responseData = MemberDashboardResource::collection($member);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

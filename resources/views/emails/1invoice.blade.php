@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <!--begin::Fonts -->
     <link
@@ -156,7 +156,7 @@
           margin: 2rem 0 2rem;
         "
       >
-        Renew Package
+        Pay Now
       </button>
         <p>Regards, <br /><span style="font-weight: 600">Meet-Up Team</span></p>
       </div>

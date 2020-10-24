@@ -21,11 +21,7 @@ class OpportunityPolicy
      */
     public function viewAny(User $user)
     {
-        // if ($user->type != 2) {
-        //     return true;
-        // } else {
-        //     return $this->deny('Anda diizinkan mengakses halaman ini');
-        // }
+
     }
 
     /**
