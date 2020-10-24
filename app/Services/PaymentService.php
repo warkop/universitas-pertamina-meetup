@@ -223,6 +223,10 @@ class PaymentService
                 'status_id' => $status_id,
                 'package_id' => $invoices[0]->package_id,
                 'package_name' => $packageName,
+                'valid_until' => $invoices[0]->valid_until,
+                'bank_name' => $invoices[0]->bank->name,
+                'account_number' => $invoices[0]->bank->account_number,
+                'transfer_to' => $invoices[0]->bank->owner_name,
             ];
         } else {
             return null;
