@@ -25,7 +25,6 @@ class MailService
 {
    public function sendChangeEmail($dataUser, $emailReset, $type)
    {
-       dd($dataUser);
       $dataUser = $dataUser->toArray();
       $url = env('URL_FRONTEND').'/check-change-email/approve?type='.$type.'&change_email_token='.$emailReset->token;
 

@@ -137,6 +137,11 @@ class RoleMenuSeeder extends Seeder
             'action'   => 'C,R,U,D,DE,AS',
          ],
          [
+            'role_id'  => 5,
+            'menu_id'  => 1,
+            'action'   => 'R',
+         ],
+         [
             'role_id'  => 6,
             'menu_id'  => 3,
             'action'   => 'C,R,U,D,DE,AS',
@@ -154,6 +159,11 @@ class RoleMenuSeeder extends Seeder
          [
             'role_id'  => 9,
             'menu_id'  => 3,
+            'action'   => 'R',
+         ],
+         [
+            'role_id'  => 10,
+            'menu_id'  => 1,
             'action'   => 'R',
          ],
          [
