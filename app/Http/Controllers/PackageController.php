@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DetailPaymentResource;
 use App\Http\Resources\ListForUserResource;
+use App\Http\Resources\MyPackageResource;
 use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Package;
@@ -70,7 +72,7 @@ class PackageController extends Controller
         $user = auth()->user();
         $invoice = (new Invoice())->getLastPaidedInvoice($user);
         $this->responseCode = 200;
-        $this->responseData = $invoice;
+        $this->responseData = new DetailPaymentResource($invoice);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
