@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendForgetPassword;
+use App\Request\ResetPasswordRequest;
 use App\Models\Institution;
 use App\Models\Member;
 use App\Models\EmailReset;
@@ -25,7 +26,7 @@ class ForgetPasswordController extends Controller
    {
         $email = strtolower($request->input('email'));
 
-        $chekUser = User::where('email', $email)->first();
+        $chekUser = User::whereRaw("LOWER(email) = '".$email."'")->first();
 
         if(!empty($chekUser)){
             $emailReset = EmailReset::withTrashed()->updateOrCreate(
@@ -79,7 +80,7 @@ class ForgetPasswordController extends Controller
       }
    }
 
-   public function changePassword(request $request, $token){
+   public function changePassword(ResetPasswordRequest $request, $token){
 
       $password = ['password' => bcrypt($request->password)];
 
