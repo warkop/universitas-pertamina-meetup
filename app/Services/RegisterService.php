@@ -122,6 +122,9 @@ class RegisterService
                     throw new Exception('Kuota institusi sudah penuh, silahkan Anda mendaftar sebagai independent atau extension', 403);
                 }
                 $member->department_id      = $request->department_id;
+                if ($request->is_extension) {
+                    $member->is_extension = true;
+                }
             } else {
                 $member->is_independent = true;
                 $package_id = $request->input('package_id');
