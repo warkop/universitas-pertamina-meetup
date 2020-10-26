@@ -18,7 +18,6 @@ class PaymentService
 
         if ($package->price > 0) {
             $number = $this->generateInvoiceNumber($user);
-
             $invoice = Invoice::create([
                 'package_id'    => $package_id,
                 'user_id'       => $user->id,
