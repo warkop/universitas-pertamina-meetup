@@ -70,7 +70,7 @@ class PackageController extends Controller
     public function myPackage()
     {
         $user = auth()->user();
-        $invoice = (new Invoice())->getLastPaidedInvoice($user);
+        $invoice = (new Invoice())->getLastInvoice($user);
         if ($invoice) {
             $this->responseCode = 200;
             $this->responseData = new DetailPaymentResource($invoice);
