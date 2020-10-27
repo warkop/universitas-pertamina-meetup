@@ -115,7 +115,7 @@ class RoleController extends Controller
       } elseif ($menu_all == 1) {
          RoleMenu::where('role_id', $role->id)->delete();
 
-         $dataMenu = Menu::get();
+         $dataMenu = Menu::where('id', '!=', 18)->get();
 
          foreach ($dataMenu as $key => $value) {
             $arrayMenu[] = [
