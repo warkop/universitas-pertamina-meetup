@@ -15,7 +15,7 @@ class PackageController extends Controller
 {
     public function index()
     {
-        $package = Package::where('package_type', request()->type)->get();
+        $package = Package::where('package_type', request()->type)->oldest('order')->get();
 
         $this->responseCode = 200;
         $this->responseData = $package;
@@ -98,7 +98,7 @@ class PackageController extends Controller
                 $type = 2;
             }
         }
-        $package = Package::where('package_type', $type)->get();
+        $package = Package::where('package_type', $type)->oldest('order')->get();
 
         $this->responseCode = 200;
         $this->responseData = ListForUserResource::collection($package);
