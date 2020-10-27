@@ -23,7 +23,7 @@ class MenuController extends Controller
      */
     public function index()
     {
-      $data = Menu::groupBy('menu.id')->orderBy('order', 'asc')->get();
+      $data = Menu::where('id', '!=', 18)->groupBy('menu.id')->orderBy('order', 'asc')->get();
 
       $this->responseData = MenuDataResource::collection($data);
       $this->responseNote = [

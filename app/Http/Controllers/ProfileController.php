@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileInstitutionStoreRequest;
 use App\Http\Requests\ProfileMemberStoreRequest;
 use App\Http\Requests\ProfilePhotoStoreRequest;
 use App\Http\Requests\ProfileChangeMailStoreRequest;
+use App\Http\Requests\ProfileUserStoreRequest;
 
 use App\Http\Resources\ProfileInstitutionDataResource;
 use App\Http\Resources\ProfileMemberDataResource;
@@ -140,113 +141,135 @@ class ProfileController extends Controller
 
      public function storeMember(ProfileMemberStoreRequest $request, Member $member)
      {
-         $request->validated();
+        $request->validated();
 
-         $member->name = $request->input('name');
-         $member->desc = $request->input('desc');
-         $member->department_id = $request->input('department');
-         $member->position = $request->input('position');
-         $member->employee_number = $request->input('employee_id');
-         $member->nationality_id = $request->input('nationality');
-         $member->orcid_id = $request->input('orcid_id');
-         $member->scopus_id = $request->input('scopus_id');
-         $member->web = $request->input('website');
+        $member->name = $request->input('name');
+        $member->desc = $request->input('desc');
+        $member->department_id = $request->input('department');
+        $member->position = $request->input('position');
+        $member->employee_number = $request->input('employee_id');
+        $member->nationality_id = $request->input('nationality');
+        $member->orcid_id = $request->input('orcid_id');
+        $member->scopus_id = $request->input('scopus_id');
+        $member->web = $request->input('website');
 
-         //Education//
-         $education = $request->input('education');
-         MemberEducation::where('member_id', $member->id)->delete();
+        //Education//
+        $education = $request->input('education');
+        MemberEducation::where('member_id', $member->id)->delete();
 
-         foreach ($education as $key => $value) {
-            MemberEducation::withTrashed()->updateOrCreate(
-               ['member_id' => $member->id, 'academic_degree_id' => $value['degree_id']],
-               [
-                  'institution_name' => $value['institution'],
-                  'deleted_at' => null,
-               ]
-            );
-         }
-         //////////////////////////////////////////////////
+        foreach ($education as $key => $value) {
+           MemberEducation::withTrashed()->updateOrCreate(
+           ['member_id' => $member->id, 'academic_degree_id' => $value['degree_id']],
+           [
+           'institution_name' => $value['institution'],
+           'deleted_at' => null,
+           ]
+           );
+        }
+        //////////////////////////////////////////////////
 
-         //SKILL//
-         MemberSkill::where('member_id', $member->id)->delete();
-         $array_skill = [];
-         foreach ($request->input('skill') as $key => $value) {
-            $check_skill = Skill::where('name', $value)->where('type', 1)->first();
+        //SKILL//
+        MemberSkill::where('member_id', $member->id)->delete();
+        $array_skill = [];
+        foreach ($request->input('skill') as $key => $value) {
+           $check_skill = Skill::where('name', $value)->where('type', 1)->first();
 
-            if (!empty($check_skill)){
-               $array_skill[] = [
-                  'member_id' => $member->id,
-                  'skill_id' => $check_skill->id,
-               ];
-            } else {
-               $mSkill = new Skill;
+           if (!empty($check_skill)){
+             $array_skill[] = [
+             'member_id' => $member->id,
+             'skill_id' => $check_skill->id,
+             ];
+          } else {
+             $mSkill = new Skill;
 
-               $mSkill->name = $value;
-               $mSkill->type = 1;
-               $mSkill->status = 0;
-               $mSkill->input = 0;
+             $mSkill->name = $value;
+             $mSkill->type = 1;
+             $mSkill->status = 0;
+             $mSkill->input = 0;
 
-               $mSkill->save();
+             $mSkill->save();
 
-               $array_skill[] = [
-                  'member_id' => $member->id,
-                  'skill_id' => $mSkill->id,
-               ];
-            }
-         }
+             $array_skill[] = [
+             'member_id' => $member->id,
+             'skill_id' => $mSkill->id,
+             ];
+          }
+       }
 
-         foreach ($request->input('interest') as $key => $values) {
-            $check_skill = Skill::where('name', $values)->where('type', 0)->first();
+       foreach ($request->input('interest') as $key => $values) {
+          $check_skill = Skill::where('name', $values)->where('type', 0)->first();
 
-            if (!empty($check_skill)){
-               $array_skill[] = [
-                  'member_id' => $member->id,
-                  'skill_id' => $check_skill->id,
-               ];
-            } else {
-               $mSkill = new Skill;
+          if (!empty($check_skill)){
+             $array_skill[] = [
+             'member_id' => $member->id,
+             'skill_id' => $check_skill->id,
+             ];
+          } else {
+             $mSkill = new Skill;
 
-               $mSkill->name = $values;
-               $mSkill->type = 0;
-               $mSkill->status = 0;
-               $mSkill->input = 0;
+             $mSkill->name = $values;
+             $mSkill->type = 0;
+             $mSkill->status = 0;
+             $mSkill->input = 0;
 
-               $mSkill->save();
+             $mSkill->save();
 
-               $array_skill[] = [
-                  'member_id' => $member->id,
-                  'skill_id' => $mSkill->id,
-               ];
-            }
-         }
+             $array_skill[] = [
+             'member_id' => $member->id,
+             'skill_id' => $mSkill->id,
+             ];
+          }
+       }
 
-         MemberSkill::insert($array_skill);
-         //////////////////////////////////////////////////
+       MemberSkill::insert($array_skill);
+       //////////////////////////////////////////////////
 
-         //Publication//
-         $publication = $request->input('publication');
-         MemberPublication::where('member_id', $member->id)->delete();
+       //Publication//
+       $publication = $request->input('publication');
+       MemberPublication::where('member_id', $member->id)->delete();
 
-         foreach ($publication as $key => $value) {
-            MemberPublication::withTrashed()->updateOrCreate(
-               ['member_id' => $member->id, 'id' => $value['id']],
-               [
-                  'title' => $value['title'],
-                  'publication_type_id' => $value['publication_type_id'],
-                  'author' => $value['author'],
-                  'deleted_at' => null,
-               ]
-            );
-         }
-         //////////////////////////////////////////////////
-         $member->save();
+       foreach ($publication as $key => $value) {
+          MemberPublication::withTrashed()->updateOrCreate(
+          ['member_id' => $member->id, 'id' => $value['id']],
+          [
+          'title' => $value['title'],
+          'publication_type_id' => $value['publication_type_id'],
+          'author' => $value['author'],
+          'deleted_at' => null,
+          ]
+          );
+       }
+       //////////////////////////////////////////////////
+       $member->save();
 
-         $this->responseCode = 200;
-         $this->responseMessage = 'Data berhasil disimpan';
-         $this->responseData = $member;
+       $this->responseCode = 200;
+       $this->responseMessage = 'Data berhasil disimpan';
+       $this->responseData = $member;
 
-         return response()->json($this->getResponse(), $this->responseCode);
-     }
+       return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function storeSysAdmin(ProfileUserStoreRequest $request, User $user)
+    {
+        $request->validated();
+
+        $member = Member::findOrFail($user->owner_id);
+
+        $member->name = $request->input('name');
+        $member->position = $request->input('position');
+        $member->nationality_id = $request->input('nationality');
+        $member->employee_number = $request->input('employee_id');
+        $member->desc = $request->input('desc');
+        $member->is_sysadmin = true;
+
+        $member->save();
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Data berhasil disimpan';
+        $this->responseData = $member;
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
 
     public function showFile()
     {
@@ -307,13 +330,13 @@ class ProfileController extends Controller
         $user = auth()->user();
 
         if ($user->type == 0) {
-           $model = Institution::findOrFail($id);
+           $model = Institution::findOrFail($user->owner_id);
            $type = 'institution';
         } else if ($user->type == 1) {
-           $model = Member::findOrFail($id);
+           $model = Member::findOrFail($user->owner_id);
            $type = 'member';
         } else if ($user->type == 2) {
-           $model = Member::findOrFail($id);
+           $model = Member::findOrFail($user->owner_id);
            $type = 'sysadmin';
         }
 
