@@ -118,10 +118,13 @@ class RegisterService
                     throw new Exception('Institusi tidak memiliki paket atau paket milik institusi belum aktif! Silahkan hubungi administrator untuk info lebih lanjut!', 400);
                 }
                 $isQuotaAvailable = $this->isQuotaAvailable($department, $package_id);
-                if (!$isQuotaAvailable) {
+                if (!$isQuotaAvailable && !$request->is_extension) {
                     throw new Exception('Kuota institusi sudah penuh, silahkan Anda mendaftar sebagai independent atau extension', 403);
                 }
                 $member->department_id      = $request->department_id;
+                if ($request->is_extension) {
+                    $member->is_extension = true;
+                }
             } else {
                 $member->is_independent = true;
                 $package_id = $request->input('package_id');
@@ -141,12 +144,11 @@ class RegisterService
                 'role_id'   => 2,
                 'type'      => 1,
             ];
-
             $user = $this->createUser($request, $spesific);
 
             // register package
             $paymentToken = null;
-            if ($request->is_extenstion || $member->is_independent) {
+            if ($request->is_extension || $member->is_independent) {
                 $paymentToken = (new PaymentService)->registerPackage($package_id, $user);
             }
             DB::commit();

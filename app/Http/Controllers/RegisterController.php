@@ -125,10 +125,16 @@ class RegisterController extends Controller
 
             if ($invoice->valid_until) {
                 $this->responseCode     = 200;
-                $this->responseMessage  = 'Bukti pembayaran berhasil diunggah';
+                $this->responseMessage  = 'Bukti pembayaran sudah disetujui';
+                $this->responseData  = ['status' => 3];
             } else if (!$invoice->valid_until && ($invoice->payment_date || $invoice->payment_attachment)) {
                 $this->responseCode     = 200;
                 $this->responseMessage  = 'Menunggu pembayaran dikonfirmasi';
+                $this->responseData  = ['status' => 2];
+            } else {
+                $this->responseCode     = 200;
+                $this->responseMessage  = 'Silahkan Upload bukti pembayaran';
+                $this->responseData  = ['status' => 1];
             }
         } else {
             $this->responseCode     = 403;
