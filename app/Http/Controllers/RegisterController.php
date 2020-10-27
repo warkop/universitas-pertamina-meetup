@@ -11,6 +11,7 @@ use App\Models\Invoice;
 use App\Models\User;
 use App\Models\EmailReset;
 use App\Models\Institution;
+use App\Models\Package;
 use App\Models\PaymentToken;
 use App\Services\PaymentService;
 use App\Services\RegisterService;
@@ -122,19 +123,27 @@ class RegisterController extends Controller
         $paymentToken = PaymentToken::where('token', request()->token)->firstOrFail();
         if ($paymentToken) {
             $invoice = Invoice::findOrFail($paymentToken->invoice_id);
-
+            $package = Package::findOrFail($invoice->package_id);
             if ($invoice->valid_until) {
                 $this->responseCode     = 200;
                 $this->responseMessage  = 'Bukti pembayaran sudah disetujui';
-                $this->responseData  = ['status' => 3];
+                $this->responseData  = [
+                    'status' => 3,
+                    'package' => $package
+                ];
             } else if (!$invoice->valid_until && ($invoice->payment_date || $invoice->payment_attachment)) {
                 $this->responseCode     = 200;
                 $this->responseMessage  = 'Menunggu pembayaran dikonfirmasi';
-                $this->responseData  = ['status' => 2];
+                $this->responseData  = [
+                    'status' => 2,
+                    'package' => $package
+                ];
             } else {
                 $this->responseCode     = 200;
                 $this->responseMessage  = 'Silahkan Upload bukti pembayaran';
-                $this->responseData  = ['status' => 1];
+                $this->responseData  = ['status' => 1,
+                    'package' => $package
+                ];
             }
         } else {
             $this->responseCode     = 403;
