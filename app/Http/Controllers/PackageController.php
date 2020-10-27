@@ -71,8 +71,13 @@ class PackageController extends Controller
     {
         $user = auth()->user();
         $invoice = (new Invoice())->getLastPaidedInvoice($user);
-        $this->responseCode = 200;
-        $this->responseData = new DetailPaymentResource($invoice);
+        if ($invoice) {
+            $this->responseCode = 200;
+            $this->responseData = new DetailPaymentResource($invoice);
+        } else {
+            $this->responseCode = 400;
+            $this->responseMessage = 'Paket belum aktif!';
+        }
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
