@@ -165,7 +165,7 @@ class UserController extends Controller
 
          $this->menu = new MenuService;
 
-         $all_menu = Menu::where('id', '!=', 18)->where('id', '!=', 19)->groupBy('menu.id')->orderBy('order', 'asc')->get();
+         $all_menu = Menu::where('id', '!=', 18)->groupBy('menu.id')->orderBy('order', 'asc')->get();
 
          $data_by_role = Menu::Select('menu.*', 'role_menu.action as action_role')
          ->Join('role_menu', 'role_menu.menu_id', 'menu.id')
@@ -225,7 +225,7 @@ class UserController extends Controller
       $this->menu = new MenuService;
 
 
-      $all_menu = Menu::where('id', '!=', 18)->where('id', '!=', 19)->groupBy('menu.id')->orderBy('order', 'asc')->get();
+      $all_menu = Menu::where('id', '!=', 18)->groupBy('menu.id')->orderBy('order', 'asc')->get();
 
       $all_menu = $this->menu->ResourceCheckMenuRole($all_menu);
 
