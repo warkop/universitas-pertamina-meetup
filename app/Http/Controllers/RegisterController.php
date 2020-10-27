@@ -112,7 +112,7 @@ class RegisterController extends Controller
     public function listBank()
     {
         $this->responseCode = 200;
-        $this->responseData = Bank::get(['id', 'name']);
+        $this->responseData = Bank::get(['id', 'name', 'owner_name', 'account_number']);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
