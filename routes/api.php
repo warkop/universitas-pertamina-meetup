@@ -227,8 +227,8 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
     });
 
     Route::group(['prefix' => 'package'], function () {
-        Route::get('/list-package-available', 'PackageController@listForUser');
-        Route::get('/my-package', 'PackageController@myPackage');
+        Route::get('/list-package-available', 'PackageController@listForUser')->withoutMiddleware('payment.status');
+        Route::get('/my-package', 'PackageController@myPackage')->withoutMiddleware('payment.status');
         Route::post('/upgrade-package', 'PackageController@upgrade');
         Route::post('/upload-payment', 'RegisterController@uploadPayment');
         Route::post('/send-data-payment', 'RegisterController@sendDataPayment');
