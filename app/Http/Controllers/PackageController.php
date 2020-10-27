@@ -28,11 +28,13 @@ class PackageController extends Controller
         $selectedPackage = $request->package_id;
         $user = auth()->user();
         $invoice = (new Invoice())->getLastPaidedInvoice($user);
-        $package1 = Package::find($selectedPackage);
-        $package2 = Package::find($invoice->package_id);
+        $package1 = Package::findOrFail($selectedPackage);
+        $package2 = Package::findOrFail($invoice->package_id);
         if ($package1->order > $package2->order && $package2->package_type == $package1->package_type) {
             $paymentToken = (new PaymentService)->registerPackage($selectedPackage, $user);
 
+            $uploadLink = null;
+            $dataLink = null;
             if ($paymentToken) {
                 $uploadLink = [
                     'method' => 'POST',
