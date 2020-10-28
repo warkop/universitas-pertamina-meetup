@@ -68,7 +68,7 @@ class RegulationController extends Controller
         $regulation->name           = $request->input('name');
         $regulation->code           = $request->input('code');
         $regulation->regulator      = $request->input('regulator');
-        $regulation->publish_date   = $request->input('publish_date');
+        $regulation->publish_date   = date('Y-m-d', strtotime($request->input('publish_date')));
         $regulation->target         = $request->input('target');
         $regulation->save();
 
