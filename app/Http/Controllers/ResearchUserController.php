@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ChangeInstitutionRequest;
 use App\Http\Requests\RoleUserRequest;
-use App\Http\Resources\ProfileMemberDataResource;
+use App\Http\Resources\MemberResource;
 use App\Jobs\SendAcceptMember;
 use App\Jobs\SendDeclineMember;
 use App\Jobs\SendInvitation;
@@ -188,7 +188,7 @@ class ResearchUserController extends Controller
       ])
       ->refresh()
       ;
-      $this->responseData = new ProfileMemberDataResource($data);
+      $this->responseData = new MemberResource($data);
       $this->responseCode = 200;
 
       return response()->json($this->getResponse(), $this->responseCode);
