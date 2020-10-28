@@ -24,7 +24,7 @@ class StoreUploadPaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'payment_attachment'    => 'nullable|image',
+            'payment_attachment'    => 'nullable|file',
         ];
     }
 }

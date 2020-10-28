@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
@@ -62,14 +63,22 @@ class Handler extends ExceptionHandler
             ], 404);
         }
 
-        if ($exception instanceof AuthorizationException)
-        {
+        if ($exception instanceof AuthorizationException) {
             return response()->json([
                 'status' => [
                     'message' => 'Anda tidak diizinkan mengakses url ini!',
                     'code' => 403,
                 ]
             ], 403);
+        }
+
+        if ($exception instanceof FileNotFoundException) {
+            return response()->json([
+                'status' => [
+                    'message' => 'File tidak ada di server!',
+                    'code' => 404,
+                ]
+            ], 404);
         }
 
         return parent::render($request, $exception);
