@@ -123,6 +123,7 @@ class OpportunityController extends Controller
         $opportunity->target                = $target;
         $opportunity->keyword               = $request->input('keyword');
         $opportunity->contact_person_email  = $request->input('contact_person_email');
+        $opportunity->deadline              = date('Y-m-d H:i:s', strtotime($request->input('deadline')));
         $opportunity->institution_id        = $institutionId;
         $opportunity->save();
 

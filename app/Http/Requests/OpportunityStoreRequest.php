@@ -29,8 +29,8 @@ class OpportunityStoreRequest extends FormRequest
             'total_funding'         => 'numeric',
             'target'                => 'between:0,2',
             'institutions.*'        => 'required_if:target,2',
-            'start_date'            => 'nullable|date_format:d-m-Y',
-            'end_date'              => 'nullable|date_format:d-m-Y|after:start_date',
+            'start_date'            => 'nullable|date_format:d-m-Y H:i',
+            'end_date'              => 'nullable|date_format:d-m-Y H:i|after:start_date',
         ];
     }
 
