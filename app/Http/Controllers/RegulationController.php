@@ -170,7 +170,7 @@ class RegulationController extends Controller
     public function show(Regulation $regulation)
     {
         $this->responseCode = 200;
-        $this->responseData = $regulation;
+        $this->responseData = $regulation->load('institutionRegulation');
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
