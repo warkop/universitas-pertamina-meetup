@@ -78,10 +78,10 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'RegulationController@index');
         Route::get('/get-list-institution', 'RegulationController@getListInstitution');
         Route::get('/{regulation}', 'RegulationController@show');
-        Route::post('/', 'RegulationController@store');
+        Route::post('/', 'RegulationController@store')->middleware('can:create,App\Models\Regulation');
         Route::post('/{regulation}', 'RegulationController@storeFiles');
-        Route::put('/{regulation}', 'RegulationController@store');
-        Route::delete('/{regulation}', 'RegulationController@destroy');
+        Route::put('/{regulation}', 'RegulationController@store')->middleware('can:create,App\Models\Regulation');
+        Route::delete('/{regulation}', 'RegulationController@destroy')->middleware('can:delete,App\Models\Regulation');
         Route::get('/files/{regulationFile}', 'RegulationController@showFile');
     });
 
@@ -94,8 +94,8 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::post('/', 'OpportunityController@store')->middleware('can:create,App\Models\Opportunity');
         Route::post('/{opportunity}', 'OpportunityController@storeFiles');
         Route::post('/{opportunity}/interest', 'OpportunityController@interest');
-        Route::put('/{opportunity}', 'OpportunityController@store')->middleware('can:create,opportunity');
-        Route::delete('/{opportunity}', 'OpportunityController@destroy')->middleware('can:delete,opportunity');
+        Route::put('/{opportunity}', 'OpportunityController@store')->middleware('can:create,App\Models\Opportunity');
+        Route::delete('/{opportunity}', 'OpportunityController@destroy')->middleware('can:delete,App\Models\Opportunity');
         Route::get('/files/{opportunityFile}', 'OpportunityController@showFile');
         Route::delete('/files/{opportunityFile}', 'OpportunityController@destroyFile');
     });
@@ -161,8 +161,8 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
         Route::post('/change-institution/{member}', 'ResearchUserController@changeInstitution');
         Route::post('/{member}', 'ResearchUserController@store');
-        Route::patch('/{member}', 'ResearchUserController@acceptMember')->middleware('can:basic,member');
-        Route::post('/decline/{member}', 'ResearchUserController@declineMember')->middleware('can:basic,member');
+        Route::patch('/{member}', 'ResearchUserController@acceptMember')->middleware('can:basic,App\Models\Member');
+        Route::post('/decline/{member}', 'ResearchUserController@declineMember')->middleware('can:basic,App\Models\Member');
         Route::post('/role/{member}', 'ResearchUserController@changeRole');
         Route::get('/role/detail/{member}', 'ResearchUserController@roleUser');
     });
