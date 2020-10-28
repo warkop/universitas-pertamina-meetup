@@ -27,6 +27,8 @@ class RegulationStoreRequest extends FormRequest
             'name' => 'required',
             'code' => 'nullable',
             'publish_date' => 'nullable|date_format:d-m-Y',
+            'target' => 'required|between:0,2',
+            'institutions.*' => 'required_if:target,2',
         ];
     }
 }

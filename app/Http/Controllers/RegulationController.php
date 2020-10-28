@@ -62,17 +62,32 @@ class RegulationController extends Controller
     {
         $request->validated();
         $institutionId = $this->getInstitutionId();
+        $institutions = $request->input('institutions');
 
         $regulation->institution_id = $institutionId;
         $regulation->name           = $request->input('name');
         $regulation->code           = $request->input('code');
         $regulation->regulator      = $request->input('regulator');
         $regulation->publish_date   = $request->input('publish_date');
+        $regulation->target         = $request->input('target');
         $regulation->save();
+
+        // 0 = all institution,1 = my institution, 2 = selected institution
+        if ($request->target == 0) {
+            $institution = Institution::get()->pluck('id');
+            $regulation->institutionRegulation()->sync($institution);
+        } else if ($request->target == 1) {
+            $regulation->institutionRegulation()->sync([$institutionId]);
+        } else {
+            if ($institutions != null) {
+                $regulation = Regulation::find($regulation->id);
+                $regulation->institutionRegulation()->sync($institutions);
+            }
+        }
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $regulation;
+        $this->responseData = $regulation->load('institutionRegulation');
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
