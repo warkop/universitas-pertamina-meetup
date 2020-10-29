@@ -46,11 +46,11 @@ class RegulationPolicy
         if ($user->type != 2) {
             $invoice = (new Invoice)->getLastPaidedInvoice($user);
             if (!$invoice) {
-                return $this->deny('Paket yang belum aktif atau gratis tidak diizinkan menambah opportunity!');
+                return $this->deny('Paket yang belum aktif atau gratis tidak diizinkan menambah regulasi!');
             }
             $package = Package::find($invoice->package_id);
             if (!$package) {
-                return $this->deny('Paket gratis tidak diizinkan menambah opportunity!');
+                return $this->deny('Paket gratis tidak diizinkan menambah regulasi!');
             }
 
             return true;

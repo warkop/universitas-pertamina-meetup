@@ -94,7 +94,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::post('/', 'OpportunityController@store')->middleware('can:create,App\Models\Opportunity');
         Route::post('/{opportunity}', 'OpportunityController@storeFiles');
         Route::post('/{opportunity}/interest', 'OpportunityController@interest');
-        Route::put('/{opportunity}', 'OpportunityController@store')->middleware('can:create,App\Models\Opportunity');
+        Route::put('/{opportunity}', 'OpportunityController@store')->middleware('can:update,opportunity');
         Route::delete('/{opportunity}', 'OpportunityController@destroy')->middleware('can:delete,App\Models\Opportunity');
         Route::get('/files/{opportunityFile}', 'OpportunityController@showFile');
         Route::delete('/files/{opportunityFile}', 'OpportunityController@destroyFile');
