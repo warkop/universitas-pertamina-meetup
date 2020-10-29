@@ -25,7 +25,7 @@ class UploadPaymentRequest extends FormRequest
     {
         return [
             'token' => 'required|exists:payment_tokens,token',
-            'payment_attachment' => 'required|image'
+            'payment_attachment' => 'required|file'
         ];
     }
 }

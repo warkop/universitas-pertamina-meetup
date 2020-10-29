@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Models\Invoice;
 use App\Models\Member;
 use App\Models\Opportunity;
+use App\Models\Regulation;
 use App\Policies\OpportunityPolicy;
 use App\Policies\PaymentPolicy;
+use App\Policies\RegulationPolicy;
 use App\Policies\ResearchUserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -22,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
         Opportunity::class => OpportunityPolicy::class,
         Member::class => ResearchUserPolicy::class,
         Invoice::class => PaymentPolicy::class,
+        Regulation::class => RegulationPolicy::class,
     ];
 
     /**

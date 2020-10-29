@@ -62,6 +62,8 @@ class ProfileMemberDataResource extends JsonResource
             'id'       => $value->id,
             'name'     => $value->name,
             'type'     => $value->type,
+            'total_funding'     => $value->total_funding,
+            'end_date'     => $value->end_date,
             'input'     => $value->input,
          ];
       }

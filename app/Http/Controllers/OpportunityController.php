@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HelperPublic;
 use App\Http\Requests\OpportunityStoreFilesRequest;
 use App\Http\Requests\OpportunityStoreRequest;
+use App\Http\Resources\OpportunityFileResource;
 use App\Models\Institution;
 use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\OpportunityFile;
 use App\Models\OpportunityType;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -54,7 +57,6 @@ class OpportunityController extends Controller
             ];
         }
         $model = Opportunity::listData($options);
-
         return DataTables::of($model)
         ->setTransformer(function($item){
             return [
@@ -62,7 +64,7 @@ class OpportunityController extends Controller
                 'name'                  => $item->name,
                 'desc'                  => $item->desc,
                 'contact_person'        => $item->contact_person,
-                'total_funding'         => $item->total_funding,
+                'total_funding'         => HelperPublic::helpCurrency($item->total_funding, '', '.', false),
                 'opportunity_type_name' => $item->opportunity_type_name??null,
                 'institution_name'      => $item->institution_name??null,
                 'institution_id'        => $item->institution_id??null,
@@ -91,6 +93,10 @@ class OpportunityController extends Controller
             $sql = "institution.name like ?";
             $query->whereRaw($sql, ["%{$keyword}%"]);
         })
+        ->filterColumn('total_funding', function($query, $keyword) {
+            $sql = "total_funding like ?";
+            $query->whereRaw($sql, ["%{str_replace('.', '', $keyword)}%"]);
+        })
         ->toJson();
     }
 
@@ -112,10 +118,12 @@ class OpportunityController extends Controller
         $opportunity->desc                  = $request->input('desc');
         $opportunity->total_funding         = $request->input('total_funding');
         $opportunity->contact_person        = $request->input('contact_person');
-        $opportunity->start_date            = date('Y-m-d', strtotime($request->input('start_date')));
-        $opportunity->end_date              = date('Y-m-d', strtotime($request->input('end_date')));
+        $opportunity->start_date            = date('Y-m-d H:i:s', strtotime($request->input('start_date')));
+        $opportunity->end_date              = date('Y-m-d H:i:s', strtotime($request->input('end_date')));
         $opportunity->target                = $target;
         $opportunity->keyword               = $request->input('keyword');
+        $opportunity->contact_person_email  = $request->input('contact_person_email');
+        $opportunity->deadline              = date('Y-m-d H:i:s', strtotime($request->input('deadline')));
         $opportunity->institution_id        = $institutionId;
         $opportunity->save();
 
@@ -134,6 +142,15 @@ class OpportunityController extends Controller
 
         $this->responseCode = 200;
         $this->responseData = $opportunity->refresh();
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function listFile(Opportunity $opportunity)
+    {
+        $files = OpportunityFile::where('opportunity_id', $opportunity->id)->get();
+        $this->responseCode = 200;
+        $this->responseData = OpportunityFileResource::collection($files);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -261,6 +278,20 @@ class OpportunityController extends Controller
     public function destroy(Opportunity $opportunity)
     {
         $opportunity->delete();
+
+        $this->responseCode = 200;
+        $this->responseMessage = 'Data berhasil dihapus';
+
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function destroyFile(OpportunityFile $opportunityFile)
+    {
+
+        if(File::exists(storage_path('app/opportunity/'.$opportunityFile->opportunity_id.'/'.$opportunityFile->path))){
+            File::delete(storage_path('app/opportunity/'.$opportunityFile->opportunity_id.'/'.$opportunityFile->path));
+        }
+        $opportunityFile->forceDelete();
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil dihapus';

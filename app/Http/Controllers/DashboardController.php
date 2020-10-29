@@ -85,7 +85,7 @@ class DashboardController extends Controller
         $limit = request()->get('limit');
         $user = auth()->user();
         if ($user->type == 2) {
-            $institution = new Institution();
+            $institution = Institution::get()->take($limit)->shuffle();
         } else {
             $invoice = (new Invoice)->getLastPaidedInvoice($user);
             $package = Package::find($invoice->package_id);

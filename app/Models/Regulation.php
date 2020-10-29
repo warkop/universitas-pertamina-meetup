@@ -36,4 +36,9 @@ class Regulation extends Model
     {
         return $this->belongsTo(Institution::class);
     }
+
+    public function institutionRegulation()
+    {
+        return $this->belongsToMany(Institution::class);
+    }
 }
