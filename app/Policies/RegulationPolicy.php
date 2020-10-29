@@ -53,12 +53,7 @@ class RegulationPolicy
                 return $this->deny('Paket gratis tidak diizinkan menambah opportunity!');
             }
 
-            $totalOpportunity = Regulation::where('institution_id', $user->owner_id)->count();
-            if ($totalOpportunity < $package->posting_opportunity) {
-                return true;
-            } else {
-                return $this->deny('Anda sudah melebihi batas untuk membuat opportunity!');
-            }
+            return true;
         } else {
             return $this->deny('Admin tidak diizinkan mengakses halaman ini!');
         }
