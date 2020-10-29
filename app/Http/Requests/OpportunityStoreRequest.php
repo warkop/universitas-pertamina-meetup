@@ -28,7 +28,7 @@ class OpportunityStoreRequest extends FormRequest
             'opportunity_type_id'   => 'exists:opportunity_type,id',
             'total_funding'         => 'numeric',
             'target'                => 'between:0,2',
-            'institutions.*'        => 'required_if:target,2',
+            'institutions'        => 'required_if:target,2',
             'start_date'            => 'nullable|date_format:d-m-Y H:i',
             'end_date'              => 'nullable|date_format:d-m-Y H:i|after:start_date',
         ];

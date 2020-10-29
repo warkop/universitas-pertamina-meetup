@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\HelperPublic;
+use App\Http\Requests\ListDataOpportunityRequest;
 use App\Http\Requests\OpportunityStoreFilesRequest;
 use App\Http\Requests\OpportunityStoreRequest;
 use App\Http\Resources\OpportunityFileResource;
@@ -45,8 +46,9 @@ class OpportunityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ListDataOpportunityRequest $request)
     {
+        $request->validated();
         $user = auth()->user();
         $options = [
             'profile' => request()->profile
@@ -56,6 +58,15 @@ class OpportunityController extends Controller
                 'profile' => null
             ];
         }
+
+        if ($request->target == 1) {
+            $options['institution'] = [$this->getInstitutionId()];
+        } else if ($request->target == 2 && $request->institutions != null) {
+            $options['institution'] = $request->institutions;
+        } else {
+            $options['institution'] = Institution::get()->pluck('id');
+        }
+
         $model = Opportunity::listData($options);
         return DataTables::of($model)
         ->setTransformer(function($item){

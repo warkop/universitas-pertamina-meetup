@@ -41,4 +41,25 @@ class Regulation extends Model
     {
         return $this->belongsToMany(Institution::class);
     }
+
+    public static function listData($options)
+    {
+        $result = Regulation::select(
+            'regulation.*',
+            'institution.name as institution_name'
+        )
+        ->join('institution','institution.id', '=', 'institution_id')
+        ->join('institution_regulation', 'institution_regulation.regulation_id', '=', 'regulation.id')
+        ;
+
+        if ($options['institution']) {
+            $result = $result->where(function() use($options, $result) {
+                foreach ($options['institution'] as $institution) {
+                    $result = $result->orWhere('institution_regulation.institution_id', $institution);
+                }
+            });
+        }
+
+        return $result;
+    }
 }

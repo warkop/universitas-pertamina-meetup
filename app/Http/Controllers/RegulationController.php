@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ListDataRegulationRequest;
 use App\Http\Requests\RegulationStoreFilesRequest;
 use App\Http\Requests\RegulationStoreRequest;
 use App\Http\Resources\RegulationListDataResource;
@@ -40,16 +41,45 @@ class RegulationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ListDataRegulationRequest $request)
     {
-        $model = Regulation::select(
-            'regulation.*',
-            'institution.name as institution_name'
-        )
-        ->leftJoin('institution','institution.id', '=', 'institution_id')
-        ->get();
+        $request->validated();
+        if ($request->target == 1) {
+            $options['institution'] = [$this->getInstitutionId()];
+        } else if ($request->target == 2 && $request->institutions != null) {
+            $options['institution'] = $request->institutions;
+        } else {
+            $options['institution'] = Institution::get()->pluck('id');
+        }
+        $model = Regulation::listData($options);
 
-        return DataTables::of(RegulationListDataResource::collection($model))->toJson();
+        return DataTables::of($model)
+        ->setTransformer(function($item){
+            return [
+                'id'                => $item->id,
+                'name'              => $item->name,
+                'code'              => $item->code,
+                'institution_name'  => $item->institution_name,
+                'regulator'         => $item->regulator,
+                'created_at'        => date('d-m-Y', strtotime($item->created_at)),
+                'updated_at'        => date('d-m-Y', strtotime($item->updated_at)),
+            ];
+        })
+        ->filterColumn('updated_at', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('created_at', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(created_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('institution_name', function($query, $keyword) {
+            $sql = "institution.name like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->toJson();
     }
 
     /**
