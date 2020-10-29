@@ -66,7 +66,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof AuthorizationException) {
             return response()->json([
                 'status' => [
-                    'message' => 'Anda tidak diizinkan mengakses url ini!',
+                    'message' => $exception->getMessage(),
                     'code' => 403,
                 ]
             ], 403);
