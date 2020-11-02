@@ -44,7 +44,7 @@ class Regulation extends Model
 
     public static function listData($options)
     {
-        $result = Regulation::select(
+        $result = Regulation::distinct()->select(
             'regulation.*',
             'institution.name as institution_name'
         )

@@ -39,7 +39,7 @@ class Opportunity extends Model
 
     public function interest()
     {
-        return $this->belongsToMany(Member::class, 'member_opportunity', 'member_id', 'opportunity_id');
+        return $this->belongsToMany(Member::class, 'member_opportunity', 'opportunity_id', 'member_id');
     }
 
     public function opportunityType()
