@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HelperPublic;
 use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ChangeInstitutionRequest;
 use App\Http\Requests\RoleUserRequest;
 use App\Http\Resources\MemberResource;
+use App\Http\Resources\ProjectInterestResource;
 use App\Jobs\SendAcceptMember;
 use App\Jobs\SendDeclineMember;
 use App\Jobs\SendInvitation;
@@ -22,6 +24,7 @@ use App\Models\RoleMenuAddition;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Services\InstitutionService;
+use Carbon\Carbon;
 
 class ResearchUserController extends Controller
 {
@@ -352,57 +355,92 @@ class ResearchUserController extends Controller
 
    public function roleUser(Member $member)
    {
-      $userMember = User::select('user.*')
-                       ->where('type', 1)
-                       ->where('owner_id', $member->id)
-                       ->first();
+        $userMember = User::select('user.*')
+                        ->where('type', 1)
+                        ->where('owner_id', $member->id)
+                        ->first();
 
-      $institution = Department::select('institution.*')
-                               ->leftJoin('institution', 'institution.id', 'department.institution_id')
-                               ->where('department.id', $member->department_id)
-                               ->first();
+        $institution = Department::select('institution.*')
+                                ->leftJoin('institution', 'institution.id', 'department.institution_id')
+                                ->where('department.id', $member->department_id)
+                                ->first();
 
-      $userInstitution = User::select('user.*')
-                             ->where('type', 0)
-                             ->where('owner_id', $institution->id)
-                             ->first();
+        $userInstitution = User::select('user.*')
+                                ->where('type', 0)
+                                ->where('owner_id', $institution->id)
+                                ->first();
 
-      $this->menu = new MenuService;
+        $this->menu = new MenuService;
 
-      $data_by_role = $this->menu->checkMenu($userInstitution, $institution, null, true);
+        $data_by_role = $this->menu->checkMenu($userInstitution, $institution, null, true);
 
-      $data_by_user_default = $this->menu->getMenuRole($userMember, $member, null, true);
+        $data_by_user_default = $this->menu->getMenuRole($userMember, $member, null, true);
 
-      $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
-                           ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
-                           ->where('role_menu_addition.user_id', $userMember->id)
-                           ->orderBy('menu.id')
-                           ->get();
+        $data_by_user = Menu::select('menu.*', 'role_menu_addition.action as action_role')
+                            ->Join('role_menu_addition', 'role_menu_addition.menu_id', 'menu.id')
+                            ->where('role_menu_addition.user_id', $userMember->id)
+                            ->orderBy('menu.id')
+                            ->get();
 
-      $data_by_user = $this->menu->ResourceCheckMenuRole($data_by_user);
+        $data_by_user = $this->menu->ResourceCheckMenuRole($data_by_user);
 
 
-      $returnData = [
-         'menu_institusi' => $data_by_role['menu'],
-         'menu_role' => $data_by_user_default,
-         'menu_user' => $data_by_user,
-      ];
+        $returnData = [
+            'menu_institusi' => $data_by_role['menu'],
+            'menu_role' => $data_by_user_default,
+            'menu_user' => $data_by_user,
+        ];
 
-      $this->responseCode = 200;
-      $this->responseMessage = 'Data berhasil disimpan';
-      $this->responseData = $returnData;
-      $this->responseNote = [
-         'C' => 'Create',
-         'R' => 'Read',
-         'U' => 'Update',
-         'D' => 'Delete',
-         'I' => 'Invite',
-         'A' => 'Approve',
-         'SA'=> 'Select Admin',
-         'DE'=> 'Detail',
-         'AS'=> 'Advanced Seaarch',
-      ];
+        $this->responseCode = 200;
+        $this->responseMessage = 'Data berhasil disimpan';
+        $this->responseData = $returnData;
+        $this->responseNote = [
+            'C' => 'Create',
+            'R' => 'Read',
+            'U' => 'Update',
+            'D' => 'Delete',
+            'I' => 'Invite',
+            'A' => 'Approve',
+            'SA'=> 'Select Admin',
+            'DE'=> 'Detail',
+            'AS'=> 'Advanced Seaarch',
+        ];
 
-      return response()->json($this->getResponse(), $this->responseCode);
-   }
+        return response()->json($this->getResponse(), $this->responseCode);
+    }
+
+    public function projectInterest(Member $member)
+    {
+        $model = $member->projectInterest();
+        return DataTables::of($model)
+        ->setTransformer(function($item){
+            return [
+                'id'                    => $item->id,
+                'name'                  => $item->name,
+                'desc'                  => $item->desc,
+                'contact_person'        => $item->contact_person,
+                'total_funding'         => HelperPublic::helpCurrency($item->total_funding, '', '.', false),
+                'type'                  => $item->opportunityType->name,
+                'start_date'            => $item->start_date,
+                'end_date'              => Carbon::parse($item->end_date)->format('d F Y'),
+                'deadline'              => Carbon::parse($item->deadline)->format('d F Y'),
+                'created_at'            => date('d-m-Y H:i:s', strtotime($item->created_at)),
+                'updated_at'            => date('d-m-Y H:i:s', strtotime($item->updated_at)),
+            ];
+        })
+        ->filterColumn('deadline', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(deadline, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('type', function($query, $keyword) {
+            $sql = "opportunity_type.name like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('total_funding', function($query, $keyword) {
+            $sql = "total_funding like ?";
+            $query->whereRaw($sql, ["%{str_replace('.', '', $keyword)}%"]);
+        })
+        ->toJson();
+    }
 }
