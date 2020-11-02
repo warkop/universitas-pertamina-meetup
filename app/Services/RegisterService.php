@@ -168,4 +168,8 @@ class RegisterService
             'model' => $member
         ];
     }
+
+    public function generateActiveUserInstitution()
+    {
+    }
 }
