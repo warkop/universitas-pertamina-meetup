@@ -157,6 +157,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/skill', 'ResearchUserController@getSkill');
         Route::get('/department', 'ResearchUserController@getDepartment');
         Route::get('/{member}', 'ResearchUserController@show');
+        Route::get('/{member}/project-interest', 'ResearchUserController@projectInterest');
         Route::post('/send-invitation', 'ResearchUserController@sendingInvitation');
         Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
         Route::post('/change-institution/{member}', 'ResearchUserController@changeInstitution');
