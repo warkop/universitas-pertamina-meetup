@@ -82,6 +82,7 @@ class OpportunityController extends Controller
                 'institution_photo'     => $item->institution_path_photo??null,
                 'start_date'            => $item->start_date,
                 'end_date'              => Carbon::parse($item->end_date)->format('d F Y'),
+                'deadline'              => Carbon::parse($item->deadline)->format('d F Y'),
                 'created_at'            => date('d-m-Y H:i:s', strtotime($item->created_at)),
                 'updated_at'            => date('d-m-Y H:i:s', strtotime($item->updated_at)),
             ];
