@@ -439,7 +439,8 @@ class ResearchUserController extends Controller
         })
         ->filterColumn('total_funding', function($query, $keyword) {
             $sql = "total_funding like ?";
-            $query->whereRaw($sql, ["%{str_replace('.', '', $keyword)}%"]);
+            $word = str_replace('.', '', $keyword);
+            $query->whereRaw($sql, ["%{$word}%"]);
         })
         ->toJson();
     }
