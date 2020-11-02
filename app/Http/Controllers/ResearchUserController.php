@@ -434,11 +434,11 @@ class ResearchUserController extends Controller
             $query->whereRaw($sql, ["%{$keyword}%"]);
         })
         ->filterColumn('type', function($query, $keyword) {
-            $sql = "opportunity_type.name like ?";
+            $sql = "opportunity_type.name ilike ?";
             $query->whereRaw($sql, ["%{$keyword}%"]);
         })
         ->filterColumn('total_funding', function($query, $keyword) {
-            $sql = "total_funding like ?";
+            $sql = "total_funding::text ilike ?";
             $word = str_replace('.', '', $keyword);
             $query->whereRaw($sql, ["%{$word}%"]);
         })
