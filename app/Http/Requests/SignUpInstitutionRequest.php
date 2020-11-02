@@ -29,6 +29,14 @@ class SignUpInstitutionRequest extends FormRequest
             'password'              => 'required|confirmed',
             'password_confirmation' => 'required|present',
             'package_id'            => 'required|exists:package,id',
+            'nationality_id'        => 'required|exists:nationality,id'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'nationality_id.required' => 'Negara wajib diisi',
         ];
     }
 }

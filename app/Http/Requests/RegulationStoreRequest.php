@@ -23,12 +23,26 @@ class RegulationStoreRequest extends FormRequest
      */
     public function rules()
     {
+        $user = auth()->user();
+        if ($user->type == 2) {
+            $validationInstitutionID = 'required|exists:institution,id';
+        } else {
+            $validationInstitutionID = 'nullable';
+        }
         return [
             'name' => 'required',
             'code' => 'nullable',
             'publish_date' => 'nullable|date_format:d-m-Y',
             'target' => 'required|between:0,2',
             'institutions' => 'required_if:target,2',
+            'institution_id' => $validationInstitutionID
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'institution_id.required' => 'Institusi wajib diisi',
         ];
     }
 }

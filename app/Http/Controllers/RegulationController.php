@@ -15,7 +15,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RegulationController extends Controller
 {
-    private function getInstitutionId()
+    private function getInstitutionId($request)
     {
         $user = auth()->user();
 
@@ -32,6 +32,8 @@ class RegulationController extends Controller
             $member = Member::findOrFail($user->owner_id);
 
             $institution_id = $member->department->institution->id;
+        } else {
+            $institution_id = $request->institution_id;
         }
 
         return $institution_id;
@@ -45,7 +47,7 @@ class RegulationController extends Controller
     {
         $request->validated();
         if ($request->target == 1) {
-            $options['institution'] = [$this->getInstitutionId()];
+            $options['institution'] = [$this->getInstitutionId($request)];
         } else if ($request->target == 2 && $request->institutions != null) {
             $options['institution'] = $request->institutions;
         } else {
@@ -91,7 +93,7 @@ class RegulationController extends Controller
     public function store(RegulationStoreRequest $request, Regulation $regulation)
     {
         $request->validated();
-        $institutionId = $this->getInstitutionId();
+        $institutionId = $this->getInstitutionId($request);
         $institutions = $request->input('institutions');
 
         $regulation->institution_id = $institutionId;

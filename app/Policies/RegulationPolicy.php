@@ -55,7 +55,7 @@ class RegulationPolicy
 
             return true;
         } else {
-            return $this->deny('Admin tidak diizinkan mengakses halaman ini!');
+            return true;
         }
     }
 
