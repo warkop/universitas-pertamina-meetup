@@ -143,7 +143,7 @@ class ResearchUserController extends Controller
             $this->responseMessage = 'Member berhasil dikonfirmasi';
         } else {
             $this->responseCode = 403;
-            $this->responseMessage = '  Member sudah dikonfirmasi';
+            $this->responseMessage = 'Member sudah dikonfirmasi';
         }
 
         return response()->json($this->getResponse(), $this->responseCode);
