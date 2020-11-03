@@ -234,6 +234,8 @@ class ProfileController extends Controller
           [
           'title' => $value['title'],
           'publication_type_id' => $value['publication_type_id'],
+          'name' => $value['name'],
+          'year' => $value['year'],
           'author' => $value['author'],
           'deleted_at' => null,
           ]
