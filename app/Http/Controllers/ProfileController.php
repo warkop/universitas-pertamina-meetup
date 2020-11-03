@@ -236,7 +236,7 @@ class ProfileController extends Controller
        $publication = $request->input('publication');
        MemberPublication::where('member_id', $member->id)->delete();
 
-       if ($publication[0]['title'] != '' && $value[0]['author'] != '' && $value[0]['publication_type_id'] != '' && $value[0]['name'] != '' && $value[0]['year'] != '') {
+       if ($publication[0]['title'] != '' && $publication[0]['author'] != '' && $publication[0]['publication_type_id'] != '' && $publication[0]['name'] != '' && $publication[0]['year'] != '') {
           foreach ($publication as $key => $value) {
              MemberPublication::withTrashed()->updateOrCreate(
                 ['member_id' => $member->id, 'id' => $value['id']],
