@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SignUpInstitutionRequest extends FormRequest
 {
@@ -28,7 +29,12 @@ class SignUpInstitutionRequest extends FormRequest
             'email'                 => 'required|email|unique:user',
             'password'              => 'required|confirmed',
             'password_confirmation' => 'required|present',
-            'package_id'            => 'required|exists:package,id',
+            'package_id'            => [
+                'required',
+                Rule::exists('package', 'id')->where(function ($query) {
+                    $query->where('package_type', 0);
+                })
+            ],
             'nationality_id'        => 'required|exists:nationality,id'
         ];
     }

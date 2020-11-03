@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SignUpResearcherRequest extends FormRequest
 {
@@ -25,7 +26,19 @@ class SignUpResearcherRequest extends FormRequest
     {
         $packageIdValidation = 'nullable';
         if (!request()->department_id) {
-            $packageIdValidation = 'required|exists:package,id';
+            $packageIdValidation = [
+                'required',
+                Rule::exists('package', 'id')->where(function ($query) {
+                    $query->where('package_type', 1);
+                })
+            ];
+        } else if (request()->is_extension) {
+            $packageIdValidation = [
+                'required',
+                Rule::exists('package', 'id')->where(function ($query) {
+                    $query->where('package_type', 2);
+                })
+            ];
         }
 
         return [
