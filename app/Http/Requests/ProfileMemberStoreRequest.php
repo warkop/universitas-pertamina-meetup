@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Member;
 
 class ProfileMemberStoreRequest extends FormRequest
 {
@@ -23,6 +24,15 @@ class ProfileMemberStoreRequest extends FormRequest
    */
    public function rules()
    {
+      $user = auth()->user();
+
+      $data = Member::find($user->owner_id);
+
+      if ($data->is_independent == false) {
+          $validationDepartment = 'exists:department,id';
+      } else {
+          $validationDepartment = 'nullable';
+      }
       return [
          // 'photo' => 'image',
          'name' => '',
@@ -40,7 +50,7 @@ class ProfileMemberStoreRequest extends FormRequest
          'publication.*.author' => 'required_with:publication.*.tittle, publication.*.publication_type_id',
          // 'skill.*' => 'exists:skill,id',
          // 'interest.*' => 'exists:skill,id',
-         'department' => '',
+         'department' => $validationDepartment,
          'nationality' => 'exists:nationality,id',
          'position' => '',
          'employee_id' => '',
