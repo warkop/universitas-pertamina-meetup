@@ -162,6 +162,8 @@ class ProfileController extends Controller
            ['member_id' => $member->id, 'academic_degree_id' => $value['degree_id']],
            [
            'institution_name' => $value['institution'],
+           'year_start' => $value['year_start'],
+           'year_end' => $value['year_end'],
            'deleted_at' => null,
            ]
            );
@@ -171,73 +173,83 @@ class ProfileController extends Controller
         //SKILL//
         MemberSkill::where('member_id', $member->id)->delete();
         $array_skill = [];
-        foreach ($request->input('skill') as $key => $value) {
-           $check_skill = Skill::where('name', $value)->where('type', 1)->first();
 
-           if (!empty($check_skill)){
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $check_skill->id,
-             ];
-          } else {
-             $mSkill = new Skill;
+        if ($request->input('skill')){
+           foreach ($request->input('skill') as $key => $value) {
+             $check_skill = Skill::where('name', $value)->where('type', 1)->first();
 
-             $mSkill->name = $value;
-             $mSkill->type = 1;
-             $mSkill->status = 0;
-             $mSkill->input = 0;
+             if (!empty($check_skill)){
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $check_skill->id,
+                ];
+             } else {
+                $mSkill = new Skill;
 
-             $mSkill->save();
+                $mSkill->name = $value;
+                $mSkill->type = 1;
+                $mSkill->status = 0;
+                $mSkill->input = 0;
 
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $mSkill->id,
-             ];
+                $mSkill->save();
+
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $mSkill->id,
+                ];
+             }
           }
-       }
+        }
 
-       foreach ($request->input('interest') as $key => $values) {
-          $check_skill = Skill::where('name', $values)->where('type', 0)->first();
+       if ($request->input('interest')){
+          foreach ($request->input('interest') as $key => $values) {
+             $check_skill = Skill::where('name', $values)->where('type', 0)->first();
 
-          if (!empty($check_skill)){
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $check_skill->id,
-             ];
-          } else {
-             $mSkill = new Skill;
+             if (!empty($check_skill)){
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $check_skill->id,
+                ];
+             } else {
+                $mSkill = new Skill;
 
-             $mSkill->name = $values;
-             $mSkill->type = 0;
-             $mSkill->status = 0;
-             $mSkill->input = 0;
+                $mSkill->name = $values;
+                $mSkill->type = 0;
+                $mSkill->status = 0;
+                $mSkill->input = 0;
 
-             $mSkill->save();
+                $mSkill->save();
 
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $mSkill->id,
-             ];
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $mSkill->id,
+                ];
+             }
           }
-       }
 
+       }
        MemberSkill::insert($array_skill);
+
        //////////////////////////////////////////////////
 
        //Publication//
        $publication = $request->input('publication');
        MemberPublication::where('member_id', $member->id)->delete();
 
-       foreach ($publication as $key => $value) {
-          MemberPublication::withTrashed()->updateOrCreate(
-          ['member_id' => $member->id, 'id' => $value['id']],
-          [
-          'title' => $value['title'],
-          'publication_type_id' => $value['publication_type_id'],
-          'author' => $value['author'],
-          'deleted_at' => null,
-          ]
-          );
+       if ($publication[0]['title'] != '' && $publication[0]['author'] != '' && $publication[0]['publication_type_id'] != '' && $publication[0]['name'] != '' && $publication[0]['year'] != '') {
+          foreach ($publication as $key => $value) {
+             MemberPublication::withTrashed()->updateOrCreate(
+                ['member_id' => $member->id, 'id' => $value['id']],
+                [
+                   'title' => $value['title'],
+                   'publication_type_id' => $value['publication_type_id'],
+                   'name' => $value['name'],
+                   'year' => $value['year'],
+                   'author' => $value['author'],
+                   'deleted_at' => null,
+                ]
+             );
+          }
        }
        //////////////////////////////////////////////////
        $member->save();

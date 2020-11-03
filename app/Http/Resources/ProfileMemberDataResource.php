@@ -72,6 +72,8 @@ class ProfileMemberDataResource extends JsonResource
          $data['publication'][] = [
             'id'       => $value->id,
             'title'     => $value->title,
+            'name'     => $value->name,
+            'year'     => $value->year,
             'author'     => $value->author,
             'publication_type' => [
                'id'    => $value->publicationType->id??null,
@@ -88,6 +90,8 @@ class ProfileMemberDataResource extends JsonResource
                'name' => $value['AcademicDegree']['name'],
             ],
             'institution' => $value['institution_name'],
+            'year_start' => $value['year_start'],
+            'year_end' => $value['year_end'],
          ];
       }
 

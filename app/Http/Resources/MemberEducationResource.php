@@ -17,6 +17,8 @@ class MemberEducationResource extends JsonResource
         return [
             'id' => $this->id,
             'institution_name' => $this->institution_name,
+            'year_start' => $this->year_start,
+            'year_end' => $this->year_end,
             'degree' => $this->AcademicDegree->name,
         ];
     }

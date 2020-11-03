@@ -201,12 +201,40 @@ class RoleMenuSeeder extends Seeder
             'menu_id'  => 4,
             'action'   => 'R,DE',
          ],
+         [
+            'role_id'  => 4,
+            'menu_id'  => 18,
+            'action'   => 'R,DE',
+         ],
+         [
+            'role_id'  => 5,
+            'menu_id'  => 18,
+            'action'   => 'R,DE',
+         ],
+         [
+            'role_id'  => 6,
+            'menu_id'  => 18,
+            'action'   => 'R,DE',
+         ],
+         [
+            'role_id'  => 7,
+            'menu_id'  => 18,
+            'action'   => 'R,DE',
+         ],
+         [
+            'role_id'  => 8,
+            'menu_id'  => 18,
+            'action'   => 'R,DE',
+         ],
       ];
 
 
-      $menu = Menu::select()->get();
+      $menu = Menu::select()->where('id', '!=', 18)->get();
 
       foreach ($menu as $key => $value) {
+         if ($value->id == 3 || $value->id == 4){
+            $value->action = 'R,DE';
+         }
          $roleData[] = [
             'role_id'  => 1,
             'menu_id'  => $value->id,
