@@ -236,18 +236,20 @@ class ProfileController extends Controller
        $publication = $request->input('publication');
        MemberPublication::where('member_id', $member->id)->delete();
 
-       foreach ($publication as $key => $value) {
-          MemberPublication::withTrashed()->updateOrCreate(
-          ['member_id' => $member->id, 'id' => $value['id']],
-          [
-          'title' => $value['title'],
-          'publication_type_id' => $value['publication_type_id'],
-          'name' => $value['name'],
-          'year' => $value['year'],
-          'author' => $value['author'],
-          'deleted_at' => null,
-          ]
-          );
+       if ($publication[0]['title'] != '' && $value[0]['author'] != '' && $value[0]['publication_type_id'] != '' && $value[0]['name'] != '' && $value[0]['year'] != '') {
+          foreach ($publication as $key => $value) {
+             MemberPublication::withTrashed()->updateOrCreate(
+                ['member_id' => $member->id, 'id' => $value['id']],
+                [
+                   'title' => $value['title'],
+                   'publication_type_id' => $value['publication_type_id'],
+                   'name' => $value['name'],
+                   'year' => $value['year'],
+                   'author' => $value['author'],
+                   'deleted_at' => null,
+                ]
+             );
+          }
        }
        //////////////////////////////////////////////////
        $member->save();
