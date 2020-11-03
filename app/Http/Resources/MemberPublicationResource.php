@@ -16,8 +16,11 @@ class MemberPublicationResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'publication_type_id' => $this->publicationType->id??null,
             'publication_type' => $this->publicationType->name??null,
             'title' => $this->title,
+            'name' => $this->name,
+            'year' => $this->year,
             'author' => $this->author,
         ];
     }
