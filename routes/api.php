@@ -278,3 +278,11 @@ Route::post('register/upload-payment', 'RegisterController@uploadPayment');
 Route::post('register/send-data-payment', 'RegisterController@sendDataPayment');
 
 Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify'); // Make sure to keep this as your route name
+Route::group(['prefix' => 'restrict'], function () {
+    Route::post('/generate-active-user-institution', 'RestrictController@createActiveUserInstitution');
+    Route::post('/generate-almost-expired-user-institution', 'RestrictController@createAlmostExpiredUserInstitution');
+    Route::post('/generate-expired-user-institution', 'RestrictController@createExpiredUserInstitution');
+    Route::post('/generate-active-user-researcher', 'RestrictController@createActiveUserResearcher');
+    Route::post('/generate-almost-expired-user-researcher', 'RestrictController@createAlmostExpiredUserResearcher');
+    Route::post('/generate-expired-user-researcher', 'RestrictController@createExpiredUserResearcher');
+});

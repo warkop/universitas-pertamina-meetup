@@ -30,7 +30,7 @@ class PaymentService
             return $paymentToken;
         } else {
             $number = $this->generateInvoiceNumber($user);
-            $invoice = Invoice::create([
+            Invoice::create([
                 'package_id'    => $package_id,
                 'user_id'       => $user->id,
                 'price'         => $package->price,
@@ -40,9 +40,39 @@ class PaymentService
                 'valid_until'           => now()->addMonths(4)
             ]);
 
-            $user = User::where('user.id', $user->id)->update(['confirm_at' => now()]);
+            User::where('user.id', $user->id)->update(['confirm_at' => now()]);
         }
         return null;
+    }
+
+    public function registerPackageAutoConfirm($package_id, $user, $activationStatus)
+    {
+        $package = Package::findOrFail($package_id);
+        $number = $this->generateInvoiceNumber($user);
+
+        switch ($activationStatus) {
+            case 1:
+                $validUntil = now()->addMonths($package->subscription_periode);
+                break;
+            case 2:
+                $validUntil = now()->addDays(5);
+                break;
+            default:
+                $validUntil = now();
+                break;
+        }
+
+        Invoice::create([
+            'package_id'    => $package_id,
+            'user_id'       => $user->id,
+            'price'         => $package->price,
+            'number'        => $number,
+            'payment_date'          => now(),
+            'payment_confirm_at'    => now(),
+            'valid_until'           => $validUntil,
+        ]);
+
+        User::where('user.id', $user->id)->update(['confirm_at' => now()]);
     }
 
     public function generateInvoiceNumber(): string
