@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUploadPaymentRequest extends FormRequest
+class ListDataOpportunityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,8 @@ class StoreUploadPaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'payment_attachment'    => 'nullable|file',
+            'target' => 'required',
+            'institutions' => 'required_if:target,2'
         ];
     }
 }

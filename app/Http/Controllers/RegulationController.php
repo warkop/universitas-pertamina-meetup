@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ListDataRegulationRequest;
 use App\Http\Requests\RegulationStoreFilesRequest;
 use App\Http\Requests\RegulationStoreRequest;
 use App\Http\Resources\RegulationListDataResource;
@@ -14,7 +15,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RegulationController extends Controller
 {
-    private function getInstitutionId()
+    private function getInstitutionId($request)
     {
         $user = auth()->user();
 
@@ -31,6 +32,8 @@ class RegulationController extends Controller
             $member = Member::findOrFail($user->owner_id);
 
             $institution_id = $member->department->institution->id;
+        } else {
+            $institution_id = $request->institution_id;
         }
 
         return $institution_id;
@@ -40,16 +43,45 @@ class RegulationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ListDataRegulationRequest $request)
     {
-        $model = Regulation::select(
-            'regulation.*',
-            'institution.name as institution_name'
-        )
-        ->leftJoin('institution','institution.id', '=', 'institution_id')
-        ->get();
+        $request->validated();
+        if ($request->target == 1) {
+            $options['institution'] = [$this->getInstitutionId($request)];
+        } else if ($request->target == 2 && $request->institutions != null) {
+            $options['institution'] = $request->institutions;
+        } else {
+            $options['institution'] = Institution::get()->pluck('id');
+        }
+        $model = Regulation::listData($options);
 
-        return DataTables::of(RegulationListDataResource::collection($model))->toJson();
+        return DataTables::of($model)
+        ->setTransformer(function($item){
+            return [
+                'id'                => $item->id,
+                'name'              => $item->name,
+                'code'              => $item->code,
+                'institution_name'  => $item->institution_name,
+                'regulator'         => $item->regulator,
+                'created_at'        => date('d-m-Y', strtotime($item->created_at)),
+                'updated_at'        => date('d-m-Y', strtotime($item->updated_at)),
+            ];
+        })
+        ->filterColumn('updated_at', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(updated_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('created_at', function($query, $keyword) {
+            $keyword = date('d-m-Y', strtotime($keyword));
+            $sql = "TO_CHAR(created_at, 'dd-mm-yyyy') like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->filterColumn('institution_name', function($query, $keyword) {
+            $sql = "institution.name like ?";
+            $query->whereRaw($sql, ["%{$keyword}%"]);
+        })
+        ->toJson();
     }
 
     /**
@@ -61,18 +93,33 @@ class RegulationController extends Controller
     public function store(RegulationStoreRequest $request, Regulation $regulation)
     {
         $request->validated();
-        $institutionId = $this->getInstitutionId();
+        $institutionId = $this->getInstitutionId($request);
+        $institutions = $request->input('institutions');
 
         $regulation->institution_id = $institutionId;
         $regulation->name           = $request->input('name');
         $regulation->code           = $request->input('code');
         $regulation->regulator      = $request->input('regulator');
-        $regulation->publish_date   = $request->input('publish_date');
+        $regulation->publish_date   = date('Y-m-d', strtotime($request->input('publish_date')));
+        $regulation->target         = $request->input('target');
         $regulation->save();
+
+        // 0 = all institution,1 = my institution, 2 = selected institution
+        if ($request->target == 0) {
+            $institution = Institution::get()->pluck('id');
+            $regulation->institutionRegulation()->sync($institution);
+        } else if ($request->target == 1) {
+            $regulation->institutionRegulation()->sync([$institutionId]);
+        } else {
+            if ($institutions != null) {
+                $regulation = Regulation::find($regulation->id);
+                $regulation->institutionRegulation()->sync($institutions);
+            }
+        }
 
         $this->responseCode = 200;
         $this->responseMessage = 'Data berhasil disimpan';
-        $this->responseData = $regulation;
+        $this->responseData = $regulation->load('institutionRegulation');
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
@@ -155,7 +202,7 @@ class RegulationController extends Controller
     public function show(Regulation $regulation)
     {
         $this->responseCode = 200;
-        $this->responseData = $regulation;
+        $this->responseData = $regulation->load('institutionRegulation');
 
         return response()->json($this->getResponse(), $this->responseCode);
     }

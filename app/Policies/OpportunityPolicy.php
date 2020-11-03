@@ -2,7 +2,9 @@
 
 namespace App\Policies;
 
+use App\Models\Institution;
 use App\Models\Invoice;
+use App\Models\Member;
 use App\Models\Opportunity;
 use App\Models\Package;
 use App\Models\User;
@@ -12,6 +14,26 @@ use Illuminate\Auth\Access\Response;
 class OpportunityPolicy
 {
     use HandlesAuthorization;
+
+    private function getInstitutionId($user)
+    {
+        $typeName = [
+            'institution'   => 0,
+            'researcher'    => 1,
+        ];
+
+        if ($user->type == $typeName['institution']) {
+            $institution = Institution::find($user->owner_id);
+
+            $institution_id = $institution->id;
+        } else if ($user->type == $typeName['researcher']) {
+            $member = Member::findOrFail($user->owner_id);
+
+            $institution_id = $member->department->institution->id;
+        }
+
+        return $institution_id;
+    }
 
     /**
      * Determine whether the user can view any models.
@@ -74,7 +96,20 @@ class OpportunityPolicy
      */
     public function update(User $user, Opportunity $opportunity)
     {
-        //
+        if ($user->type != 2) {
+            $invoice = (new Invoice)->getLastPaidedInvoice($user);
+            if (!$invoice) {
+                return $this->deny('Paket yang belum aktif atau gratis tidak diizinkan mengedit opportunity!');
+            }
+
+            if ($opportunity->institution_id != $this->getInstitutionId($user)) {
+                return $this->deny('Anda tidak diizinkan mengedit opportunity milik Institusi lain!');
+            }
+
+            return true;
+        } else {
+            return $this->deny('Anda tidak diizinkan mengakses halaman ini');
+        }
     }
 
     /**

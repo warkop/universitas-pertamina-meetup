@@ -78,10 +78,10 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/', 'RegulationController@index');
         Route::get('/get-list-institution', 'RegulationController@getListInstitution');
         Route::get('/{regulation}', 'RegulationController@show');
-        Route::post('/', 'RegulationController@store');
+        Route::post('/', 'RegulationController@store')->middleware('can:create,App\Models\Regulation');
         Route::post('/{regulation}', 'RegulationController@storeFiles');
-        Route::put('/{regulation}', 'RegulationController@store');
-        Route::delete('/{regulation}', 'RegulationController@destroy');
+        Route::put('/{regulation}', 'RegulationController@store')->middleware('can:create,regulation');
+        Route::delete('/{regulation}', 'RegulationController@destroy')->middleware('can:delete,regulation');
         Route::get('/files/{regulationFile}', 'RegulationController@showFile');
     });
 
@@ -90,12 +90,14 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/get-institution', 'OpportunityController@getInstitution');
         Route::get('/get-type-opportunity', 'OpportunityController@getTypeOpportunity');
         Route::get('/{opportunity}', 'OpportunityController@show');
+        Route::get('{opportunity}/list-file', 'OpportunityController@listFile');
         Route::post('/', 'OpportunityController@store')->middleware('can:create,App\Models\Opportunity');
         Route::post('/{opportunity}', 'OpportunityController@storeFiles');
         Route::post('/{opportunity}/interest', 'OpportunityController@interest');
-        Route::put('/{opportunity}', 'OpportunityController@store')->middleware('can:create,opportunity');
+        Route::put('/{opportunity}', 'OpportunityController@store')->middleware('can:update,opportunity');
         Route::delete('/{opportunity}', 'OpportunityController@destroy')->middleware('can:delete,opportunity');
         Route::get('/files/{opportunityFile}', 'OpportunityController@showFile');
+        Route::delete('/files/{opportunityFile}', 'OpportunityController@destroyFile');
     });
 
     Route::group(['prefix' => 'announcement'], function () {
@@ -155,6 +157,7 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
         Route::get('/skill', 'ResearchUserController@getSkill');
         Route::get('/department', 'ResearchUserController@getDepartment');
         Route::get('/{member}', 'ResearchUserController@show');
+        Route::get('/{member}/project-interest', 'ResearchUserController@projectInterest');
         Route::post('/send-invitation', 'ResearchUserController@sendingInvitation');
         Route::get('/accept-invitation', 'ResearchUserController@acceptInvitation');
         Route::post('/change-institution/{member}', 'ResearchUserController@changeInstitution');
@@ -227,8 +230,8 @@ Route::group(['middleware' => ['jwt.verify', 'payment.status']], function () {
     });
 
     Route::group(['prefix' => 'package'], function () {
-        Route::get('/list-package-available', 'PackageController@listForUser');
-        Route::get('/my-package', 'PackageController@myPackage');
+        Route::get('/list-package-available', 'PackageController@listForUser')->withoutMiddleware('payment.status');
+        Route::get('/my-package', 'PackageController@myPackage')->withoutMiddleware('payment.status');
         Route::post('/upgrade-package', 'PackageController@upgrade');
         Route::post('/upload-payment', 'RegisterController@uploadPayment');
         Route::post('/send-data-payment', 'RegisterController@sendDataPayment');

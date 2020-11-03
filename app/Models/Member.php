@@ -81,6 +81,7 @@ class Member extends Model
         ->leftJoin('institution', 'institution.id', '=', 'institution_id')
         ->leftJoin('nationality', 'nationality.id', '=', 'nationality_id')
         ->join('user', 'user.owner_id', '=', 'member.id')
+        ->where('user.type', 1)
         ;
 
         if ($user->type == 1) {

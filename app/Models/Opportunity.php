@@ -39,7 +39,7 @@ class Opportunity extends Model
 
     public function interest()
     {
-        return $this->belongsToMany(Member::class, 'member_opportunity', 'member_id', 'opportunity_id');
+        return $this->belongsToMany(Member::class, 'member_opportunity', 'opportunity_id', 'member_id');
     }
 
     public function opportunityType()
@@ -54,13 +54,13 @@ class Opportunity extends Model
 
     public function institutionTarget()
     {
-        return $this->belongsToMany(Institution::class, 'opportunity_target', 'institution_id', 'opportunity_id');
+        return $this->belongsToMany(Institution::class, 'opportunity_target', 'opportunity_id', 'institution_id');
     }
 
     public static function listData($options = [])
     {
-        $result = Opportunity::
-        select(
+        $result = Opportunity::distinct()
+        ->select(
             'opportunity.*',
             'opportunity_type.name as opportunity_type_name',
             'institution.name as institution_name',
@@ -69,13 +69,22 @@ class Opportunity extends Model
         )
         ->join('opportunity_type', 'opportunity_type.id', '=', 'opportunity_type_id')
         ->join('institution', 'institution.id', '=', 'institution_id')
-        ->whereNull('opportunity.deleted_at');
+        ->join('opportunity_target', 'opportunity_target.opportunity_id', 'opportunity.id')
+        ;
 
         if (isset($options['profile']) && $options['profile'] == 1){
              $user = auth()->user();
 
              $result = $result->leftJoin('member_opportunity', 'opportunity_id', 'opportunity.id')->where('member_opportunity.member_id', $user->owner_id);
-       }
+        }
+
+        if ($options['institution']) {
+            $result = $result->where(function() use($options, $result) {
+                foreach ($options['institution'] as $institution) {
+                    $result = $result->orWhere('opportunity_target.institution_id', $institution);
+                }
+            });
+        }
 
         return $result;
     }
