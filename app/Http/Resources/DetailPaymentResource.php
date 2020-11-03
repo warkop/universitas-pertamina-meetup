@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Invoice;
+use App\Services\PaymentService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailPaymentResource extends JsonResource
@@ -30,6 +31,8 @@ class DetailPaymentResource extends JsonResource
             $action = 'New Member';
         }
 
+        $user = auth()->user();
+
         return [
             'id' => $this->id,
             'package_name' => $this->package->name??null,
@@ -50,6 +53,7 @@ class DetailPaymentResource extends JsonResource
             'created_at' => optional($this->created_at)->format('Y-m-d H:i:s'),
             'status' => $status,
             'action' => $action,
+            'package_status' => (new PaymentService)->statusPackage($user),
         ];
     }
 }

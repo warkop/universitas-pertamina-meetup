@@ -295,4 +295,22 @@ class PaymentService
 
         return false;
     }
+
+    public function statusPackage($user)
+    {
+        $invoice = (new Invoice)->getLastInvoice($user);
+        if ($invoice->valid_until == null) {
+            $message = 'not_active';
+        } else if (now()->diffInDays($invoice->valid_until) > 7) {
+            $message = 'active';
+        } else if ($invoice->valid_until->diffInDays(now()) > 0 && $invoice->valid_until->diffInDays(now()) <=7) {
+            $message = 'almost_expired';
+        } else if ($invoice->valid_until <= now()) {
+            $message = 'expired';
+        } else {
+            $message = '';
+        }
+
+        return $message;
+    }
 }
