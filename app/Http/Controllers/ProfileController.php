@@ -162,6 +162,8 @@ class ProfileController extends Controller
            ['member_id' => $member->id, 'academic_degree_id' => $value['degree_id']],
            [
            'institution_name' => $value['institution'],
+           'year_start' => $value['year_start'],
+           'year_end' => $value['year_end'],
            'deleted_at' => null,
            ]
            );
