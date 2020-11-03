@@ -173,57 +173,63 @@ class ProfileController extends Controller
         //SKILL//
         MemberSkill::where('member_id', $member->id)->delete();
         $array_skill = [];
-        foreach ($request->input('skill') as $key => $value) {
-           $check_skill = Skill::where('name', $value)->where('type', 1)->first();
 
-           if (!empty($check_skill)){
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $check_skill->id,
-             ];
-          } else {
-             $mSkill = new Skill;
+        if ($request->input('skill')){
+           foreach ($request->input('skill') as $key => $value) {
+             $check_skill = Skill::where('name', $value)->where('type', 1)->first();
 
-             $mSkill->name = $value;
-             $mSkill->type = 1;
-             $mSkill->status = 0;
-             $mSkill->input = 0;
+             if (!empty($check_skill)){
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $check_skill->id,
+                ];
+             } else {
+                $mSkill = new Skill;
 
-             $mSkill->save();
+                $mSkill->name = $value;
+                $mSkill->type = 1;
+                $mSkill->status = 0;
+                $mSkill->input = 0;
 
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $mSkill->id,
-             ];
+                $mSkill->save();
+
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $mSkill->id,
+                ];
+             }
           }
-       }
+        }
 
-       foreach ($request->input('interest') as $key => $values) {
-          $check_skill = Skill::where('name', $values)->where('type', 0)->first();
+       if ($request->input('interest')){
+          foreach ($request->input('interest') as $key => $values) {
+             $check_skill = Skill::where('name', $values)->where('type', 0)->first();
 
-          if (!empty($check_skill)){
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $check_skill->id,
-             ];
-          } else {
-             $mSkill = new Skill;
+             if (!empty($check_skill)){
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $check_skill->id,
+                ];
+             } else {
+                $mSkill = new Skill;
 
-             $mSkill->name = $values;
-             $mSkill->type = 0;
-             $mSkill->status = 0;
-             $mSkill->input = 0;
+                $mSkill->name = $values;
+                $mSkill->type = 0;
+                $mSkill->status = 0;
+                $mSkill->input = 0;
 
-             $mSkill->save();
+                $mSkill->save();
 
-             $array_skill[] = [
-             'member_id' => $member->id,
-             'skill_id' => $mSkill->id,
-             ];
+                $array_skill[] = [
+                   'member_id' => $member->id,
+                   'skill_id' => $mSkill->id,
+                ];
+             }
           }
-       }
 
+       }
        MemberSkill::insert($array_skill);
+
        //////////////////////////////////////////////////
 
        //Publication//
