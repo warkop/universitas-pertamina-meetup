@@ -26,6 +26,7 @@ class PaymentController extends Controller
         $model = Invoice::query();
         if ($type == 0) {
             $datatable = DataTables::eloquent($model
+                ->distinct()
                 ->select([
                     'institution.*',
                     'invoice.valid_until',
