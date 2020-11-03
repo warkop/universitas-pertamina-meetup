@@ -32,15 +32,7 @@ class SignUpResearcherRequest extends FormRequest
                     $query->where('package_type', 1);
                 })
             ];
-        } else if (request()->is_extension) {
-            $packageIdValidation = [
-                'required',
-                Rule::exists('package', 'id')->where(function ($query) {
-                    $query->where('package_type', 2);
-                })
-            ];
         }
-
         return [
             'name'                  => 'required|regex:/^[a-zA-Z0-9\-\s]+$/|unique:member,name',
             'title_id'              => 'required|exists:title,id',
