@@ -58,7 +58,7 @@ class PaymentService
                 $validUntil = now()->addDays(5);
                 break;
             default:
-                $validUntil = now();
+                $validUntil = now()->subDay(1);
                 break;
         }
 
