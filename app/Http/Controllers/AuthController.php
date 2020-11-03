@@ -32,7 +32,7 @@ class AuthController extends Controller
    *
    * @return \Illuminate\Http\JsonResponse
    */
-   protected function respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent = false)
+   protected function respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent = false, $isExtension = false)
    {
       return response()->json([
          'access_token' => $token,
@@ -42,6 +42,7 @@ class AuthController extends Controller
          'menu'       => $menu['menu'],
          'packageEnd' => $menu['packageEnd'],
          'is_independent' => $isIndependent,
+         'is_extension' => $isExtension,
          'data_user'  =>$dataLogin
       ]);
    }
@@ -61,6 +62,7 @@ class AuthController extends Controller
 
       $user = auth()->user();
       $isIndependent = false;
+      $isExtension = false;
       if ($user->type == 0) {
          $modelLogin = Institution::find($user->owner_id);
          $name = $modelLogin->name;
@@ -68,6 +70,7 @@ class AuthController extends Controller
          $modelLogin = Member::find($user->owner_id);
          $name = $modelLogin->name;
          $isIndependent = $modelLogin->is_independent;
+         $isExtension = $modelLogin->is_extension;
       } else {
          $modelLogin = new \stdClass;
          $modelLogin->status = true;
@@ -107,7 +110,7 @@ class AuthController extends Controller
                 'name' => $name,
             ];
 
-            $response = $this->respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent);
+            $response = $this->respondWithToken($token, $change_mail, $menu, $dataLogin, $isIndependent, $isExtension);
       }
 
         return $response;
