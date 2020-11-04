@@ -6,6 +6,7 @@ use App\Helpers\HelperPublic;
 use App\Http\Requests\ListDataOpportunityRequest;
 use App\Http\Requests\OpportunityStoreFilesRequest;
 use App\Http\Requests\OpportunityStoreRequest;
+use App\Http\Resources\DetailOpportunityResource;
 use App\Http\Resources\OpportunityFileResource;
 use App\Models\Institution;
 use App\Models\Member;
@@ -233,7 +234,7 @@ class OpportunityController extends Controller
 
         $owner_id = $user->owner_id;
 
-        $opportunity->interest()->sync([$owner_id]);
+        $opportunity->interest()->syncWithoutDetaching([$owner_id]);
 
         $this->responseCode = 200;
         $this->responseMessage = 'Anda tertarik pada opportunity ini';
@@ -256,7 +257,7 @@ class OpportunityController extends Controller
     public function show(Opportunity $opportunity)
     {
         $this->responseCode = 200;
-        $this->responseData = $opportunity;
+        $this->responseData = new DetailOpportunityResource($opportunity);
 
         return response()->json($this->getResponse(), $this->responseCode);
     }
