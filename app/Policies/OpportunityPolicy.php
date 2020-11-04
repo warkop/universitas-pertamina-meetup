@@ -77,7 +77,7 @@ class OpportunityPolicy
             }
 
             $totalOpportunity = Opportunity::where('institution_id', $user->owner_id)->count();
-            if ($totalOpportunity < $package->posting_opportunity) {
+            if ($totalOpportunity < $package->posting_opportunity || !$package->posting_opportunity) {
                 return true;
             } else {
                 return $this->deny('Anda sudah melebihi batas untuk membuat opportunity!');
